@@ -12,6 +12,7 @@ import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
 import { defaultAuthConfig } from './auth/types.js';
 import { loadConfig, loadMagicLinkKeys } from './config.js';
+import { createVaultReader } from './vault.js';
 
 const config = loadConfig();
 const { db, close } = createDb(config.DATABASE_URL);
@@ -26,6 +27,14 @@ const app = buildApp(
       // Long-tail Venues; [] unless POLYROUTER_ENABLED=true.
       ...polyRouterAdaptersFromEnv(process.env),
     ]),
+    ...(config.MONAD_RPC_URL &&
+      config.VAULT_ADDRESS && {
+        vault: createVaultReader({
+          rpcUrl: config.MONAD_RPC_URL,
+          vault: config.VAULT_ADDRESS as `0x${string}`,
+          chainId: config.VAULT_CHAIN_ID,
+        }),
+      }),
     magicLinks: {
       keys: loadMagicLinkKeys(config),
       webBaseUrl: config.WEB_BASE_URL,

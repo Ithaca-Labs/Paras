@@ -27,6 +27,7 @@ import {
 } from './profile.js';
 import { getCategory, listCategories } from './taxonomy.js';
 import { listVenues } from './venues.js';
+import { getVaultBalances } from './vault.js';
 
 /**
  * Every API route. Add new route files here; the api, OpenAPI document and typed client
@@ -60,6 +61,7 @@ export const apiRoutes = {
   getOnboardingOptions,
   interpretInterest,
   getExplainer,
+  getVaultBalances,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -74,3 +76,4 @@ export * from './profile.js';
 export * from './auth.js';
 export * from './venues.js';
 export * from './jurisdiction.js';
+export * from './vault.js';

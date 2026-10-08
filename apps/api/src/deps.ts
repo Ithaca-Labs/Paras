@@ -3,6 +3,7 @@ import type { Database } from '@paras/db';
 import type { Embedder, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
 import type { GeoResolver } from './jurisdiction.js';
+import type { VaultReader } from './vault.js';
 
 export interface MagicLinkDeps {
   /** Signing keys by kid (rotation: add a key, switch `activeKid`, drop old keys after their TTL). */
@@ -24,6 +25,8 @@ export interface AppDeps {
   embedder?: Embedder;
   /** Country resolver; default trusts the CDN country header. */
   geo?: GeoResolver;
+  /** Monad Vault reader; omit and the balance endpoint answers 503. */
+  vault?: VaultReader;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** How often SSE streams re-read latest Quotes from Postgres. Default 2000 ms. */
