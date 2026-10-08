@@ -18,7 +18,8 @@ export interface PolymarketOptions {
   now?: () => Date;
 }
 
-const GAMMA_MAX_PAGE = 500;
+/** Gamma silently caps `limit` at 100. */
+const GAMMA_MAX_PAGE = 100;
 const BOOKS_BATCH = 100;
 /** Default bucket size (minutes) per window, matching what the CLOB accepts. */
 const FIDELITY: Record<PriceHistoryParams['interval'], number> = {

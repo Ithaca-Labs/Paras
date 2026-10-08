@@ -15,7 +15,7 @@ export interface VenueJobContext {
   log?: (msg: string, data?: Record<string, unknown>) => void;
 }
 
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 100;
 const QUOTE_BATCH = 200;
 
 export const VenueSyncPayload = z.object({

@@ -12,6 +12,10 @@ export interface TestAppOptions {
   adapters?: VenueAdapter[];
   /** Override auth settings (TTLs, rate limits, ...). */
   auth?: Partial<AuthConfig>;
+  /** Injected clock for freshness (`stale`) assertions. */
+  now?: () => Date;
+  /** SSE re-read interval; tests use a small value. */
+  ssePollMs?: number;
 }
 
 export const TEST_AUTH_DOMAIN = 'paras.test';
@@ -47,6 +51,8 @@ export async function createTestApp(options: TestAppOptions = {}) {
   const app = buildApp({
     db,
     adapters: createAdapterRegistry(options.adapters),
+    ...(options.now && { now: options.now }),
+    ssePollMs: options.ssePollMs ?? 50,
     auth: {
       config: defaultAuthConfig({
         secret: 'test-secret-test-secret-test-secret-00',

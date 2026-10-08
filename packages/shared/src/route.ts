@@ -72,3 +72,6 @@ export type RouteResult<R extends Route> = z.output<R['response']>;
 export function toFastifyPath(path: string): string {
   return path.replace(/\{(\w+)\}/g, ':$1');
 }
+
+/** What an SSE handler receives after validation. */
+export type SseRequest<R extends SseRoute> = Present<R['request'], 'output'>;
