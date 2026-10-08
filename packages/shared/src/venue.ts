@@ -49,7 +49,9 @@ export type MarketStatus = z.infer<typeof MarketStatus>;
 
 /**
  * Fee model. `curve`: per-share fee = rate * (p * (1 - p)) ^ exponent, charged to takers only
- * if `takerOnly`. Venues with other models add a new `kind`. Fee-adjusted effective price is
+ * if `takerOnly`. `profit`: `rate` of profit on a winning share, i.e. rate * (1 - p) per share.
+ * `tiered`: fraction of notional, `rate` linearly interpolated over `points` (ascending by price).
+ * Venues with other models add a new `kind`. Fee-adjusted effective price is
  * computed in packages/domain from this.
  */
 export const FeeSchedule = z.discriminatedUnion('kind', [
@@ -59,6 +61,11 @@ export const FeeSchedule = z.discriminatedUnion('kind', [
     rate: DecimalString,
     exponent: z.number(),
     takerOnly: z.boolean(),
+  }),
+  z.object({ kind: z.literal('profit'), rate: DecimalString }),
+  z.object({
+    kind: z.literal('tiered'),
+    points: z.array(z.object({ price: PriceString, rate: DecimalString })).min(1),
   }),
 ]);
 export type FeeSchedule = z.infer<typeof FeeSchedule>;

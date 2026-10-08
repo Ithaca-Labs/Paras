@@ -9,6 +9,25 @@ export const LIMITLESS_SITE = 'https://limitless.exchange';
 /** Order books and history are keyed by Market slug; Outcome ids are `<slug>:yes` / `<slug>:no`. */
 export type Side = 'yes' | 'no';
 export const outcomeId = (slug: string, side: Side): string => `${slug}:${side}`;
+// CLOB buy taker rate by price (docs.limitless.exchange/user-guide/fees); makers pay 0.
+const LIMITLESS_FEE = {
+  kind: 'tiered',
+  points: [
+    ['0.5', '0.03'],
+    ['0.55', '0.0252'],
+    ['0.6', '0.0213'],
+    ['0.65', '0.018'],
+    ['0.7', '0.0151'],
+    ['0.75', '0.0126'],
+    ['0.8', '0.0105'],
+    ['0.85', '0.0085'],
+    ['0.9', '0.0068'],
+    ['0.95', '0.0053'],
+    ['0.99', '0.0042'],
+    ['0.999', '0.004'],
+  ].map(([price, rate]) => ({ price: price!, rate: rate! })),
+} as const;
+
 export function parseOutcomeId(id: string): { slug: string; side: Side } | null {
   const i = id.lastIndexOf(':');
   const side = id.slice(i + 1);
@@ -89,7 +108,7 @@ export function normalizeLimitlessMarket(
     liquidity: '0',
     imageUrl: raw.imageUrl || raw.logo || parent?.imageUrl || null,
     url: limitlessDeepLink({ externalId: raw.slug, meta }),
-    fee: { kind: 'none' },
+    fee: LIMITLESS_FEE,
     outcomes: [
       { externalId: outcomeId(raw.slug, 'yes'), label: 'Yes', index: 0 },
       { externalId: outcomeId(raw.slug, 'no'), label: 'No', index: 1 },

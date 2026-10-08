@@ -19,6 +19,7 @@ describe('limitless adapter (fixture replay)', () => {
     for (const m of page.items) {
       expect(NormalizedMarket.parse(m)).toEqual(m);
       expect(m.venueId).toBe('limitless');
+      expect(m.fee.kind).toBe('tiered');
       expect(['open', 'resolved']).toContain(m.status);
       expect(m.url).toMatch(/^https:\/\/limitless\.exchange\/markets\//);
       expect(m.outcomes.map((o) => o.label)).toEqual(['Yes', 'No']);

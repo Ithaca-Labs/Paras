@@ -77,7 +77,8 @@ export function normalizeSxMarket(row: unknown): NormalizedMarket | null {
     liquidity: '0',
     imageUrl: null,
     url: sxbetDeepLink({ externalId: raw.marketHash, meta }),
-    fee: { kind: 'none' },
+    // 1% taker fee on net profit (docs.sx.bet/user-guides/trading/fees); makers pay 0.
+    fee: { kind: 'profit', rate: '0.01' },
     outcomes: [
       { externalId: outcomeId(raw.marketHash, 1), label: raw.outcomeOneName, index: 0 },
       { externalId: outcomeId(raw.marketHash, 2), label: raw.outcomeTwoName, index: 1 },
