@@ -99,6 +99,8 @@ CI never makes live Venue calls. Record fixtures with the fixture harness. Every
 
 ## Style
 
+- **Always use the `ponytail` skill (full level).** Invoke it at the start of every session and task, and follow it: the smallest complete change, no speculative abstractions. Every subagent you spawn must invoke it too.
+
 - Be concise in comments, PRs and commits.
 - TypeScript strict mode. Match the surrounding code's idioms.
 - Keep changes minimal and focused on the issue.
