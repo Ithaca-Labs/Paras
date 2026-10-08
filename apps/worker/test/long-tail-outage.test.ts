@@ -1,7 +1,8 @@
 import {
   createAdapterRegistry,
   createFakeAdapter,
-  createPolyRouterAdapters,
+  createOpinionAdapter,
+  createProbableAdapter,
   fakeMarket,
 } from '@paras/adapters';
 import { createDb, schema, type DbHandle } from '@paras/db';
@@ -22,15 +23,12 @@ beforeAll(async () => {
     id: 'core',
     markets: [fakeMarket('a', { venueId: 'core' }), fakeMarket('b', { venueId: 'core' })],
   });
-  // PolyRouter is down: every request fails.
-  const longTail = createPolyRouterAdapters({
-    apiKey: 'k',
-    minIntervalMs: 0,
-    fetch: async () => {
-      hits++;
-      return new Response('bad gateway', { status: 502 });
-    },
-  });
+  // Long-tail Venues are down: every request fails.
+  const down = async () => {
+    hits++;
+    return new Response('bad gateway', { status: 502 });
+  };
+  const longTail = [createOpinionAdapter({ fetch: down }), createProbableAdapter({ fetch: down })];
   const adapters = createAdapterRegistry([core, ...longTail]);
   const venues = [...adapters.keys()];
   worker = buildWorker({
@@ -47,7 +45,7 @@ afterAll(async () => {
   await testDb.drop();
 });
 
-describe('PolyRouter outage', () => {
+describe('long-tail Venue outage', () => {
   it('leaves core Venue sync unaffected and long-tail Venues empty', async () => {
     await expect
       .poll(async () => (await handle.db.select().from(schema.markets)).length, { timeout: 20_000 })

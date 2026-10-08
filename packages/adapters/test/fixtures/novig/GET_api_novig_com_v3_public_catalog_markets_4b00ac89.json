@@ -1,0 +1,287 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.novig.com/v3/public/catalog/markets?limit=10"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "items": [
+        {
+          "marketId": "01a11dac-d120-76b3-bdfd-59ca4a4b8952",
+          "description": "Nico Collins 25.5 LONGEST_RECEPTION",
+          "eventId": "01a0ef14-21dd-70b1-bfbd-e8f1957b95de",
+          "marketType": "LONGEST_RECEPTION",
+          "strike": "25.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791738000000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11dac-d120-76b3-bdfd-59d89ef1e6ab",
+              "name": "Over 25.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11dac-d120-76b3-bdfd-59e481c2aa2b",
+              "name": "Under 25.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11dac-570d-76b2-89b2-bc70e95b00f7",
+          "description": "Javonte Williams 86.5 RUSHING_AND_RECEIVING_YARDS",
+          "eventId": "01a0ef14-1e69-7631-9389-bf88cf7969ce",
+          "marketType": "RUSHING_AND_RECEIVING_YARDS",
+          "strike": "86.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791504900000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11dac-570d-76b2-89b2-bc88c60f8a43",
+              "name": "Over 86.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11dac-570d-76b2-89b2-bc99e42ca2d3",
+              "name": "Under 86.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11dab-8c8d-7d41-8a33-505f9125e968",
+          "description": "Zach Benson 2.5 POINTS",
+          "eventId": "01a11751-bb07-72b1-baec-1f100cd8fd09",
+          "marketType": "POINTS",
+          "strike": "2.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791500400000,
+          "fee": {
+            "coefficient": "0.06",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11dab-8c8d-7d41-8a33-506cee06495a",
+              "name": "Over 2.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11dab-8c8d-7d41-8a33-507e9df9a734",
+              "name": "Under 2.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11dab-80a3-74f0-a20a-290e3fe1a323",
+          "description": "CLE -7.5",
+          "eventId": "01a11623-09be-7e53-aa7a-5550f0b579f7",
+          "marketType": "SPREAD",
+          "strike": "-7.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791500700000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11dab-80a3-74f0-a20a-2914162f2868",
+              "name": "CLE -7.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11dab-80a3-74f0-a20a-292ed9f9ba97",
+              "name": "BOS +7.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11da9-9534-7fe3-84c8-efef1214b17f",
+          "description": "Kenneth Gainwell 29.5 RUSHING_AND_RECEIVING_YARDS",
+          "eventId": "01a0ef14-1e69-7631-9389-bf88cf7969ce",
+          "marketType": "RUSHING_AND_RECEIVING_YARDS",
+          "strike": "29.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791504900000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11da9-9534-7fe3-84c8-eff71ac06cd2",
+              "name": "Over 29.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11da9-9534-7fe3-84c8-f005cbcc9cdc",
+              "name": "Under 29.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11da7-61f3-7021-a22f-3ad3d273b0dd",
+          "description": "CLE -1.5 1H",
+          "eventId": "01a11623-09be-7e53-aa7a-5550f0b579f7",
+          "marketType": "SPREAD_1H",
+          "strike": "-1.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791500700000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11da7-61f3-7021-a22f-3aecfb8c6a49",
+              "name": "CLE -1.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11da7-61f3-7021-a22f-3afeaa88d735",
+              "name": "BOS +1.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11da7-24c7-7493-bc2f-c8e229202490",
+          "description": "Xavier Hutchinson 9.5 LONGEST_RECEPTION",
+          "eventId": "01a0ef14-21dd-70b1-bfbd-e8f1957b95de",
+          "marketType": "LONGEST_RECEPTION",
+          "strike": "9.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791738000000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11da7-24c7-7493-bc2f-c8f481c2d413",
+              "name": "Over 9.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11da7-24c7-7493-bc2f-c902f26cd8ad",
+              "name": "Under 9.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11da7-1558-79e1-80f4-359bfed3459b",
+          "description": "Kevin Coleman 18.5 RECEIVING_YARDS",
+          "eventId": "01a0ef14-1f5c-7001-8758-435bb13ab5bd",
+          "marketType": "RECEIVING_YARDS",
+          "strike": "18.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791738000000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11da7-1558-79e1-80f4-35a10ee9fb33",
+              "name": "Over 18.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11da7-1558-79e1-80f4-35b99c3c84fe",
+              "name": "Under 18.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11da7-0400-7362-96a4-c64243ba0ad5",
+          "description": "SAS -5.5 1H",
+          "eventId": "01a1165a-40b2-7d31-80de-39c6fed27e3d",
+          "marketType": "SPREAD_1H",
+          "strike": "-5.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791504300000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11da7-0400-7362-96a4-c6501178a509",
+              "name": "SAS -5.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11da7-0400-7362-96a4-c66a369a21d7",
+              "name": "ATL +5.5",
+              "status": "TBD"
+            }
+          ]
+        },
+        {
+          "marketId": "01a11da7-03ce-7da1-ae61-ec82d2c4236f",
+          "description": "Trae Young 5.5 ASSISTS",
+          "eventId": "01a1163e-d5a8-7213-9722-4cadf1762a90",
+          "marketType": "ASSISTS",
+          "strike": "5.5",
+          "status": "OPEN",
+          "voids": "FMV",
+          "startsTs": 1791502500000,
+          "fee": {
+            "coefficient": "0.03",
+            "makerCredit": "0.5",
+            "charged": "WHEN_LIVE"
+          },
+          "outcomes": [
+            {
+              "outcomeId": "01a11da7-03ce-7da1-ae61-ec922fd74429",
+              "name": "Over 5.5",
+              "status": "TBD"
+            },
+            {
+              "outcomeId": "01a11da7-03ce-7da1-ae61-ecacb8be815c",
+              "name": "Under 5.5",
+              "status": "TBD"
+            }
+          ]
+        }
+      ],
+      "next": "01a11da7-03ce-7da1-ae61-ec82d2c4236f"
+    }
+  }
+}

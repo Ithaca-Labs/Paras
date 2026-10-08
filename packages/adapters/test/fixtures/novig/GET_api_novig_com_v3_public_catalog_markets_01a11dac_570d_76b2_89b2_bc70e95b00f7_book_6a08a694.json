@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.novig.com/v3/public/catalog/markets/01a11dac-570d-76b2-89b2-bc70e95b00f7/book?depth=20"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "marketId": "01a11dac-570d-76b2-89b2-bc70e95b00f7",
+      "seq": 0,
+      "orders": {}
+    }
+  }
+}

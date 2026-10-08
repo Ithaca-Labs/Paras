@@ -30,7 +30,7 @@ export interface PriceHistoryParams {
 }
 
 /**
- * The contract every Venue adapter implements (Polymarket, Kalshi, Limitless, SX Bet, PolyRouter).
+ * The contract every Venue adapter implements (Polymarket, Kalshi, Limitless, SX Bet, long tail).
  *
  * Adapters are pure translators: HTTP in, normalized schema out. No ranking, matching, caching or
  * persistence. They take an injectable `fetch` (see @paras/testkit) so tests replay fixtures, and

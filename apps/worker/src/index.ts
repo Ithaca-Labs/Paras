@@ -4,7 +4,7 @@ import {
   createLimitlessAdapter,
   createPolymarketAdapter,
   createSxBetAdapter,
-  polyRouterAdaptersFromEnv,
+  longTailAdaptersFromEnv,
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { createTransformersEmbedder } from '@paras/embeddings';
@@ -19,8 +19,8 @@ const adapters = createAdapterRegistry([
   createLimitlessAdapter(),
   createSxBetAdapter(),
   createKalshiAdapter(),
-  // Long-tail Venues; [] unless POLYROUTER_ENABLED=true.
-  ...polyRouterAdaptersFromEnv(process.env),
+  // Long-tail Venues; key-gated ones are off while their key is unset.
+  ...longTailAdaptersFromEnv(process.env),
 ]);
 const venues = [...adapters.keys()];
 

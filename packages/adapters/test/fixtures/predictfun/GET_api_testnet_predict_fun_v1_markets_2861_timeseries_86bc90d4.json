@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-testnet.predict.fun/v1/markets/2861/timeseries?metric=chance&resolution=1h&from=1791412800&limit=1000"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "cursor": null,
+      "data": {
+        "resolution": "1h",
+        "series": [
+          {
+            "x": 1791475200,
+            "y": 65
+          }
+        ]
+      },
+      "success": true
+    }
+  }
+}

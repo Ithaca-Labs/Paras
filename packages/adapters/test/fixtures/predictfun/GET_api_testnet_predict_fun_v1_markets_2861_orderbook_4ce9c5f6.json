@@ -1,0 +1,55 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-testnet.predict.fun/v1/markets/2861/orderbook"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "data": {
+        "asks": [
+          [
+            0.77,
+            88634
+          ],
+          [
+            0.95,
+            792420
+          ]
+        ],
+        "bids": [
+          [
+            0.65,
+            97.11
+          ],
+          [
+            0.11,
+            81182.94269
+          ],
+          [
+            0.09,
+            29.579
+          ],
+          [
+            0.01,
+            5651703
+          ]
+        ],
+        "lastOrderSettled": {
+          "id": "407179",
+          "kind": "LIMIT",
+          "marketId": 2861,
+          "outcome": "No",
+          "price": "0.65",
+          "side": "Ask"
+        },
+        "marketId": 2861,
+        "updateTimestampMs": 1791447008954
+      },
+      "success": true
+    }
+  }
+}

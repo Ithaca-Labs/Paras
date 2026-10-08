@@ -1,0 +1,748 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-testnet.predict.fun/v1/markets?first=10&sort=VOLUME_TOTAL_DESC&status=OPEN"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "cursor": "NDYy",
+      "data": [
+        {
+          "boostEndsAt": null,
+          "boostStartsAt": null,
+          "categorySlug": "will-there-be-another-us-government-shutdown-by-january-31",
+          "conditionId": "0x280559e894eeeeab06adf4f8569c6052df1bf0f7ab6937e05e4dd1df96ee6b4d",
+          "createdAt": "2026-02-03T08:46:09.198Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve to “Yes” if the U.S. Office of Personnel Management (OPM) announces another federal government shutdown due to a lapse in appropriations by January 31, 2026, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nPartial shutdowns count as shutdowns; announcements of office closures due to holidays or inclement weather do not qualify as a shutdown.\n\nThe resolution source for this market will be OPM’s Operating Status page (https://www.opm.gov/policy-data-oversight/snow-dismissal-procedures/current-status/).",
+          "feeRateBps": 200,
+          "id": 2861,
+          "imageUrl": "https://static.predict.fail/will-there-be-another-us-government-shutdown-by-january-31-us-government-shutdown-saturday",
+          "isBoosted": false,
+          "isNegRisk": false,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0x0b5d63e810568653c603d4bf9c9db69e787aa065cec80341df273a9d19db5741",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.77,
+                "size": 88634
+              },
+              "bestBid": {
+                "price": 0.65,
+                "size": 97.11
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "18998729123214394630752568378283086773500264043862448838214524128316522281839",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.35,
+                "size": 97.11
+              },
+              "bestBid": {
+                "price": 0.23,
+                "size": 88634
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "57302180868560218804155605196644161027244946967248352833045473768100502752126",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0x43ec78527bd98a0588dd9455685b2cc82f5743140cb3a154603dc03c02b57de5"
+          ],
+          "question": "US government shutdown Saturday?",
+          "questionIndex": null,
+          "resolution": null,
+          "resolverAddress": "0x8403922ad0c5d39B4148e17C86095cAf10B37E50",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "US government shutdown Saturday?",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-01-29T19:53:24.000Z",
+          "boostStartsAt": "2026-01-29T09:00:00.000Z",
+          "categorySlug": "who-will-trump-nominate-as-fed-chair",
+          "conditionId": "0x87f4afcbc1102fdb221fb9e77cb773598fea35a8184423e91eb2ebf4eb59e245",
+          "createdAt": "2025-12-05T13:35:01.051Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve according to the next individual Donald Trump, as President of the United States, formally nominates to be Chair of the Federal Reserve by December 31, 2026, 11:59 PM ET. \n\nFormal nominations are defined as the submission of a nomination message to the U.S. Senate.\n\nActing or interim appointments will not count unless the individual is formally nominated to be Chair of the Federal Reserve by submission of a nomination message to the U.S. Senate.\n\nThe primary resolution source for this market will be official information from the U.S. Senate (see: https://www.senate.gov/legislative/nominations_new.htm), however a consensus of credible reporting may also be used.",
+          "feeRateBps": 200,
+          "id": 469,
+          "imageUrl": "https://static.predict.fail/who-will-trump-nominate-as-fed-chair-other",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0x6eb21807381b69d3e11c08d13d0e4c15ead82a140c413bd4c68d6462a989704f",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.65,
+                "size": 480442.1583
+              },
+              "bestBid": {
+                "price": 0.59,
+                "size": 6.4331
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "91836012516826630387708478317755513950727259236111825952394018822238566506386",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.41,
+                "size": 6.4331
+              },
+              "bestBid": {
+                "price": 0.35,
+                "size": 480442.1583
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "81930138412540704640278347724082880801865519578136320425058611697079200662509",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0xa304e39106706aabd9d84e66d39a18e19c54733e4f77d3f813c1dd0e45ca0701"
+          ],
+          "question": "Will Trump nominate someone else as the next Fed chair?",
+          "questionIndex": 3,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Other",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-01-29T19:53:24.000Z",
+          "boostStartsAt": "2026-01-29T09:00:00.000Z",
+          "categorySlug": "who-will-trump-nominate-as-fed-chair",
+          "conditionId": "0x0586a82f11b0c2981bcdf185666589c51980979b25c6a8f4b5b28ba32e132241",
+          "createdAt": "2025-12-05T13:34:25.117Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve according to the next individual Donald Trump, as President of the United States, formally nominates to be Chair of the Federal Reserve by December 31, 2026, 11:59 PM ET. \n\nFormal nominations are defined as the submission of a nomination message to the U.S. Senate.\n\nActing or interim appointments will not count unless the individual is formally nominated to be Chair of the Federal Reserve by submission of a nomination message to the U.S. Senate.\n\nThe primary resolution source for this market will be official information from the U.S. Senate (see: https://www.senate.gov/legislative/nominations_new.htm), however a consensus of credible reporting may also be used.",
+          "feeRateBps": 200,
+          "id": 457,
+          "imageUrl": "https://static.predict.fail/who-will-trump-nominate-as-fed-chair-donald-trump",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0xe794868458365446385212225e7004fa7934c4f998e3213fc6244d562bf67fe4",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.23,
+                "size": 847033.5958
+              },
+              "bestBid": {
+                "price": 0.17,
+                "size": 86902
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "89815470172812647939190486559817427221808344376669839183200485498693126750958",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.83,
+                "size": 86902
+              },
+              "bestBid": {
+                "price": 0.77,
+                "size": 847033.5958
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "100743520540675710931991480462614745605462375677652031831252870272391447394344",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0x3d83f444f62b2afe0cb28485073cbf3617400d58813cd351cd4d242560ac47f2"
+          ],
+          "question": "Will Trump nominate himself as the next Fed chair?",
+          "questionIndex": 14,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Donald Trump",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-05-02T18:54:40.000Z",
+          "boostStartsAt": "2026-02-03T18:45:00.000Z",
+          "categorySlug": "2026-nba-champion",
+          "conditionId": "0x2c3e9f78c75999a81d564e8227ca9a831b6cc2e9545d8ffc11084ed441f319b9",
+          "createdAt": "2025-12-05T13:30:39.148Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve to “Yes” if the Denver Nuggets win the 2026 NBA Finals. Otherwise, this market will resolve to “No”.\n\nThis market will resolve to “No” if it becomes impossible for this team to win the 2026 NBA Finals based off the rules of the NBA.\n\nThe resolution source for this market will be information from the NBA.",
+          "feeRateBps": 200,
+          "id": 405,
+          "imageUrl": "https://static.predict.fail/2026-nba-champion-denver-nuggets",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0x6d3a9db9c681a7ac5f34f588306c339a2d80d666f6941b86a67e6160879f2f16",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.7,
+                "size": 46861
+              },
+              "bestBid": {
+                "price": 0.65,
+                "size": 7.7045
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "28145582824538111769539459858183947061732403962864482439460095046793855289791",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.35,
+                "size": 7.7045
+              },
+              "bestBid": {
+                "price": 0.3,
+                "size": 46861
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "87024625948035143376691197688397210799369744555735955334541622713435295238964",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0x4e65282819c98c6aed529f357fbf5983b1ae9407a3c25bd50fe97b2906df68f9"
+          ],
+          "question": "Will the Denver Nuggets win the 2026 NBA Finals?",
+          "questionIndex": 26,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Denver Nuggets",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-01-29T19:53:24.000Z",
+          "boostStartsAt": "2026-01-29T09:00:00.000Z",
+          "categorySlug": "who-will-trump-nominate-as-fed-chair",
+          "conditionId": "0x7ef39cdeb17f3091cfe76ad78b888705ce5ae1f2a655d089c511d59c85adf4a4",
+          "createdAt": "2025-12-05T13:34:18.837Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve according to the next individual Donald Trump, as President of the United States, formally nominates to be Chair of the Federal Reserve by December 31, 2026, 11:59 PM ET. \n\nFormal nominations are defined as the submission of a nomination message to the U.S. Senate.\n\nActing or interim appointments will not count unless the individual is formally nominated to be Chair of the Federal Reserve by submission of a nomination message to the U.S. Senate.\n\nThe primary resolution source for this market will be official information from the U.S. Senate (see: https://www.senate.gov/legislative/nominations_new.htm), however a consensus of credible reporting may also be used.",
+          "feeRateBps": 200,
+          "id": 455,
+          "imageUrl": "https://static.predict.fail/who-will-trump-nominate-as-fed-chair-larry-lindsey",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0x4bdfb17dd88dea4527a4449be03030abfcebc82e22e8933b0f3710668f532464",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.7,
+                "size": 0.8586
+              },
+              "bestBid": {
+                "price": 0.6,
+                "size": 147480
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "4420981734913145350438991434344317006732395948769848002359598634554278483325",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.4,
+                "size": 147480
+              },
+              "bestBid": {
+                "price": 0.3,
+                "size": 0.8586
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "98356553063219341347555266896893819886624905593111076040086955976984523118077",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0x95657cd92502a3b132163cb9c77f5f16771dda1faa33a3977364f11a945d68f0"
+          ],
+          "question": "Will Trump nominate Larry Lindsey as the next Fed chair?",
+          "questionIndex": 16,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Larry Lindsey",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-05-02T18:54:40.000Z",
+          "boostStartsAt": "2026-02-03T18:45:00.000Z",
+          "categorySlug": "2026-nba-champion",
+          "conditionId": "0x6c66e9fe9699d69d04ede4d88927793e7cb7c3c33deced4df9aff5780acfbf20",
+          "createdAt": "2025-12-05T13:30:46.019Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve to “Yes” if the Los Angeles Clippers win the 2026 NBA Finals. Otherwise, this market will resolve to “No”.\n\nThis market will resolve to “No” if it becomes impossible for this team to win the 2026 NBA Finals based off the rules of the NBA.\n\nThe resolution source for this market will be information from the NBA.",
+          "feeRateBps": 200,
+          "id": 408,
+          "imageUrl": "https://static.predict.fail/2026-nba-champion-los-angeles-clippers",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0xd4ac7949721b1a151666d9e524d8368460b5f524c5ccf8dde42176c9a9cf4d58",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.86,
+                "size": 296650
+              },
+              "bestBid": {
+                "price": 0.76,
+                "size": 299154.01
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "113979176923537936828724280716818970491414945492943210559665042691930642675550",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.24,
+                "size": 299154.01
+              },
+              "bestBid": {
+                "price": 0.14,
+                "size": 296650
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "9092004366864658973678095020498336146276089186284636409549209415993573455904",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0x543da007c2f149346cf9f9f21021f1b2e10c46c78fcd0c9297c0c21f10c94626"
+          ],
+          "question": "Will the Los Angeles Clippers win the 2026 NBA Finals?",
+          "questionIndex": 22,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Los Angeles Clippers",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-01-29T19:53:24.000Z",
+          "boostStartsAt": "2026-01-29T09:00:00.000Z",
+          "categorySlug": "who-will-trump-nominate-as-fed-chair",
+          "conditionId": "0x8f6e94c0972537b6449e91c58fbb1fbc8a6a04f884d7595e09351fc561c40b85",
+          "createdAt": "2025-12-05T13:34:33.486Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve according to the next individual Donald Trump, as President of the United States, formally nominates to be Chair of the Federal Reserve by December 31, 2026, 11:59 PM ET. \n\nFormal nominations are defined as the submission of a nomination message to the U.S. Senate.\n\nActing or interim appointments will not count unless the individual is formally nominated to be Chair of the Federal Reserve by submission of a nomination message to the U.S. Senate.\n\nThe primary resolution source for this market will be official information from the U.S. Senate (see: https://www.senate.gov/legislative/nominations_new.htm), however a consensus of credible reporting may also be used.",
+          "feeRateBps": 200,
+          "id": 458,
+          "imageUrl": "https://static.predict.fail/who-will-trump-nominate-as-fed-chair-individual-p",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0x4c03a5f0f339d392cbbca09f91469ac073dc32359ca4cdc79371969ee46c1a07",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.29,
+                "size": 7.0403
+              },
+              "bestBid": {
+                "price": 0.22,
+                "size": 437667
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "50961590422140150943855899738445740416527626910563727292707300103971920930677",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.78,
+                "size": 437667
+              },
+              "bestBid": {
+                "price": 0.71,
+                "size": 7.0403
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "90689717280634746331321427542037312975154302370258662217745699186636355888364",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0xc76ba4b5ddabac355b4d03e61d233c94a552e22c46348f44e0258e61b648bb34"
+          ],
+          "question": "Will Trump nominate Individual P as the next Fed chair?",
+          "questionIndex": 30,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Individual P",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-05-02T18:54:40.000Z",
+          "boostStartsAt": "2026-02-03T18:45:00.000Z",
+          "categorySlug": "2026-nba-champion",
+          "conditionId": "0xf7f6d593bebdbef3afea133b013330c7cf7361ed92cac0ceda5bf29681fd0f26",
+          "createdAt": "2025-12-05T13:30:41.936Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve to “Yes” if the San Antonio Spurs win the 2026 NBA Finals. Otherwise, this market will resolve to “No”.\n\nThis market will resolve to “No” if it becomes impossible for this team to win the 2026 NBA Finals based off the rules of the NBA.\n\nThe resolution source for this market will be information from the NBA.",
+          "feeRateBps": 200,
+          "id": 406,
+          "imageUrl": "https://static.predict.fail/2026-nba-champion-san-antonio-spurs",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0xcce425bcf963fdf71c67d82eb65c0effe89bb6211fb2b195625fd5f50fb9f435",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.31,
+                "size": 806852.6118000001
+              },
+              "bestBid": {
+                "price": 0.23,
+                "size": 193559.0112
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "97554673676317173920283119494004633770171621760014844852495155852558100019705",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.77,
+                "size": 193559.0112
+              },
+              "bestBid": {
+                "price": 0.69,
+                "size": 806852.6118000001
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "37208116014039936111748886308981926553639223968057571532196318488938055871154",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0xb6b3d7a2037b3faa7e1306d741840d453432902d73cc9a146a035e40271eae73"
+          ],
+          "question": "Will the San Antonio Spurs win the 2026 NBA Finals?",
+          "questionIndex": 19,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "San Antonio Spurs",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-05-02T18:54:40.000Z",
+          "boostStartsAt": "2026-02-03T18:45:00.000Z",
+          "categorySlug": "2026-nba-champion",
+          "conditionId": "0x3fce3e2d93a76b19f9bda6cf76e257eca5feae6574dddde2e76d6bf33bb75afa",
+          "createdAt": "2025-12-05T13:30:22.813Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve to “Yes” if the Chicago Bulls win the 2026 NBA Finals. Otherwise, this market will resolve to “No”.\n\nThis market will resolve to “No” if it becomes impossible for this team to win the 2026 NBA Finals based off the rules of the NBA.\n\nThe resolution source for this market will be information from the NBA.",
+          "feeRateBps": 200,
+          "id": 397,
+          "imageUrl": "https://static.predict.fail/2026-nba-champion-chicago-bulls",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0xb8a9fbafc71c7432700e23ed43c60eb952199e0c450029f4a0a6d9eb2ec49e6a",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.66,
+                "size": 9783.6512
+              },
+              "bestBid": {
+                "price": 0.35,
+                "size": 3.9415
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "28182621453801999382324848396843230956811906605407549551192719989560424139633",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.65,
+                "size": 3.9415
+              },
+              "bestBid": {
+                "price": 0.34,
+                "size": 9783.6512
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "86261400688843988018566272518595525176273947090901623217442627170371513439367",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0xf374fb58698bccedf29399f9f5548a70370a11c0fece34f2570fb9b3885e8e5a"
+          ],
+          "question": "Will the Chicago Bulls win the 2026 NBA Finals?",
+          "questionIndex": 10,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Chicago Bulls",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        },
+        {
+          "boostEndsAt": "2026-01-29T19:53:24.000Z",
+          "boostStartsAt": "2026-01-29T09:00:00.000Z",
+          "categorySlug": "who-will-trump-nominate-as-fed-chair",
+          "conditionId": "0x62786382501c4ab89e14cd1f74b4a60106518f740fb79a02d689170dfb4ae591",
+          "createdAt": "2025-12-05T13:34:44.147Z",
+          "decimalPrecision": 2,
+          "description": "This market will resolve according to the next individual Donald Trump, as President of the United States, formally nominates to be Chair of the Federal Reserve by December 31, 2026, 11:59 PM ET. \n\nFormal nominations are defined as the submission of a nomination message to the U.S. Senate.\n\nActing or interim appointments will not count unless the individual is formally nominated to be Chair of the Federal Reserve by submission of a nomination message to the U.S. Senate.\n\nThe primary resolution source for this market will be official information from the U.S. Senate (see: https://www.senate.gov/legislative/nominations_new.htm), however a consensus of credible reporting may also be used.",
+          "feeRateBps": 200,
+          "id": 462,
+          "imageUrl": "https://static.predict.fail/who-will-trump-nominate-as-fed-chair-individual-u",
+          "isBoosted": true,
+          "isNegRisk": true,
+          "isVisible": true,
+          "isYieldBearing": false,
+          "kalshiMarketTicker": null,
+          "marketType": null,
+          "marketVariant": "DEFAULT",
+          "oracleQuestionId": "0x6e5295e6477a864adf80812c12bd41038466060c702090ba7e2b5b32c9dcd25f",
+          "outcomes": [
+            {
+              "bestAsk": {
+                "price": 0.91,
+                "size": 87.713
+              },
+              "bestBid": {
+                "price": 0.66,
+                "size": 0.7907
+              },
+              "indexSet": 1,
+              "name": "Yes",
+              "onChainId": "107592268195003821274069123928178644168788170405878867540877297597060522953750",
+              "status": null,
+              "team": null,
+              "variantData": null
+            },
+            {
+              "bestAsk": {
+                "price": 0.34,
+                "size": 0.7907
+              },
+              "bestBid": {
+                "price": 0.09,
+                "size": 87.713
+              },
+              "indexSet": 2,
+              "name": "No",
+              "onChainId": "115039817081506551270203308360161871569198203352606405758295484838601579224519",
+              "status": null,
+              "team": null,
+              "variantData": null
+            }
+          ],
+          "polymarketConditionIds": [
+            "0x612cd4c4fd822bb32515453b6de233c7279bc9f81c583a0bc4f51a57d5b06532"
+          ],
+          "question": "Will Trump nominate Individual U as the next Fed chair?",
+          "questionIndex": 35,
+          "resolution": null,
+          "resolverAddress": "0x52DA245ac170155391e7607c67b77D549005002d",
+          "rewards": {
+            "current": null,
+            "schedule": []
+          },
+          "shareThreshold": 100,
+          "spreadThreshold": 0.06,
+          "stats": null,
+          "status": "REGISTERED",
+          "team": null,
+          "title": "Individual U",
+          "tradingStatus": "OPEN",
+          "variantData": null
+        }
+      ],
+      "success": true
+    }
+  }
+}

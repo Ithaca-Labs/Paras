@@ -1,0 +1,32 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.probable.markets/public/api/v1/book?token_id=12472061478157368054150210876288795444385799546115054194409549061807272712731"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "market": "0xd175be850d96d0753aaff6b7db267abdee33437808261baa91a2809103d12907",
+      "asset_id": "12472061478157368054150210876288795444385799546115054194409549061807272712731",
+      "timestamp": "2026-10-08T22:42:22.800104Z",
+      "hash": "c82c17ee683a7f6cf0bb99f4900cb01bec6ff695398ef8b9ebdff267208fd851",
+      "bids": [
+        {
+          "price": "0.001000",
+          "size": "9989.840000"
+        },
+        {
+          "price": "0.010000",
+          "size": "100"
+        }
+      ],
+      "asks": [],
+      "min_order_size": "1",
+      "tick_size": "0.001000",
+      "neg_risk": false
+    }
+  }
+}

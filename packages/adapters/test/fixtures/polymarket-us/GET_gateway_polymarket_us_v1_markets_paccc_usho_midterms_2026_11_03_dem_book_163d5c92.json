@@ -1,0 +1,276 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/markets/paccc-usho-midterms-2026-11-03-dem/book"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "marketData": {
+        "marketSlug": "paccc-usho-midterms-2026-11-03-dem",
+        "bids": [
+          {
+            "px": {
+              "value": "0.8990",
+              "currency": "USD"
+            },
+            "qty": "67123.0000"
+          },
+          {
+            "px": {
+              "value": "0.8980",
+              "currency": "USD"
+            },
+            "qty": "17.0000"
+          },
+          {
+            "px": {
+              "value": "0.8940",
+              "currency": "USD"
+            },
+            "qty": "4.0000"
+          },
+          {
+            "px": {
+              "value": "0.8930",
+              "currency": "USD"
+            },
+            "qty": "76000.0000"
+          },
+          {
+            "px": {
+              "value": "0.8900",
+              "currency": "USD"
+            },
+            "qty": "100.0000"
+          },
+          {
+            "px": {
+              "value": "0.8860",
+              "currency": "USD"
+            },
+            "qty": "71.0000"
+          },
+          {
+            "px": {
+              "value": "0.8850",
+              "currency": "USD"
+            },
+            "qty": "2000.0000"
+          },
+          {
+            "px": {
+              "value": "0.8840",
+              "currency": "USD"
+            },
+            "qty": "10000.0000"
+          },
+          {
+            "px": {
+              "value": "0.8830",
+              "currency": "USD"
+            },
+            "qty": "78.0000"
+          },
+          {
+            "px": {
+              "value": "0.8820",
+              "currency": "USD"
+            },
+            "qty": "13464.0000"
+          },
+          {
+            "px": {
+              "value": "0.8810",
+              "currency": "USD"
+            },
+            "qty": "2000.0000"
+          },
+          {
+            "px": {
+              "value": "0.8800",
+              "currency": "USD"
+            },
+            "qty": "26100.0000"
+          },
+          {
+            "px": {
+              "value": "0.8700",
+              "currency": "USD"
+            },
+            "qty": "10000.0000"
+          },
+          {
+            "px": {
+              "value": "0.8590",
+              "currency": "USD"
+            },
+            "qty": "500.0000"
+          },
+          {
+            "px": {
+              "value": "0.0110",
+              "currency": "USD"
+            },
+            "qty": "22827.0000"
+          },
+          {
+            "px": {
+              "value": "0.0100",
+              "currency": "USD"
+            },
+            "qty": "2500.0000"
+          },
+          {
+            "px": {
+              "value": "0.0020",
+              "currency": "USD"
+            },
+            "qty": "125000.0000"
+          },
+          {
+            "px": {
+              "value": "0.0010",
+              "currency": "USD"
+            },
+            "qty": "375000.0000"
+          }
+        ],
+        "offers": [
+          {
+            "px": {
+              "value": "0.9000",
+              "currency": "USD"
+            },
+            "qty": "69935.0000"
+          },
+          {
+            "px": {
+              "value": "0.9010",
+              "currency": "USD"
+            },
+            "qty": "4636.0000"
+          },
+          {
+            "px": {
+              "value": "0.9020",
+              "currency": "USD"
+            },
+            "qty": "11440.0000"
+          },
+          {
+            "px": {
+              "value": "0.9090",
+              "currency": "USD"
+            },
+            "qty": "43.0000"
+          },
+          {
+            "px": {
+              "value": "0.9220",
+              "currency": "USD"
+            },
+            "qty": "40.0000"
+          },
+          {
+            "px": {
+              "value": "0.9230",
+              "currency": "USD"
+            },
+            "qty": "4.0000"
+          },
+          {
+            "px": {
+              "value": "0.9340",
+              "currency": "USD"
+            },
+            "qty": "188.0000"
+          },
+          {
+            "px": {
+              "value": "0.9890",
+              "currency": "USD"
+            },
+            "qty": "100.0000"
+          },
+          {
+            "px": {
+              "value": "0.9900",
+              "currency": "USD"
+            },
+            "qty": "2500.0000"
+          },
+          {
+            "px": {
+              "value": "0.9990",
+              "currency": "USD"
+            },
+            "qty": "34251.0000"
+          }
+        ],
+        "state": "MARKET_STATE_OPEN",
+        "stats": {
+          "openPx": {
+            "value": "0.8410",
+            "currency": "USD"
+          },
+          "closePx": {
+            "value": "0.8400",
+            "currency": "USD"
+          },
+          "lowPx": {
+            "value": "0.8360",
+            "currency": "USD"
+          },
+          "highPx": {
+            "value": "0.9160",
+            "currency": "USD"
+          },
+          "lastTradePx": {
+            "value": "0.9000",
+            "currency": "USD"
+          },
+          "settlementPx": {
+            "value": "0.8400",
+            "currency": "USD"
+          },
+          "sharesTraded": "36813834.0000",
+          "notionalTraded": {
+            "value": "30979088.0010",
+            "currency": "USD"
+          },
+          "lastTradeQty": "22.0000",
+          "openInterest": "1090397.0000",
+          "openSetTime": "2026-09-12T21:00:53.137800594Z",
+          "closeSetTime": "2026-09-12T21:00:24.446628567Z",
+          "highSetTime": "2026-09-24T23:07:42.887417979Z",
+          "lowSetTime": "2026-09-18T11:28:55.469318094Z",
+          "lastTradeSetTime": "2026-10-08T22:17:19.901178618Z",
+          "settlementSetTime": "2026-09-12T21:00:24.446720822Z",
+          "openInterestSetTime": "2026-10-08T22:17:20.135016978Z",
+          "notionalSetTime": "2026-10-08T22:17:19.901178618Z",
+          "settlementPriceCalculationMethod": "SETTLEMENT_PRICE_CALCULATION_METHOD_EVENT_TIER_2",
+          "currentPx": {
+            "value": "0.8995",
+            "currency": "USD"
+          },
+          "lastPriceSample": {
+            "longPx": {
+              "value": "0.9000",
+              "currency": "USD"
+            },
+            "shortPx": {
+              "value": "0.1",
+              "currency": "USD"
+            },
+            "ts": "2026-10-08T22:42:01.831510601Z"
+          }
+        },
+        "transactTime": "2026-10-08T22:42:01.831510601Z"
+      }
+    }
+  }
+}

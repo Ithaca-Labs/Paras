@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.novig.com/v3/public/catalog/markets/01a11dab-8c8d-7d41-8a33-505f9125e968/book?depth=20"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "marketId": "01a11dab-8c8d-7d41-8a33-505f9125e968",
+      "seq": 1,
+      "orders": {
+        "01a11dab-8c8d-7d41-8a33-507e9df9a734": [
+          {
+            "orderId": "01a11dac-6d8b-7ac1-b458-62837742c3ee",
+            "price": "0.89",
+            "qty": 6000
+          }
+        ]
+      }
+    }
+  }
+}
