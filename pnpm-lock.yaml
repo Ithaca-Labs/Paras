@@ -122,6 +122,15 @@ importers:
         specifier: 5.12.5
         version: 5.12.5
     devDependencies:
+      '@paras/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
+      '@paras/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@paras/testkit':
+        specifier: workspace:*
+        version: link:../../packages/testkit
       '@types/node':
         specifier: 22.20.5
         version: 22.20.5

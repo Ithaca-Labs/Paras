@@ -28,7 +28,7 @@ export const TEST_AUTH_DOMAIN = 'paras.test';
 export const TEST_WEB_BASE_URL = 'https://web.paras.test';
 
 /** `fetch` that dispatches in-process via fastify.inject: no sockets, no network. */
-function injectFetch(app: FastifyInstance): typeof fetch {
+export function injectFetch(app: FastifyInstance): typeof fetch {
   return async (input, init) => {
     const req = new Request(input, init);
     const url = new URL(req.url);
