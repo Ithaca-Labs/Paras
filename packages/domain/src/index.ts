@@ -80,3 +80,14 @@ export {
   parseDecimal,
   type Scaled,
 } from './decimal.js';
+export {
+  EXPERIENCE_LEVELS,
+  HORIZONS,
+  RISK_APPETITES,
+  STAKE_SIZES,
+  explainerFor,
+  profileVector,
+  type ExperienceLevel,
+  type ExplainerSection,
+  type ProfileSelection,
+} from './profile.js';

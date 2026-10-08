@@ -16,6 +16,15 @@ import {
   getVaultEligibility,
 } from './jurisdiction.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
+import {
+  getExplainer,
+  getOnboardingOptions,
+  getProfile,
+  interpretInterest,
+  resetProfile,
+  skipOnboarding,
+  updateProfile,
+} from './profile.js';
 import { getCategory, listCategories } from './taxonomy.js';
 import { listVenues } from './venues.js';
 
@@ -44,6 +53,13 @@ export const apiRoutes = {
   acknowledgeDisclosures,
   attestJurisdiction,
   getVaultEligibility,
+  getProfile,
+  updateProfile,
+  skipOnboarding,
+  resetProfile,
+  getOnboardingOptions,
+  interpretInterest,
+  getExplainer,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -54,6 +70,7 @@ export * from './compare.js';
 export * from './health.js';
 export * from './magic-links.js';
 export * from './taxonomy.js';
+export * from './profile.js';
 export * from './auth.js';
 export * from './venues.js';
 export * from './jurisdiction.js';

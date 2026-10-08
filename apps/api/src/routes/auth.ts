@@ -7,6 +7,7 @@ import {
   revokeSession,
   setSessionCookie,
 } from '../auth/sessions.js';
+import { anonCookie, anonTokenOf, claimAnonProfile } from '../profile/store.js';
 import { loadMe, resolveIdentity, type Identity } from '../auth/users.js';
 import { implement, type HandlerCtx } from '../implement.js';
 import type { RoutePlugin } from './index.js';
@@ -30,6 +31,12 @@ export const authRoutes: RoutePlugin = (app, { db, auth }) => {
     } else {
       ({ token, expiresAt } = await createSession(db, auth, outcome.userId));
       if (mode === 'cookie') setSessionCookie(ctx.reply, auth, token, expiresAt);
+    }
+    // Fold the visitor's anonymous Interest Profile into the User, then retire the anon cookie.
+    const anon = anonTokenOf(ctx.request);
+    if (anon) {
+      await claimAnonProfile(db, anon, outcome.userId);
+      void ctx.reply.header('set-cookie', anonCookie('', auth.config.secureCookie, true));
     }
     return {
       user: await loadMe(db, outcome.userId),

@@ -57,6 +57,13 @@
       "when": 1791498585831,
       "tag": "0007_deep_nightcrawler",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791498743588,
+      "tag": "0008_sour_violations",
+      "breakpoints": true
     }
   ]
 }
