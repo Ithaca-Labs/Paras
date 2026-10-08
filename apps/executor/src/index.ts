@@ -3,6 +3,7 @@ import { createDb } from '@paras/db';
 import { http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { buildApp } from './app.js';
+import { HttpClob } from './clob/client.js';
 import { loadConfig } from './config.js';
 import { createBookSource } from './intents/books.js';
 import { createGeoblock, createIris, createPolygon } from './intents/clients.js';
@@ -62,12 +63,11 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     vault: monad.chain,
     polygon,
     iris: createIris({ baseUrl: config.IRIS_URL }),
-    // Follow-up: the real Polymarket CLOB client (POLY_1271 + builder code) needs builder credentials (#35).
-    clob: {
-      placeOrder: () => Promise.reject(new Error('CLOB client not implemented')),
-      getOrder: () => Promise.reject(new Error('CLOB client not implemented')),
-      cancel: () => Promise.reject(new Error('CLOB client not implemented')),
-    },
+    clob: new HttpClob({
+      baseUrl: config.POLYMARKET_CLOB_URL,
+      builderCode: need(config.POLYMARKET_BUILDER_CODE, 'POLYMARKET_BUILDER_CODE') as `0x${string}`,
+      sessionKey: (w) => wallets.sessionAccount(w),
+    }),
     books: createBookSource(db, createAdapterRegistry([createPolymarketAdapter()])),
     geoblock: createGeoblock(),
   });
