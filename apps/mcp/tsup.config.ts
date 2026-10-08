@@ -1,12 +1,4 @@
 import { defineConfig } from 'tsup';
+import { appConfig } from '../../tsup.base.js';
 
-export default defineConfig({
-  entry: ['src/index.ts'],
-  format: 'esm',
-  target: 'node22',
-  platform: 'node',
-  sourcemap: true,
-  clean: true,
-  // Workspace packages ship TypeScript source: inline them. Third-party deps stay external.
-  noExternal: [/^@paras\//],
-});
+export default defineConfig(appConfig);
