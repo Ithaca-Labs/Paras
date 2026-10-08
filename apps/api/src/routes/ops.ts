@@ -8,7 +8,7 @@ import { HttpError } from '../errors.js';
 import { implement } from '../implement.js';
 import type { RoutePlugin } from './index.js';
 
-const { executorPauses, latestQuotes, markets, outcomes, users, venueRuns, venues } = schema;
+const { executorPauses, latestQuotes, markets, outcomes, venueRuns, venues } = schema;
 const DAY_MS = 24 * 3600_000;
 
 export const opsRoutes: RoutePlugin = (app, { db, vault, now = () => new Date() }) => {

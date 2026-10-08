@@ -14,8 +14,7 @@ import { HttpError } from '../errors.js';
 import { implement } from '../implement.js';
 import type { RoutePlugin } from './index.js';
 
-const { eventMarkets, events, markets, matchReviews, outcomes, users } = schema;
-
+const { eventMarkets, events, markets, matchReviews, outcomes } = schema;
 
 const mapErr = async <T>(p: Promise<T>): Promise<T> =>
   p.catch((e: unknown) => {
