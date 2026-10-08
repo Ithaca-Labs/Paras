@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.sx.bet/orderbook-v3/snapshot?marketHash=0xaef171bf0bc1b421213383c0d5e87929992b52654e89b26a92006e496a780d95"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "status": "success",
+      "data": {
+        "marketHash": "0xaef171bf0bc1b421213383c0d5e87929992b52654e89b26a92006e496a780d95",
+        "outcomeOne": [],
+        "outcomeTwo": [],
+        "version": "000000000000000000"
+      }
+    }
+  }
+}

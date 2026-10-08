@@ -1,4 +1,9 @@
-import { createAdapterRegistry, createPolymarketAdapter } from '@paras/adapters';
+import {
+  createAdapterRegistry,
+  createLimitlessAdapter,
+  createPolymarketAdapter,
+  createSxBetAdapter,
+} from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
@@ -10,7 +15,11 @@ const { db, close } = createDb(config.DATABASE_URL);
 const app = buildApp(
   {
     db,
-    adapters: createAdapterRegistry([createPolymarketAdapter()]),
+    adapters: createAdapterRegistry([
+      createPolymarketAdapter(),
+      createLimitlessAdapter(),
+      createSxBetAdapter(),
+    ]),
     magicLinks: {
       keys: loadMagicLinkKeys(config),
       webBaseUrl: config.WEB_BASE_URL,

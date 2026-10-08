@@ -1,0 +1,189 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.limitless.exchange/markets/btc-up-or-down-daily-p-1791464715953/orderbook"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "bids": [
+        {
+          "price": 0.713,
+          "size": 27000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.709,
+          "size": 1000000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.702,
+          "size": 34000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.696,
+          "size": 150000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.693,
+          "size": 100000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.692,
+          "size": 76000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.682,
+          "size": 314000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.58,
+          "size": 50000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.444,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.23,
+          "size": 217390000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.01,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.009,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.008,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.007,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.006,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.005,
+          "size": 1000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.002,
+          "size": 230000000,
+          "side": "BUY"
+        },
+        {
+          "price": 0.001,
+          "size": 1230000000,
+          "side": "BUY"
+        }
+      ],
+      "asks": [
+        {
+          "price": 0.757,
+          "size": 35000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.762,
+          "size": 1000000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.767,
+          "size": 64000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.774,
+          "size": 250000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.776,
+          "size": 15000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.786,
+          "size": 309000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.96,
+          "size": 50000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.99,
+          "size": 1000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.991,
+          "size": 1000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.992,
+          "size": 1000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.993,
+          "size": 1000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.994,
+          "size": 1000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.995,
+          "size": 1000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.998,
+          "size": 230000000,
+          "side": "SELL"
+        },
+        {
+          "price": 0.999,
+          "size": 1230000000,
+          "side": "SELL"
+        }
+      ],
+      "tokenId": "19235448734869075376353654982028627141095406142945018649829910923890906565",
+      "adjustedMidpoint": 0.7355,
+      "midpoint": 0.735,
+      "maxSpread": "0.035",
+      "minSize": "100000000",
+      "lastTradePrice": 0.718
+    }
+  }
+}
