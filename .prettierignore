@@ -1,0 +1,12 @@
+node_modules
+dist
+pnpm-lock.yaml
+.turbo
+contracts
+packages/db/drizzle/meta
+**/fixtures/**
+PRD.md
+CLAUDE.md
+AGENTS.md
+tasks
+.github/pull_request_template.md

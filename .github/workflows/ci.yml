@@ -19,7 +19,7 @@ jobs:
           POSTGRES_USER: paras
           POSTGRES_PASSWORD: paras
           POSTGRES_DB: paras_test
-        ports: ["5432:5432"]
+        ports: ['5432:5432']
         options: >-
           --health-cmd "pg_isready -U paras"
           --health-interval 5s --health-timeout 5s --health-retries 10
@@ -27,40 +27,26 @@ jobs:
       DATABASE_URL: postgres://paras:paras@localhost:5432/paras_test
     steps:
       - uses: actions/checkout@v4
-      - name: Detect workspace
-        id: ws
-        run: echo "present=$([ -f pnpm-lock.yaml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-      - if: steps.ws.outputs.present == 'true'
-        uses: pnpm/action-setup@v4
-      - if: steps.ws.outputs.present == 'true'
-        uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - if: steps.ws.outputs.present == 'true'
-        run: pnpm install --frozen-lockfile
-      - if: steps.ws.outputs.present == 'true'
-        run: pnpm lint
-      - if: steps.ws.outputs.present == 'true'
-        run: pnpm typecheck
-      - if: steps.ws.outputs.present == 'true'
-        run: pnpm test
-      - if: steps.ws.outputs.present != 'true'
-        run: 'echo "No pnpm workspace yet (added by issue 2), skipping."'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
 
   contracts:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Detect Foundry project
-        id: fp
-        run: echo "present=$([ -f contracts/foundry.toml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-      - if: steps.fp.outputs.present == 'true'
-        uses: foundry-rs/foundry-toolchain@v1
-      - if: steps.fp.outputs.present == 'true'
-        working-directory: contracts
-        run: forge build --sizes && forge test -vvv
-      - if: steps.fp.outputs.present != 'true'
-        run: 'echo "No Foundry project yet (added by issue 2), skipping."'
+      - uses: foundry-rs/foundry-toolchain@v1
+      - run: forge build --sizes
+      - run: forge test -vvv
