@@ -3,6 +3,7 @@ import { schema, type Database } from '@paras/db';
 import type { InterestProfile } from '@paras/shared';
 import { eq } from 'drizzle-orm';
 import type { FastifyRequest } from 'fastify';
+import { moveFeedState } from '../feed/move.js';
 
 type Tx = Parameters<Parameters<Database['transaction']>[0]>[0];
 export type ProfileRow = typeof schema.interestProfiles.$inferSelect;
@@ -82,6 +83,7 @@ export function claimAnonProfile(db: Database, token: string, userId: string) {
       .from(schema.interestProfiles)
       .where(eq(schema.interestProfiles.anonTokenHash, hashAnon(token)));
     if (anon) await adoptProfile(tx, anon, userId);
+    await moveFeedState(tx, `a:${hashAnon(token)}`, `u:${userId}`);
   });
 }
 

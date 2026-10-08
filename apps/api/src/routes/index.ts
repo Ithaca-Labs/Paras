@@ -3,6 +3,7 @@ import type { AppDeps } from '../deps.js';
 import { authRoutes } from './auth.js';
 import { compareRoutes } from './compare.js';
 import { eventRoutes } from './events.js';
+import { feedRoutes } from './feed.js';
 import { healthRoutes } from './health.js';
 import { jurisdictionRoutes } from './jurisdiction.js';
 import { magicLinkRoutes } from './magic-links.js';
@@ -30,5 +31,6 @@ export const routePlugins: RoutePlugin[] = [
   jurisdictionRoutes,
   profileRoutes,
   vaultRoutes,
+  feedRoutes,
   openapiRoutes,
 ];
