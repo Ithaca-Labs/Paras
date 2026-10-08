@@ -6,7 +6,14 @@ import { buildApp } from './app.js';
 import { HttpClob } from './clob/client.js';
 import { loadConfig } from './config.js';
 import { createBookSource } from './intents/books.js';
-import { createGeoblock, createIris, createPolygon } from './intents/clients.js';
+import { ExitEngine, scanResolved } from './exits/engine.js';
+import { indexPolygon } from './indexer/polygon.js';
+import {
+  createGeoblock,
+  createIris,
+  createPolygon,
+  createPolygonLogs,
+} from './intents/clients.js';
 import { IntentEngine } from './intents/engine.js';
 import { createRunner } from './intents/runner.js';
 import { createMonad } from './vault/chain.js';
@@ -56,29 +63,52 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     chain: polygon,
     vault: monad.registry,
   });
+  const iris = createIris({ baseUrl: config.IRIS_URL });
+  const clob = new HttpClob({
+    baseUrl: config.POLYMARKET_CLOB_URL,
+    builderCode: need(config.POLYMARKET_BUILDER_CODE, 'POLYMARKET_BUILDER_CODE') as `0x${string}`,
+    sessionKey: (w) => wallets.sessionAccount(w),
+  });
+  const geoblock = createGeoblock();
   const engine = new IntentEngine({
     db,
     wallets,
     relayer,
     vault: monad.chain,
     polygon,
-    iris: createIris({ baseUrl: config.IRIS_URL }),
-    clob: new HttpClob({
-      baseUrl: config.POLYMARKET_CLOB_URL,
-      builderCode: need(config.POLYMARKET_BUILDER_CODE, 'POLYMARKET_BUILDER_CODE') as `0x${string}`,
-      sessionKey: (w) => wallets.sessionAccount(w),
-    }),
+    iris,
+    clob,
     books: createBookSource(db, createAdapterRegistry([createPolymarketAdapter()])),
-    geoblock: createGeoblock(),
+    geoblock,
   });
+  const exitEngine = new ExitEngine({
+    db,
+    wallets,
+    relayer,
+    vault: monad.chain,
+    polygon,
+    iris,
+    clob,
+    geoblock,
+  });
+  const logs = createPolygonLogs({ transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')) });
   const log = (msg: string, data?: object) => app.log.info(data, msg);
   const runner = createRunner({
     db,
     databaseUrl,
     vault: monad.chain,
     engine,
+    exitEngine,
     startBlock: BigInt(config.VAULT_START_BLOCK),
-    onTick: () => syncWalletRequests(db, wallets, log),
+    onTick: async () => {
+      await syncWalletRequests(db, wallets, log);
+      await indexPolygon(
+        db,
+        logs,
+        config.POLYGON_START_BLOCK === undefined ? undefined : BigInt(config.POLYGON_START_BLOCK),
+      );
+      await scanResolved(db, polygon);
+    },
     log,
   });
   await runner.start();

@@ -16,6 +16,7 @@ const tz = (name: string) => timestamp(name, { withTimezone: true });
 /** Step data the Executor accumulates per Intent (tx hashes, CCTP message, order id, amounts in USDC base units). */
 export interface IntentCtx {
   walletId?: string;
+  submitTx?: string;
   dispatchTx?: string;
   message?: string;
   attestation?: string;
@@ -31,6 +32,7 @@ export interface IntentCtx {
   returnPusd?: string;
   returnMessage?: string;
   returnAttestation?: string;
+  settleTx?: string;
   /** Terminal status to take once the return leg settles. */
   then?: 'partially_filled' | 'expired' | 'failed';
   reason?: string;

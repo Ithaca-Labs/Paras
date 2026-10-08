@@ -1,11 +1,13 @@
 import { createDb, schema, type DbHandle } from '@paras/db';
 import { intentDetailsHash, registerTypedData, type IntentDetails } from '@paras/domain';
 import { createTestDatabase, type TestDatabase } from '@paras/testkit';
+import { randomUUID } from 'node:crypto';
 import { decodeFunctionData, getAddress, pad, toHex, type Address, type Hex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { rampAbi, swapRouterAbi, tokenMessengerAbi } from '../../src/wallet/abi.js';
+import { ctfAbi, rampAbi, swapRouterAbi, tokenMessengerAbi } from '../../src/wallet/abi.js';
 import { batchTypedData, type Batch } from '../../src/wallet/batch.js';
 import { POLYGON, POLYGON_CHAIN_ID } from '../../src/wallet/constants.js';
+import { ExitEngine } from '../../src/exits/engine.js';
 import { IntentEngine } from '../../src/intents/engine.js';
 import type { Clob, ClobOrderRequest, VaultEvent } from '../../src/intents/ports.js';
 import { VAULT_STATUS } from '../../src/vault/abi.js';
@@ -25,6 +27,8 @@ export function cctpMessage(nonce: number, amount: bigint): Hex {
 }
 
 export type ClobMode = 'full' | 'partial' | 'none' | 'rest';
+const CONDITION = `0x${'cd'.repeat(32)}` as Hex;
+export const TOKEN = '123';
 
 /**
  * One in-memory world behind every Executor port: Vault, Polygon balances, relayer, Iris and CLOB. The relayer
@@ -48,7 +52,18 @@ export class World {
     settles: 0,
     closes: 0,
     expires: 0,
+    approvals: 0,
+    redeems: 0,
+    sells: 0,
   };
+  /** CTF shares held by the (single) Deposit Wallet, by token id. */
+  ctf = new Map<string, bigint>();
+  /** Fill model for SELL orders. */
+  sellMode: 'full' | 'partial' | 'none' = 'full';
+  /** CTF resolution by condition id. */
+  resolutions = new Map<string, { denominator: bigint; numerators: bigint[] }>();
+  /** Intent ids passed to `settle` (0x0 = no claim reduced). */
+  settledFor: Hex[] = [];
   geoblocked = false;
   clobMode: ClobMode = 'full';
   asks = [{ price: '0.50', size: '10000' }];
@@ -92,17 +107,21 @@ export class World {
       this.vault.get(this.key(u, id))!.status = VAULT_STATUS.Closed;
       this.count.closes++;
     },
-    settle: async (m: Hex) => {
+    settle: async (m: Hex, _a: Hex, intentId: Hex) => {
       if (this.usedMonad.has(m)) throw new Error('nonce used');
       this.usedMonad.add(m);
       this.count.settles++;
+      this.settledFor.push(intentId);
       this.crash('after-settle');
+      return pad(toHex(5000 + this.count.settles), { size: 32 });
     },
     messageUsed: async (m: Hex) => this.usedMonad.has(m),
   };
 
   polygonChain = {
     balances: async () => ({ native: this.native, usdce: this.usdce, pusd: this.pusd }),
+    ctfBalance: async (_w: Address, token: string) => this.ctf.get(token) ?? 0n,
+    payout: async (c: Hex) => this.resolutions.get(c) ?? { denominator: 0n, numerators: [] },
     messageUsed: async (m: Hex) => this.usedPolygon.has(m),
     receiveMessage: async (m: Hex) => {
       if (this.usedPolygon.has(m)) throw new Error('nonce used');
@@ -124,22 +143,43 @@ export class World {
   books = { asks: async () => ({ asks: this.asks, fee: { kind: 'none' as const } }) };
   geoblock = { allowed: async () => !this.geoblocked };
 
+  /** What an order fills for, as decimals. BUY spends `amountUsd`; SELL sells `shares`. */
+  private fill(req: ClobOrderRequest) {
+    const price = Number(req.price);
+    if (req.side === 'SELL') {
+      const shares = Number(req.shares);
+      const f = this.sellMode === 'full' ? shares : this.sellMode === 'none' ? 0 : shares / 2;
+      return { shares: f, usd: f * price };
+    }
+    const amt = Number(req.amountUsd);
+    const spent = this.clobMode === 'full' ? amt : this.clobMode === 'none' ? 0 : amt / 2;
+    return { shares: spent / price, usd: spent };
+  }
+
   clob: Clob = {
     placeOrder: async (req) => {
       const existing = this.orders.get(req.key);
       if (existing) return { orderId: req.key }; // idempotent per key
       this.orders.set(req.key, { req, cancelled: false });
-      this.count.orders++;
+      const f = this.fill(req);
+      const base = (n: number) => BigInt(Math.round(n * 1e6));
+      if (req.side === 'SELL') {
+        this.count.sells++;
+        this.ctf.set(req.tokenId, (this.ctf.get(req.tokenId) ?? 0n) - base(f.shares));
+        this.pusd += base(f.usd);
+      } else {
+        this.count.orders++;
+        this.pusd -= base(f.usd);
+        this.ctf.set(req.tokenId, (this.ctf.get(req.tokenId) ?? 0n) + base(f.shares));
+      }
       this.crash('after-order');
       return { orderId: req.key };
     },
     getOrder: async (id) => {
       const { req, cancelled } = this.orders.get(id)!;
-      const amt = Number(req.amountUsd);
-      const price = Number(req.price);
-      const spent = this.clobMode === 'full' ? amt : this.clobMode === 'none' ? 0 : amt / 2;
-      const open = this.clobMode === 'rest' && !cancelled;
-      return { open, filledShares: String(spent / price), spentUsd: String(spent) };
+      const f = this.fill(req);
+      const open = req.side !== 'SELL' && this.clobMode === 'rest' && !cancelled;
+      return { open, filledShares: String(f.shares), spentUsd: String(f.usd) };
     },
     cancel: async (id) => {
       this.orders.get(id)!.cancelled = true;
@@ -191,6 +231,18 @@ export class World {
       else [this.pusd, this.usdce] = [this.pusd - amount, this.usdce + amount];
     } else if (target === POLYGON.tokenMessengerV2) {
       this.native -= decodeFunctionData({ abi: tokenMessengerAbi, data }).args[0] as bigint;
+    } else if (target === POLYGON.ctf) {
+      const { functionName, args } = decodeFunctionData({ abi: ctfAbi, data });
+      if (functionName === 'setApprovalForAll') this.count.approvals++;
+      else {
+        this.count.redeems++;
+        const r = this.resolutions.get(args[2] as string);
+        for (const [token, held] of this.ctf) {
+          if (!r || held === 0n) continue;
+          this.pusd += (held * (r.numerators[token === TOKEN ? 0 : 1] ?? 0n)) / r.denominator;
+          this.ctf.set(token, 0n);
+        }
+      }
     }
   }
 }
@@ -203,6 +255,8 @@ export interface Harness {
   userAddress: Address;
   clock: { now: Date };
   engine: () => IntentEngine;
+  exits: () => ExitEngine;
+  market: { id: string; outcomeId: string; eventId: string; conditionId: Hex };
   /** Inserts a previewed Intent, reserves it on the fake Vault and applies the `submitted` event. */
   newIntent: (o?: {
     amount?: number;
@@ -267,6 +321,40 @@ export async function createHarness(): Promise<Harness> {
       now: () => clock.now,
     });
 
+  const exits = () =>
+    new ExitEngine({
+      db: h.db,
+      wallets: svc,
+      relayer: world.relayer,
+      vault: world.vaultChain,
+      polygon: world.polygonChain,
+      iris: world.iris,
+      clob: world.clob,
+      geoblock: world.geoblock,
+      now: () => clock.now,
+    });
+
+  await h.db
+    .insert(schema.venues)
+    .values({ id: 'polymarket', name: 'Polymarket', capabilities: { routable: true } as never })
+    .onConflictDoNothing();
+  const [mk] = await h.db
+    .insert(schema.markets)
+    .values({
+      venueId: 'polymarket',
+      externalId: CONDITION,
+      question: 'Will it?',
+      status: 'open',
+      url: 'https://polymarket.com/x',
+      fee: { kind: 'none' },
+    })
+    .returning();
+  const [oc] = await h.db
+    .insert(schema.outcomes)
+    .values({ marketId: mk!.id, externalId: TOKEN, label: 'Yes', index: 0 })
+    .returning();
+  const market = { id: mk!.id, outcomeId: oc!.id, eventId: randomUUID(), conditionId: CONDITION };
+
   let n = 0;
   return {
     world,
@@ -276,16 +364,18 @@ export async function createHarness(): Promise<Harness> {
     userAddress: owner.address,
     clock,
     engine,
+    exits,
+    market,
     async newIntent(o = {}) {
       const amount = USDC(o.amount ?? 10);
       const id = pad(toHex(++n), { size: 32 });
       const expiry = new Date(clock.now.getTime() + (o.expiresInMs ?? 3_600_000));
       const details: IntentDetails = {
-        eventId: 'e',
-        marketId: 'm',
-        outcomeId: 'o',
+        eventId: market.eventId,
+        marketId: market.id,
+        outcomeId: market.outcomeId,
         venueId: 'polymarket',
-        tokenId: '123',
+        tokenId: TOKEN,
         maxPrice: o.maxPrice ?? '0.55',
         remainder: o.remainder ?? 'return',
       };
