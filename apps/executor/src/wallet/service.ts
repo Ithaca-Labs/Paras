@@ -1,4 +1,5 @@
 import { schema, type Database } from '@paras/db';
+import { registerTypedData } from '@paras/domain';
 import { and, eq } from 'drizzle-orm';
 import {
   encodePacked,
@@ -14,7 +15,7 @@ import { batchTypedData, signBatchAsSession, type Batch, type Call } from './bat
 import { authorizeSessionSigner, revokeSessionSigner } from './calls.js';
 import { POLYGON_CHAIN_ID, SESSION_KEY_TTL_SECONDS } from './constants.js';
 import type { KeyCipher } from './key-cipher.js';
-import { checkBatch } from './policy.js';
+import { checkBatch, checkClobAction, type ClobAction } from './policy.js';
 import type { RelayerClient } from './relayer.js';
 
 const { depositWallets, executorSessionKeys, intentFunding } = schema;
@@ -22,17 +23,30 @@ const { depositWallets, executorSessionKeys, intentFunding } = schema;
 export type DepositWalletRow = typeof depositWallets.$inferSelect;
 export type SessionKeyRow = typeof executorSessionKeys.$inferSelect;
 
-/** Reads the factory's counterfactual wallet address (an `eth_call`). */
+/** Reads Polygon: the factory's counterfactual wallet address and a deployed wallet's owner (`eth_call`s). */
 export interface WalletChain {
   predictWalletAddress(salt: Hex): Promise<Address>;
+  /** On-chain `owner()` of the wallet, or null while it is not deployed. */
+  walletOwner(wallet: Address): Promise<Address | null>;
 }
 
-/** Registers a Deposit Wallet with the Monad Vault (user-signature bound; real impl lands with #18/#20). */
+/** Registers a Deposit Wallet with the Monad Vault, bound to the user's EIP-712 signature. */
 export interface VaultRegistry {
   /** Address of the Vault on Monad; the only external destination the Executor may bridge to. */
   readonly vault: Address;
-  registerDepositWallet(p: { userId: string; owner: Address; wallet: Address }): Promise<void>;
+  /** Monad chain id (EIP-712 domain of the registration signature). */
+  readonly chainId: number;
+  registerDepositWallet(p: {
+    userId: string;
+    owner: Address;
+    wallet: Address;
+    signature: Hex;
+  }): Promise<void>;
 }
+
+/** Factory id of a user's Deposit Wallet; the same value every time, so provisioning is idempotent. */
+export const walletSalt = (userId: string): Hex =>
+  keccak256(encodePacked(['string', 'string'], ['paras:deposit-wallet:', userId]));
 
 export interface WalletServiceDeps {
   db: Database;
@@ -78,9 +92,7 @@ export class WalletService {
         .where(and(eq(depositWallets.userId, p.userId), eq(depositWallets.chainId, chainId)))
     )[0];
     if (!row) {
-      const salt = keccak256(
-        encodePacked(['string', 'string'], ['paras:deposit-wallet:', p.userId]),
-      );
+      const salt = walletSalt(p.userId);
       const wallet = await this.d.chain.predictWalletAddress(salt);
       [row] = await db
         .insert(depositWallets)
@@ -116,15 +128,36 @@ export class WalletService {
     return done!;
   }
 
-  async registerWithVault(walletId: string): Promise<DepositWalletRow> {
+  /**
+   * Registers the wallet with the Vault using the user's signature. SECURITY: the Vault credits returns to whoever
+   * is mapped to the wallet, so before relaying we prove the wallet is the user's OWN Deposit Wallet: it derives from
+   * this user's factory id (counterfactual address) and, on-chain, its owner is the signing EOA. Otherwise an
+   * attacker could register a victim's wallet under their own address and receive the victim's returns.
+   */
+  async registerWithVault(walletId: string, signature: Hex): Promise<DepositWalletRow> {
     const w = await this.wallet(walletId);
     if (w.status === 'pending') throw new Error('wallet not deployed');
     if (w.status === 'registered') return w;
-    await this.d.vault.registerDepositWallet({
-      userId: w.userId,
-      owner: getAddress(w.ownerAddress),
-      wallet: getAddress(w.walletAddress),
+    const owner = getAddress(w.ownerAddress);
+    const wallet = getAddress(w.walletAddress);
+    const salt = walletSalt(w.userId);
+    if (w.salt !== salt || !isAddressEqual(await this.d.chain.predictWalletAddress(salt), wallet))
+      throw new Error('wallet is not derived from this user');
+    const onChainOwner = await this.d.chain.walletOwner(wallet);
+    if (!onChainOwner || !isAddressEqual(onChainOwner, owner))
+      throw new Error('wallet owner is not the registering user');
+    const ok = await verifyTypedData({
+      address: owner,
+      signature,
+      ...registerTypedData({
+        vault: this.d.vault.vault,
+        chainId: this.d.vault.chainId,
+        user: owner,
+        wallet,
+      }),
     });
+    if (!ok) throw new Error('registration signature invalid');
+    await this.d.vault.registerDepositWallet({ userId: w.userId, owner, wallet, signature });
     const [done] = await this.d.db
       .update(depositWallets)
       .set({ status: 'registered', registeredAt: this.now() })
@@ -261,6 +294,32 @@ export class WalletService {
       .from(executorSessionKeys)
       .where(eq(executorSessionKeys.status, 'active'));
     return keys.filter((k) => k.validUntil.getTime() <= cutoff);
+  }
+
+  /** The registered Deposit Wallet whose owner is `owner` (the Vault account address). */
+  async registeredWalletOf(owner: Address): Promise<DepositWalletRow | undefined> {
+    const [w] = await this.d.db
+      .select()
+      .from(depositWallets)
+      .where(
+        and(
+          eq(depositWallets.ownerAddress, lc(owner)),
+          eq(depositWallets.chainId, String(this.chainId)),
+          eq(depositWallets.status, 'registered'),
+        ),
+      );
+    return w;
+  }
+
+  /** CLOB scope check (maker/signer must be the wallet, key unexpired) before the order client signs anything. */
+  async checkClob(walletId: string, action: ClobAction): Promise<void> {
+    const key = await this.activeKey(walletId);
+    if (!key) throw new Error('no active session key');
+    checkClobAction(action, {
+      wallet: getAddress((await this.wallet(walletId)).walletAddress),
+      now: this.now(),
+      keyValidUntil: key.validUntil,
+    });
   }
 
   /** Cap on funding (USDC base units) an Intent may bring into its wallet on Polygon. */

@@ -17,6 +17,7 @@ export interface IntentCtx {
   orderId?: string;
   filledShares?: string;
   spentUsdc?: string;
+  returnRelayerTx?: string;
   returnTx?: string;
   returnPusd?: string;
   returnMessage?: string;
@@ -68,18 +69,6 @@ export const intentEvents = pgTable(
   },
   (t) => [index('intent_events_intent_idx').on(t.intentRowId, t.id)],
 );
-
-/** Notifications waiting for delivery (#22 builds the delivery side). Written by the Executor on fill/partial/failure. */
-export const notificationOutbox = pgTable('notification_outbox', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id),
-  kind: text('kind').notNull(),
-  payload: jsonb('payload').$type<Record<string, unknown>>().notNull(),
-  createdAt: tz('created_at').notNull().defaultNow(),
-  deliveredAt: tz('delivered_at'),
-});
 
 /** Last block the Executor has processed for a chain watcher. */
 export const chainCursors = pgTable('chain_cursors', {

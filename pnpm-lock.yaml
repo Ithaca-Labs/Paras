@@ -81,6 +81,9 @@ importers:
       '@paras/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@paras/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@paras/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -90,6 +93,9 @@ importers:
       fastify:
         specifier: 5.12.5
         version: 5.12.5
+      pg-boss:
+        specifier: 11.1.2
+        version: 11.1.2
       viem:
         specifier: 2.57.4
         version: 2.57.4(typescript@5.9.3)(zod@4.6.5)

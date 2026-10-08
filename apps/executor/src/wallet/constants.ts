@@ -19,6 +19,7 @@ export const POLYGON = {
   v2Exchange: a('0xe3333700cA9d93003F00f0F71f8515005F6c00Aa'),
   swapRouter02: a('0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'),
   tokenMessengerV2: a('0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d'),
+  messageTransmitterV2: a('0x81D40F21F12A8F0E3252Bccb954D722d4c464B64'),
 } as const;
 
 /** Circle CCTP domain ids. */

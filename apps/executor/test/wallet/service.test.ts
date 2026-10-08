@@ -1,7 +1,8 @@
 import { createDb, schema, type DbHandle } from '@paras/db';
 import { createTestDatabase, type TestDatabase } from '@paras/testkit';
 import { eq } from 'drizzle-orm';
-import { decodeFunctionData, recoverTypedDataAddress, type Address, type Hex } from 'viem';
+import { registerTypedData } from '@paras/domain';
+import { decodeFunctionData, getAddress, recoverTypedDataAddress, type Address, type Hex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { depositWalletAbi } from '../../src/wallet/abi.js';
@@ -21,6 +22,7 @@ import { WalletService } from '../../src/wallet/service.js';
 
 const MASTER = '11'.repeat(32);
 const VAULT: Address = '0x2222222222222222222222222222222222222222';
+const VAULT_CHAIN_ID = 143;
 const attacker: Address = '0x000000000000000000000000000000000000bEEF';
 
 /** Relayer double: records submissions, tracks nonces, can be told to fail. */
@@ -42,7 +44,9 @@ class FakeRelayer implements RelayerClient {
   async getNonce() {
     return this.nonce;
   }
-  async waitConfirmed() {}
+  async waitConfirmed() {
+    return {};
+  }
 }
 
 /** Counts decrypts so tests can prove a rejected batch never touches key material. */
@@ -68,6 +72,11 @@ describe('WalletService (Seam 4: provisioning, session keys, rotation, policy)',
   let walletId: string;
   let walletAddress: Address;
   const registered: unknown[] = [];
+  let onChainOwner: Address | null = owner.address;
+  const regSig = (user: Address, wallet: Address, signer = owner) =>
+    signer.signTypedData(
+      registerTypedData({ vault: VAULT, chainId: VAULT_CHAIN_ID, user, wallet }),
+    );
 
   beforeAll(async () => {
     testDb = await createTestDatabase();
@@ -79,9 +88,13 @@ describe('WalletService (Seam 4: provisioning, session keys, rotation, policy)',
       cipher,
       relayer,
       now: () => clock,
-      chain: { predictWalletAddress: async (salt) => `0x${salt.slice(2, 42)}` as Address },
+      chain: {
+        predictWalletAddress: async (salt) => `0x${salt.slice(2, 42)}` as Address,
+        walletOwner: async () => onChainOwner,
+      },
       vault: {
         vault: VAULT,
+        chainId: VAULT_CHAIN_ID,
         registerDepositWallet: async (p) => void registered.push(p),
       },
     });
@@ -123,11 +136,54 @@ describe('WalletService (Seam 4: provisioning, session keys, rotation, policy)',
     await expect(svc.provision({ userId, owner: attacker })).rejects.toThrow(/owner differs/);
   });
 
-  it('registers the wallet with the Vault', async () => {
-    const w = await svc.registerWithVault(walletId);
+  it('refuses to register a wallet whose on-chain owner is not the registering user (victim-wallet attack)', async () => {
+    // Attacker holds a valid signature over their own address + this wallet, but the wallet belongs to someone else.
+    onChainOwner = attacker;
+    await expect(
+      svc.registerWithVault(walletId, await regSig(owner.address, walletAddress)),
+    ).rejects.toThrow(/owner is not the registering user/);
+    onChainOwner = null; // not deployed on chain at all
+    await expect(
+      svc.registerWithVault(walletId, await regSig(owner.address, walletAddress)),
+    ).rejects.toThrow(/owner is not the registering user/);
+    onChainOwner = owner.address;
+    expect(registered).toHaveLength(0);
+  });
+
+  it('refuses a registration signature from anyone but the owner, or naming another wallet', async () => {
+    const other = privateKeyToAccount(generatePrivateKey());
+    await expect(
+      svc.registerWithVault(walletId, await regSig(owner.address, walletAddress, other)),
+    ).rejects.toThrow(/signature invalid/);
+    await expect(svc.registerWithVault(walletId, await regSig(owner.address, attacker))).rejects.toThrow(
+      /signature invalid/,
+    );
+    expect(registered).toHaveLength(0);
+  });
+
+  it('refuses a wallet row that does not derive from its user', async () => {
+    await h.db
+      .update(schema.depositWallets)
+      .set({ walletAddress: attacker.toLowerCase() })
+      .where(eq(schema.depositWallets.id, walletId));
+    await expect(
+      svc.registerWithVault(walletId, await regSig(owner.address, attacker)),
+    ).rejects.toThrow(/not derived from this user/);
+    await h.db
+      .update(schema.depositWallets)
+      .set({ walletAddress: walletAddress.toLowerCase() })
+      .where(eq(schema.depositWallets.id, walletId));
+    expect(registered).toHaveLength(0);
+  });
+
+  it('registers the wallet with the Vault using the user signature (once)', async () => {
+    const signature = await regSig(owner.address, walletAddress);
+    const w = await svc.registerWithVault(walletId, signature);
     expect(w.status).toBe('registered');
-    expect(registered).toHaveLength(1);
-    await svc.registerWithVault(walletId);
+    expect(registered).toEqual([
+      { userId, owner: owner.address, wallet: getAddress(walletAddress), signature },
+    ]);
+    await svc.registerWithVault(walletId, signature);
     expect(registered).toHaveLength(1);
   });
 

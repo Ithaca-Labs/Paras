@@ -70,7 +70,7 @@ describe.skipIf(!forkUrl)('Polygon fork: real DepositWallet (set POLYGON_FORK_RP
       return { txId: hash };
     },
     getNonce: async () => nonce,
-    waitConfirmed: async () => {},
+    waitConfirmed: async () => ({}),
   };
 
   beforeAll(async () => {
@@ -129,6 +129,7 @@ describe.skipIf(!forkUrl)('Polygon fork: real DepositWallet (set POLYGON_FORK_RP
       relayer,
       now: () => now,
       chain: {
+        walletOwner: async (w: Address) => pub.readContract({ address: w, abi: depositWalletAbi, functionName: 'owner' }),
         predictWalletAddress: (id: Hex) =>
           pub.readContract({
             address: POLYGON.walletFactory,
@@ -139,6 +140,7 @@ describe.skipIf(!forkUrl)('Polygon fork: real DepositWallet (set POLYGON_FORK_RP
       },
       vault: {
         vault: '0x2222222222222222222222222222222222222222',
+        chainId: 143,
         registerDepositWallet: async () => {},
       },
     });

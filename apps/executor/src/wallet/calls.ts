@@ -132,6 +132,25 @@ export const revokeSessionSigner = (wallet: Address, signer: Address): Call =>
   );
 
 /**
+ * Funding: CCTP-minted native USDC -> USDC.e -> pUSD, then let `exchange` spend the pUSD. One batch (PRD 2c).
+ * `minOut` is the swap floor and the wrapped amount; any surplus USDC.e stays in the wallet as dust.
+ */
+export function buildConvertCalls(p: {
+  wallet: Address;
+  exchange: Address;
+  amount: bigint;
+  minOut: bigint;
+}): Call[] {
+  return [
+    approve(POLYGON.usdcNative, POLYGON.swapRouter02, p.amount),
+    swapUsdc('nativeToE', p.wallet, p.amount, p.minOut),
+    approve(POLYGON.usdcE, POLYGON.onramp, p.minOut),
+    wrapUsdcE(p.wallet, p.minOut),
+    approve(POLYGON.pUSD, p.exchange, p.minOut),
+  ];
+}
+
+/**
  * Sweep-back: pUSD -> USDC.e -> native USDC -> CCTP burn to the user's Vault account.
  * `minNative` is the slippage floor of the swap. All calls pass the Executor policy.
  */
