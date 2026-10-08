@@ -21,6 +21,8 @@ export interface FakeAdapter extends VenueAdapter {
   /** Replace the order book for an Outcome; the next `fetchQuotes` reflects it. */
   setBook(outcomeExternalId: string, book: BookInput): void;
   setMarkets(markets: NormalizedMarket[]): void;
+  /** Replace the price history (oldest first) returned for an Outcome. */
+  setHistory(outcomeExternalId: string, points: PricePoint[]): void;
 }
 
 /** A valid binary YES/NO Market for tests. Outcome ids are `<externalId>-yes` / `<externalId>-no`. */
@@ -59,6 +61,7 @@ export function createFakeAdapter(options: FakeAdapterOptions = {}): FakeAdapter
   const now = options.now ?? (() => new Date());
   let markets = options.markets ?? [];
   const books = new Map<string, BookInput>();
+  const history = new Map<string, PricePoint[]>();
 
   const book = (outcomeExternalId: string): OrderBook | null => {
     const b = books.get(outcomeExternalId);
@@ -86,6 +89,7 @@ export function createFakeAdapter(options: FakeAdapterOptions = {}): FakeAdapter
     },
     setBook: (outcomeExternalId, b) => void books.set(outcomeExternalId, b),
     setMarkets: (next) => void (markets = next),
+    setHistory: (outcomeId, points) => void history.set(outcomeId, points),
     async listMarkets(params: ListMarketsParams = {}): Promise<Page<NormalizedMarket>> {
       const start = Number(params.cursor ?? 0);
       const limit = params.limit ?? 100;
@@ -102,8 +106,8 @@ export function createFakeAdapter(options: FakeAdapterOptions = {}): FakeAdapter
         return b ? [{ outcomeExternalId: i, ...bookToQuote(b), observedAt: b.observedAt }] : [];
       });
     },
-    async fetchPriceHistory(_id: string, _params: PriceHistoryParams): Promise<PricePoint[]> {
-      return [];
+    async fetchPriceHistory(id: string, _params: PriceHistoryParams): Promise<PricePoint[]> {
+      return history.get(id) ?? [];
     },
     deepLink: (m) => `https://fake.example/${m.externalId}`,
   };
