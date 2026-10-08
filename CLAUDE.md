@@ -38,7 +38,7 @@ Use PRD glossary terms exactly in code, UI and docs: Venue, Market, Outcome, Eve
 
 - The MCP server is read-only. It has no tool that moves money or places trades. Execution only happens on Paras with a user-signed Intent.
 - The Vault keeps each user's funds segregated. No pooled shares or NAV.
-- The Executor can only move a user's funds to that user's own Deposit Wallet, or back to that user, and only against a valid, unexpired, user-signed Intent.
+- The Executor can only move a user's funds to that user's own Deposit Wallet, or back to that user, and only against a valid, unexpired, user-signed Intent. Caveat (#36): on Polygon in V1 this is enforced off-chain by the Executor policy layer (`apps/executor/src/wallet/policy.ts`, deny-by-default) and Polymarket's relayer, since stock session keys are not scoped on-chain; on Monad it is on-chain. Never weaken the policy allowlist. Option A (PolicyOwner) will make it on-chain.
 - The user chooses the Event, Outcome and amount. The Vault only chooses the Venue. No autonomous strategies.
 - Kalshi is read-only plus a redirect. V1 routes to Polymarket only. Keep the Route interface venue-agnostic.
 - Vault execution is gated by jurisdiction (eligibility matrix). US users get discovery plus redirects.
