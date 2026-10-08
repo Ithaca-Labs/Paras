@@ -3,7 +3,7 @@ import { createDb } from '@paras/db';
 import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
 import { defaultAuthConfig } from './auth/types.js';
-import { loadConfig } from './config.js';
+import { loadConfig, loadMagicLinkKeys } from './config.js';
 
 const config = loadConfig();
 const { db, close } = createDb(config.DATABASE_URL);
@@ -11,6 +11,13 @@ const app = buildApp(
   {
     db,
     adapters: createAdapterRegistry([createPolymarketAdapter()]),
+    magicLinks: {
+      keys: loadMagicLinkKeys(config),
+      webBaseUrl: config.WEB_BASE_URL,
+      defaultTtlMs: config.MAGIC_LINK_TTL_SECONDS * 1000,
+      maxTtlMs: config.MAGIC_LINK_MAX_TTL_SECONDS * 1000,
+      now: () => new Date(),
+    },
     auth: {
       config: defaultAuthConfig({
         secret: config.AUTH_SECRET ?? 'dev-only-insecure-auth-secret-change-me',

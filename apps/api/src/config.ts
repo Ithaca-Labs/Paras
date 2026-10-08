@@ -1,3 +1,4 @@
+import type { MagicLinkKeys } from '@paras/domain';
 import { z } from '@paras/shared';
 
 const Env = z.object({
@@ -13,6 +14,14 @@ const Env = z.object({
   EMAIL_PROVIDER: z.enum(['console', 'resend']).default('console'),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default('Paras <login@paras.local>'),
+  /** Public web app origin for Magic Link URLs (the web app is built later). */
+  WEB_BASE_URL: z.string().url().default('http://localhost:5173'),
+  /** Comma-separated `kid:secret` pairs (secret >= 32 chars). Required in production. */
+  MAGIC_LINK_KEYS: z.string().optional(),
+  /** Key used to sign new links; defaults to the first in MAGIC_LINK_KEYS. */
+  MAGIC_LINK_ACTIVE_KID: z.string().optional(),
+  MAGIC_LINK_TTL_SECONDS: z.coerce.number().int().min(60).default(3600),
+  MAGIC_LINK_MAX_TTL_SECONDS: z.coerce.number().int().min(60).default(86400),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 });
 
@@ -20,6 +29,30 @@ export const loadConfig = (env: NodeJS.ProcessEnv = process.env) => {
   const cfg = Env.parse(env);
   const prod = env.NODE_ENV === 'production';
   if (prod && !cfg.AUTH_SECRET) throw new Error('AUTH_SECRET is required in production');
+  if (prod && !cfg.MAGIC_LINK_KEYS) throw new Error('MAGIC_LINK_KEYS is required in production');
   return cfg;
+};
+
+/** Parses `kid:secret,kid2:secret2`; dev falls back to a fixed key. */
+export const loadMagicLinkKeys = (cfg: Config): MagicLinkKeys => {
+  const keys: Record<string, string> = {};
+  const kids: string[] = [];
+  for (const pair of (cfg.MAGIC_LINK_KEYS ?? 'dev:dev-only-insecure-magic-link-key-0000').split(
+    ',',
+  )) {
+    const i = pair.indexOf(':');
+    const kid = pair.slice(0, i).trim();
+    const secret = pair.slice(i + 1).trim();
+    if (i < 1 || secret.length < 32) {
+      if (cfg.MAGIC_LINK_KEYS)
+        throw new Error('MAGIC_LINK_KEYS entries must be kid:secret (>=32 chars)');
+    }
+    keys[kid] = secret;
+    kids.push(kid);
+  }
+  const activeKid = cfg.MAGIC_LINK_ACTIVE_KID ?? kids[0]!;
+  if (!keys[activeKid])
+    throw new Error(`MAGIC_LINK_ACTIVE_KID ${activeKid} not in MAGIC_LINK_KEYS`);
+  return { activeKid, keys };
 };
 export type Config = ReturnType<typeof loadConfig>;

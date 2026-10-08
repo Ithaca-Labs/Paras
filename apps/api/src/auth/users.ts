@@ -57,7 +57,12 @@ export async function mergeUsers(tx: Tx, aId: string, bId: string): Promise<stri
     }),
   );
   const { survivor, absorbed } = pickMergeSurvivor(a!, b!);
-  for (const t of [schema.walletLinks, schema.emailIdentities, schema.authSessions]) {
+  for (const t of [
+    schema.walletLinks,
+    schema.emailIdentities,
+    schema.authSessions,
+    schema.magicLinks,
+  ]) {
     await tx.update(t).set({ userId: survivor.id }).where(eq(t.userId, absorbed.id));
   }
   await tx
