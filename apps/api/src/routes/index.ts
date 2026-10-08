@@ -10,6 +10,7 @@ import { openapiRoutes } from './openapi.js';
 import { profileRoutes } from './profile.js';
 import { taxonomyRoutes } from './taxonomy.js';
 import { venueRoutes } from './venues.js';
+import { vaultRoutes } from './vault.js';
 
 export type RoutePlugin = (app: FastifyInstance, deps: AppDeps) => void;
 
@@ -28,5 +29,6 @@ export const routePlugins: RoutePlugin[] = [
   venueRoutes,
   jurisdictionRoutes,
   profileRoutes,
+  vaultRoutes,
   openapiRoutes,
 ];

@@ -25,6 +25,13 @@ const Env = z.object({
   /** Hugging Face sentence model (384 dims) for semantic search, or `off` for full-text only. */
   EMBEDDING_MODEL: z.string().default('Xenova/all-MiniLM-L6-v2'),
   EMBEDDING_CACHE_DIR: z.string().default('/tmp/paras-models'),
+  /** Monad RPC + Vault proxy for the balance endpoint; both unset = endpoint answers 503. */
+  MONAD_RPC_URL: z.string().url().optional(),
+  VAULT_ADDRESS: z
+    .string()
+    .regex(/^0x[0-9a-fA-F]{40}$/)
+    .optional(),
+  VAULT_CHAIN_ID: z.coerce.number().int().default(10143),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 });
 

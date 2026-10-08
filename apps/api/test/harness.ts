@@ -7,6 +7,7 @@ import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { MemoryMailer } from '../src/auth/mailer.js';
 import type { MagicLinkDeps } from '../src/deps.js';
+import type { VaultReader } from '../src/vault.js';
 import { defaultAuthConfig, type AuthConfig } from '../src/auth/types.js';
 
 export interface TestAppOptions {
@@ -18,6 +19,8 @@ export interface TestAppOptions {
   magicLinks?: Partial<MagicLinkDeps>;
   /** Fake embedder (`createFakeEmbedder`) enabling semantic search; omit for full-text only. */
   embedder?: Embedder;
+  /** Fake Vault chain reader; omit for the 503 path. */
+  vault?: VaultReader;
   /** Injected clock for freshness (`stale`) assertions. */
   now?: () => Date;
   /** SSE re-read interval; tests use a small value. */
@@ -60,6 +63,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
     adapters: createAdapterRegistry(options.adapters),
     ...(options.embedder && { embedder: options.embedder }),
     ...(options.now && { now: options.now }),
+    ...(options.vault && { vault: options.vault }),
     ssePollMs: options.ssePollMs ?? 50,
     magicLinks: {
       keys: { activeKid: 'k1', keys: { k1: 'test-magic-key-test-magic-key-0001' } },
