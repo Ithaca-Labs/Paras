@@ -41,7 +41,7 @@ describe('notifications API', () => {
       unread: 0,
       nextCursor: null,
     });
-    expect(await t.client.getNotificationPrefs({})).toEqual({
+    expect(await t.client.getNotificationPrefs()).toEqual({
       email: true,
       inApp: true,
       frequency: 'instant',
