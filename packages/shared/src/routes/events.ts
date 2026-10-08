@@ -6,6 +6,7 @@ import {
   PriceString,
   VenueCapabilities,
   VenueId,
+  VenueLabel,
 } from '../venue.js';
 import { z } from '../zod.js';
 
@@ -34,7 +35,12 @@ export type OutcomeView = z.infer<typeof OutcomeView>;
 /** One Venue's Market within an Event. */
 export const MarketView = z.object({
   id: z.string().uuid(),
-  venue: z.object({ id: VenueId, name: z.string(), capabilities: VenueCapabilities }),
+  venue: z.object({
+    id: VenueId,
+    name: z.string(),
+    capabilities: VenueCapabilities,
+    label: VenueLabel,
+  }),
   externalId: z.string(),
   question: z.string(),
   /** Resolution rules as published by the Venue. */
@@ -110,6 +116,8 @@ export const listEvents = defineRoute({
       q: z.string().trim().min(1).max(300).optional(),
       status: z.enum(['open', 'closed', 'resolved', 'all']).default('open'),
       venue: VenueId.optional(),
+      /** Include play-money Venues (e.g. Manifold). Hidden by default so they never read as real prices. */
+      includePlayMoney: z.enum(['true', 'false']).default('false'),
       /** Taxonomy ids from `GET /v1/categories`. */
       category: z.string().optional(),
       topic: z.string().optional(),

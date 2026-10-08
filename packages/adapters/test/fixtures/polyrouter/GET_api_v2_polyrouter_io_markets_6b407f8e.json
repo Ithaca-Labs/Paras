@@ -1,0 +1,73 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-v2.polyrouter.io/markets?platform=manifold&limit=25&status=open"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "markets": [
+        {
+          "id": "MAN-1",
+          "platform": "manifold",
+          "platform_id": "MAN-1",
+          "title": "Will it rain in SF tomorrow?",
+          "slug": "man-1",
+          "market_slug": "man-1",
+          "description": "Will it rain in SF tomorrow? Resolves per manifold rules.",
+          "category": "Sports",
+          "tags": [
+            "nfl"
+          ],
+          "status": "open",
+          "market_type": "binary",
+          "outcomes": [
+            {
+              "id": "yes",
+              "name": "Yes"
+            },
+            {
+              "id": "no",
+              "name": "No"
+            }
+          ],
+          "current_prices": {
+            "yes": {
+              "price": 0.2,
+              "bid": 0.19,
+              "ask": 0.21
+            },
+            "no": {
+              "price": 0.8,
+              "bid": 0.79,
+              "ask": 0.81
+            }
+          },
+          "volume_24h": 1000,
+          "volume_total": 50000,
+          "liquidity": 2500,
+          "source_url": "https://manifold.example/markets/man-1",
+          "trading_end_at": "2026-12-31T00:00:00Z",
+          "last_synced_at": "2026-10-09T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "total": 1,
+        "limit": 25,
+        "has_more": false,
+        "next_cursor": null
+      },
+      "meta": {
+        "platforms_queried": [
+          "manifold"
+        ],
+        "request_time": 120,
+        "cache_hit": false,
+        "data_freshness": "2026-10-09T00:00:00Z"
+      }
+    }
+  }
+}

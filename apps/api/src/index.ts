@@ -22,6 +22,8 @@ const app = buildApp(
       createLimitlessAdapter(),
       createSxBetAdapter(),
       createKalshiAdapter(),
+      // Long-tail Venues; [] unless POLYROUTER_ENABLED=true.
+      ...polyRouterAdaptersFromEnv(process.env),
     ]),
     magicLinks: {
       keys: loadMagicLinkKeys(config),

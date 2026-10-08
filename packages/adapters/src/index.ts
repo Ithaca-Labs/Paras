@@ -10,4 +10,10 @@ export { createPolymarketAdapter, type PolymarketOptions } from './polymarket/in
 export { createLimitlessAdapter, type LimitlessOptions } from './limitless/index.js';
 export { createSxBetAdapter, type SxBetOptions } from './sxbet/index.js';
 export { createKalshiAdapter, type KalshiOptions } from './kalshi/index.js';
+export {
+  createPolyRouterAdapters,
+  polyRouterAdaptersFromEnv,
+  LONG_TAIL_VENUES,
+  type PolyRouterOptions,
+} from './polyrouter/index.js';
 export { toDecimalString } from './decimal.js';

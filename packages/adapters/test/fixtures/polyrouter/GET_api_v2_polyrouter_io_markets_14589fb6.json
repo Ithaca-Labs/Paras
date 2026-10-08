@@ -1,0 +1,166 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-v2.polyrouter.io/markets?platform=novig&limit=25&status=open"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "markets": [
+        {
+          "id": "NVG-1",
+          "platform": "novig",
+          "platform_id": "NVG-1",
+          "title": "Will the Chiefs win Super Bowl LXI?",
+          "slug": "nvg-1",
+          "market_slug": "nvg-1",
+          "description": "Will the Chiefs win Super Bowl LXI? Resolves per novig rules.",
+          "category": "Sports",
+          "tags": [
+            "nfl"
+          ],
+          "status": "open",
+          "market_type": "binary",
+          "outcomes": [
+            {
+              "id": "yes",
+              "name": "Yes"
+            },
+            {
+              "id": "no",
+              "name": "No"
+            }
+          ],
+          "current_prices": {
+            "yes": {
+              "price": 0.31,
+              "bid": 0.3,
+              "ask": 0.32
+            },
+            "no": {
+              "price": 0.69,
+              "bid": 0.68,
+              "ask": 0.7
+            }
+          },
+          "volume_24h": 1000,
+          "volume_total": 90000,
+          "liquidity": 2500,
+          "source_url": "https://novig.example/markets/nvg-1",
+          "trading_end_at": "2026-12-31T00:00:00Z",
+          "last_synced_at": "2026-10-09T00:00:00Z"
+        },
+        {
+          "id": "NVG-2",
+          "platform": "novig",
+          "platform_id": "NVG-2",
+          "title": "Will the Bills win the AFC East?",
+          "slug": "nvg-2",
+          "market_slug": "nvg-2",
+          "description": "Will the Bills win the AFC East? Resolves per novig rules.",
+          "category": "Sports",
+          "tags": [
+            "nfl"
+          ],
+          "status": "open",
+          "market_type": "binary",
+          "outcomes": [
+            {
+              "id": "yes",
+              "name": "Yes"
+            },
+            {
+              "id": "no",
+              "name": "No"
+            }
+          ],
+          "current_prices": {
+            "yes": {
+              "price": 0.55,
+              "bid": 0.54,
+              "ask": 0.56
+            },
+            "no": {
+              "price": 0.45,
+              "bid": 0.44,
+              "ask": 0.46
+            }
+          },
+          "volume_24h": 1000,
+          "volume_total": 120000,
+          "liquidity": 2500,
+          "source_url": "https://novig.example/markets/nvg-2",
+          "trading_end_at": "2026-12-31T00:00:00Z",
+          "last_synced_at": "2026-10-09T00:00:00Z"
+        },
+        {
+          "id": "BAD",
+          "platform": "novig",
+          "status": "open",
+          "outcomes": [],
+          "current_prices": {}
+        },
+        {
+          "id": "KX-1",
+          "platform": "kalshi",
+          "platform_id": "KX-1",
+          "title": "Native venue leak must be dropped",
+          "slug": "kx-1",
+          "market_slug": "kx-1",
+          "description": "Native venue leak must be dropped Resolves per kalshi rules.",
+          "category": "Sports",
+          "tags": [
+            "nfl"
+          ],
+          "status": "open",
+          "market_type": "binary",
+          "outcomes": [
+            {
+              "id": "yes",
+              "name": "Yes"
+            },
+            {
+              "id": "no",
+              "name": "No"
+            }
+          ],
+          "current_prices": {
+            "yes": {
+              "price": 0.5,
+              "bid": 0.49,
+              "ask": 0.51
+            },
+            "no": {
+              "price": 0.5,
+              "bid": 0.49,
+              "ask": 0.51
+            }
+          },
+          "volume_24h": 1000,
+          "volume_total": 50000,
+          "liquidity": 2500,
+          "source_url": "https://kalshi.example/markets/kx-1",
+          "trading_end_at": "2026-12-31T00:00:00Z",
+          "last_synced_at": "2026-10-09T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "total": 3,
+        "limit": 25,
+        "has_more": false,
+        "next_cursor": null
+      },
+      "meta": {
+        "platforms_queried": [
+          "novig"
+        ],
+        "request_time": 120,
+        "cache_hit": false,
+        "data_freshness": "2026-10-09T00:00:00Z"
+      }
+    }
+  }
+}

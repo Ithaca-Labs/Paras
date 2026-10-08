@@ -27,8 +27,10 @@ export const eventRoutes: RoutePlugin = (
               return null;
             })
         : null;
+    const includePlayMoney = query.includePlayMoney === 'true';
     const ids = await searchEventIds(db, {
       ...query,
+      includePlayMoney,
       closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
       closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,
       sort: query.sort ?? (query.q ? 'relevance' : 'volume'),
@@ -39,7 +41,7 @@ export const eventRoutes: RoutePlugin = (
     });
     const page = ids.slice(0, query.limit);
     return {
-      items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS),
+      items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, { includePlayMoney }),
       nextCursor: ids.length > query.limit ? String(offset + query.limit) : null,
     };
   });

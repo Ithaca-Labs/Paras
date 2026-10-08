@@ -15,6 +15,7 @@ export {
   type MagicLinkSource,
   type MagicLinkVerdict,
 } from './magic-link.js';
+export { venueLabel, type VenueLabel, type VenueLabelInput } from './venue-label.js';
 export { DECIMAL_SCALE, formatDecimal, mulDecimal, parseDecimal, type Scaled } from './decimal.js';
 export {
   EMBEDDING_DIMENSIONS,

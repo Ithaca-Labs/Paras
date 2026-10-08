@@ -1,4 +1,4 @@
-import { isStale, reciprocalRankFusion, taxonomyNode } from '@paras/domain';
+import { isStale, reciprocalRankFusion, taxonomyNode, venueLabel } from '@paras/domain';
 import { schema, type Database } from '@paras/db';
 import type { EventView, MarketStatus, MarketView, QuoteStreamMessage } from '@paras/shared';
 import { and, asc, desc, eq, gt, gte, inArray, isNotNull, lte, sql } from 'drizzle-orm';
@@ -11,6 +11,8 @@ export type EventSort =
 export interface ListFilter {
   status: MarketStatus | 'all';
   venue?: string | undefined;
+  /** Keep play-money Venues' Markets (and Events made only of them). Default false. */
+  includePlayMoney?: boolean | undefined;
   category?: string | undefined;
   topic?: string | undefined;
   entity?: string | undefined;
@@ -48,6 +50,14 @@ function conditions(f: ListFilter) {
           where em.event_id = ${events.id} and m.venue_id = ${f.venue}
         )`
       : undefined,
+    f.includePlayMoney
+      ? undefined
+      : sql`exists (
+          select 1 from ${eventMarkets} em
+          join ${markets} m on m.id = em.market_id
+          join ${venues} v on v.id = m.venue_id
+          where em.event_id = ${events.id} and (v.capabilities->>'realMoney')::boolean
+        )`,
     f.category ? hasTag(f.category) : undefined,
     f.topic ? hasTag(f.topic) : undefined,
     f.entity ? hasTag(f.entity) : undefined,
@@ -153,19 +163,22 @@ export async function loadEventViews(
   ids: readonly string[],
   now: Date,
   staleAfterMs: number,
+  opts: { includePlayMoney?: boolean } = {},
 ): Promise<EventView[]> {
   if (!ids.length) return [];
   const eventRows = await db
     .select()
     .from(events)
     .where(inArray(events.id, [...ids]));
-  const links = await db
+  const allLinks = await db
     .select({ link: eventMarkets, market: markets, venue: venues })
     .from(eventMarkets)
     .innerJoin(markets, eq(markets.id, eventMarkets.marketId))
     .innerJoin(venues, eq(venues.id, markets.venueId))
     .where(inArray(eventMarkets.eventId, [...ids]))
     .orderBy(desc(markets.volume), markets.id);
+  const keepPlay = opts.includePlayMoney ?? true;
+  const links = allLinks.filter((l) => keepPlay || l.venue.capabilities.realMoney);
   const tagRows = await db
     .select()
     .from(eventTags)
@@ -195,7 +208,12 @@ export async function loadEventViews(
     const newest = times.length ? new Date(Math.max(...times.map((t) => t.getTime()))) : null;
     const view: MarketView = {
       id: market.id,
-      venue: { id: venue.id, name: venue.name, capabilities: venue.capabilities },
+      venue: {
+        id: venue.id,
+        name: venue.name,
+        capabilities: venue.capabilities,
+        label: venueLabel(venue.capabilities),
+      },
       externalId: market.externalId,
       question: market.question,
       rules: market.description,

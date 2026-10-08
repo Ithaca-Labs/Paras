@@ -6,6 +6,7 @@ import { healthRoutes } from './health.js';
 import { magicLinkRoutes } from './magic-links.js';
 import { openapiRoutes } from './openapi.js';
 import { taxonomyRoutes } from './taxonomy.js';
+import { venueRoutes } from './venues.js';
 
 export type RoutePlugin = (app: FastifyInstance, deps: AppDeps) => void;
 
@@ -20,5 +21,6 @@ export const routePlugins: RoutePlugin[] = [
   eventRoutes,
   magicLinkRoutes,
   taxonomyRoutes,
+  venueRoutes,
   openapiRoutes,
 ];
