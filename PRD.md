@@ -187,9 +187,62 @@ Paras serves both US and non-US users. Discovery, the Feed, MCP and price compar
 ## Implementation Decisions
 
 ### Platform & stack
-- TypeScript monorepo. Next.js web app, a Node backend API service, a background ingestion worker, a remote MCP server, and Solidity contracts built with Foundry.
-- Postgres as system of record, with pgvector for semantic search and match candidates. Redis (or equivalent) for hot Quote caching and job queues.
 - Everything must run on free tiers or self-hosted, open-source components. Paid data vendors are not on the critical path.
+- **Build order: backend first, frontend last.** The API, worker, MCP, contracts and Executor ship first, each verified at its test seam. The web app is built only after the user provides brand assets (logo, banner, colors, fonts). Backend issues expose everything the UI will need as API endpoints.
+
+### System architecture
+
+```
+                      ┌──────────── Clients ─────────────┐
+                      │ Web (Next.js, built LAST)        │
+                      │ Claude / Codex (MCP connector)   │
+                      └───────┬──────────────────┬───────┘
+                       REST+SSE│                  │MCP (Streamable HTTP + OAuth)
+                              ▼                  ▼
+┌──────────── apps/api ───────────────┐   ┌── apps/mcp ──────────────┐
+│ Fastify REST /v1 (OpenAPI from zod) │◄──│ thin: calls api via typed │
+│ auth: SIWE, email OTP, sessions,    │   │ client; validates OAuth   │
+│ OAuth 2.1 AS (MCP clients)          │   │ bearer tokens; read-only  │
+│ SSE live Quotes; Magic Links        │   └───────────────────────────┘
+│ admin endpoints (review, pause)     │
+└───────┬─────────────────────────────┘
+        │ uses packages/domain (pure logic: pricing, matching, ranking,
+        │ routing, eligibility) + packages/db
+        ▼
+┌──────────── Postgres (+pgvector) ───────────────────────────────────┐
+│ system of record · latest-quote table · QuoteSnapshots · embeddings │
+│ pg-boss job queue (no Redis in V1)                                  │
+└───────▲──────────────────────────────▲──────────────────────────────┘
+        │                              │
+┌───────┴──── apps/worker ─────┐  ┌────┴──── apps/executor ──────────────────┐
+│ Venue sync (packages/        │  │ ONLY service with signing keys            │
+│ adapters): Polymarket,       │  │ watches Vault Intents (Monad) → Route →   │
+│ Kalshi, Limitless, SX Bet,   │  │ CCTP burn → attestation → mint (Polygon)  │
+│ PolyRouter(flag)             │  │ → wrap pUSD → CLOB order (POLY_1271)      │
+│ embeddings (transformers.js) │  │ → fills/exits/redeem → CCTP back          │
+│ matching, tagging, alerts,   │  │ Polygon indexer (viem log polling)        │
+│ digests                      │  └────┬──────────────────────┬──────────────┘
+└──────────────────────────────┘       ▼                      ▼
+                              Monad: Vault contract     Polygon: Deposit Wallets,
+                              (contracts/, Foundry)     CTF, Polymarket CLOB
+```
+
+- **Monorepo:** pnpm workspaces plus Turborepo. Deployables: `apps/api`, `apps/worker`, `apps/mcp`, `apps/executor` and `apps/web` (built last). Libraries:
+  - `packages/domain`: pure logic, no I/O
+  - `packages/adapters`: Venue adapters
+  - `packages/db`: Drizzle ORM and migrations
+  - `packages/shared`: zod schemas, types, generated API client
+  - `contracts`: Foundry
+- **API style:** REST JSON versioned under `/v1`, with an OpenAPI 3.1 spec generated from zod schemas. The MCP server and the future web app both use the generated typed client, so the API is the single contract. Live Quotes are pushed over Server-Sent Events.
+- **Data and jobs:** Postgres 16 with pgvector holds everything. pg-boss (Postgres-backed) runs jobs: sync, matching, alerts, Executor steps. The hot latest-Quote table lives in Postgres, with an in-process LRU cache. Redis is added only if load measurements demand it.
+- **Business logic:** all domain rules live in `packages/domain` as pure functions. Apps only wire I/O to them. That keeps the 4 seams sufficient and the logic reusable across api, worker and executor.
+- **Embeddings:** a self-hosted open-source sentence model (e.g. bge-small or MiniLM) runs via transformers.js in the worker. It's free, with no external API. LLM match verification is optional and behind a flag and budget.
+- **Chain access:** viem for Monad and Polygon, on free-tier RPCs with fallback. The Polygon indexer uses log polling, not a paid indexer.
+- **Key custody:** only `apps/executor` holds signing material (Executor session keys and the dispatch key). In V1 testnet, keys are encrypted at rest with an env master key. A KMS-backed signer is required before mainnet, as part of the launch gate. The API and worker never sign transactions.
+- **Email:** passwordless OTP and digests go through a free-tier transactional email provider behind an interface, with a console transport in dev and test.
+- **Runtime:** Node 22 LTS, TypeScript strict. Every app ships as a Docker image. Local dev uses docker-compose (Postgres+pgvector plus all apps). The hosting provider is not decided; it must have a free or cheap tier and run Docker.
+- **Observability:** pino structured logs with request and Intent correlation IDs, plus a `/health` endpoint on every app. Admin endpoints expose Venue freshness and error rates.
+- **CI:** GitHub Actions runs on every PR and every push to `main`. Jobs: `node` (install, lint, typecheck, test with a Postgres+pgvector service) and `contracts` (forge build/test). A PR may be merged only when CI is green. GitHub branch protection is intentionally not enabled; the rule is enforced by the workflow described in CLAUDE.md.
 
 ### Module: Venue adapters (deep module)
 - One interface per Venue. Each normalizes into the shared Market, Outcome and Quote schema: list/sync Markets, fetch Quotes and order book, fetch price history, provide a deep link URL, and report capabilities (read-only vs. routable, regulation, jurisdictions).
@@ -406,9 +459,17 @@ Each slice is a sub-issue of #1. Start an issue only once every issue in its "Bl
 | #21 | Executor: exits, redemption, portfolio | #20 |
 | #22 | Notifications | #12 |
 | #23 | Ops: health + pause | #20 |
-| #24 | Mainnet launch gate (HITL) | #21, #23 |
+| #24 | Mainnet launch gate (HITL) | #21, #23, #30 |
+| **Frontend (built last)** | | |
+| #25 | Brand assets from user (HITL) | — |
+| #26 | Web foundation + design system + auth UI | #25, #10 |
+| #27 | Discovery UI | #26, #5, #6, #9, #16 |
+| #28 | Onboarding + Feed + notifications UI | #26, #11, #12, #22 |
+| #29 | Magic Link landing + connected apps UI | #26, #13, #15 |
+| #30 | Vault UI | #26, #16, #18, #20, #21 |
+| #31 | Admin UI | #26, #6, #23 |
 
-Parallel tracks after #2: discovery (#3→#4→#5→#6, #7, #8, #9), identity (#10→#11→#12), Vault (#17→#18/#19→#20).
+Parallel backend tracks after #2: discovery (#3→#4→#5→#6, #7, #8, #9), identity (#10→#11→#12), Vault (#17→#18/#19→#20). The frontend (#26–#31) starts only after the backend it depends on is merged and #25 (assets) is closed.
 
 ## Vault risk findings
 
@@ -421,3 +482,4 @@ _Contract addresses, by network. Filled by #18 and later._
 ## Decision log
 
 - 2026-10-09: V1 Vault is Polymarket-only, with per-user segregation and no pooled shares. Kalshi is read-only plus redirect. US and non-US users are both in scope, with the Vault gated by jurisdiction. Free native adapters for the main Venues; long tail through PolyRouter. MCP is read-only.
+- 2026-10-09: Backend first, frontend last (after the user supplies brand assets). No Redis in V1; Postgres + pg-boss instead. REST `/v1` with OpenAPI generated from zod is the single contract for MCP and web. Only `apps/executor` holds keys. CI is required for merge by convention; GitHub branch protection is intentionally off.

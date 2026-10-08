@@ -11,6 +11,29 @@ Paras is a prediction market aggregator and discovery layer on Monad. It has fou
 
 Use PRD glossary terms exactly in code, UI and docs: Venue, Market, Outcome, Event, Quote, Interest Profile, Feed, Magic Link, Vault, Deposit Wallet, Intent, Executor, Route.
 
+## Architecture (details: PRD → System architecture)
+
+- **Apps:**
+  - `apps/api`: Fastify REST `/v1` plus SSE, auth, OAuth AS, Magic Links, admin
+  - `apps/worker`: Venue sync, embeddings, matching, alerts
+  - `apps/mcp`: thin read-only MCP layer over the API
+  - `apps/executor`: the only signer; turns Vault Intents into Polymarket orders
+  - `apps/web`: built last
+- **Libraries:**
+  - `packages/domain`: pure business logic, no I/O
+  - `packages/adapters`
+  - `packages/db`: Drizzle plus migrations
+  - `packages/shared`: zod schemas, OpenAPI, typed client
+  - `contracts`: Foundry
+- **Infra:** Postgres+pgvector with pg-boss jobs. No Redis in V1.
+- Domain rules go in `packages/domain`. Apps only wire I/O.
+
+## Build order: backend first, frontend LAST
+
+- Do **not** create or modify `apps/web` until you are working on a `frontend`-labeled issue.
+- Frontend issues are blocked until the user provides brand assets (logo, banner, colors, fonts) in the `hitl` assets issue. Never invent a brand or design.
+- Backend issues expose everything the UI needs as API endpoints. UI work belongs only in `frontend` issues.
+
 ## Non-negotiables (do not change without updating PRD decision log + user approval)
 
 - The MCP server is read-only. It has no tool that moves money or places trades. Execution only happens on Paras with a user-signed Intent.
@@ -40,7 +63,7 @@ Use PRD glossary terms exactly in code, UI and docs: Venue, Market, Outcome, Eve
   - copy the acceptance criteria from the issue as a checklist
   - include test evidence (commands run plus results)
 - **Merge to `main` only when all of these hold:**
-  1. CI is green (lint, typecheck, all tests, Foundry).
+  1. CI is green (lint, typecheck, all tests, Foundry). Run `gh pr checks <pr> --watch` and confirm both the `node` and `contracts` jobs pass. GitHub doesn't enforce this; you must.
   2. You ran the full test suite locally and it passed.
   3. Every acceptance criterion is checked and verified, with the feature demonstrated working (e.g. API call or UI screenshot noted in the PR).
   4. `PRD.md` is updated in the same PR if any decision, address or finding changed.
@@ -64,6 +87,7 @@ CI never makes live Venue calls. Record fixtures with the fixture harness. Every
 
 - `ready-for-agent`: fully specified; an agent can pick it up.
 - `hitl`: needs a human action or decision.
+- `frontend`: web UI work. Build it last, and only after the brand assets issue is closed.
 
 ## Session memory
 
