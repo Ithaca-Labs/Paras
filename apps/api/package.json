@@ -22,7 +22,8 @@
     "@paras/domain": "workspace:*",
     "@paras/shared": "workspace:*",
     "drizzle-orm": "0.45.4",
-    "fastify": "5.12.5"
+    "fastify": "5.12.5",
+    "viem": "2.57.4"
   },
   "devDependencies": {
     "@paras/testkit": "workspace:*",

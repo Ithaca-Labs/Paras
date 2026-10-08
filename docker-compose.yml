@@ -41,6 +41,7 @@ services:
     environment:
       <<: *env
       API_PORT: 3000
+      AUTH_SECRET: ${AUTH_SECRET:-dev-only-insecure-auth-secret-change-me}
 
   worker:
     <<: *app
