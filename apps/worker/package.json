@@ -16,6 +16,8 @@
   "dependencies": {
     "@paras/adapters": "workspace:*",
     "@paras/db": "workspace:*",
+    "@paras/domain": "workspace:*",
+    "@paras/embeddings": "workspace:*",
     "@paras/shared": "workspace:*",
     "fastify": "5.12.5",
     "pg-boss": "11.1.2"

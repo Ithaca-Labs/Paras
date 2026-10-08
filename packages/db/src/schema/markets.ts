@@ -1,6 +1,9 @@
 import type { FeeSchedule, MarketStatus, VenueCapabilities } from '@paras/shared';
+import { sql } from 'drizzle-orm';
 import {
   bigserial,
+  customType,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -11,7 +14,11 @@ import {
   timestamp,
   unique,
   uuid,
+  vector,
 } from 'drizzle-orm/pg-core';
+import { EMBEDDING_DIMENSIONS } from '@paras/domain';
+
+const tsvector = customType<{ data: string }>({ dataType: () => 'tsvector' });
 
 const ts = (name: string) => timestamp(name, { withTimezone: true, mode: 'date' });
 
@@ -84,9 +91,41 @@ export const events = pgTable(
     imageUrl: text('image_url'),
     /** Sum of linked Markets' volume (USD), for ordering. */
     volume: numeric('volume').notNull().default('0'),
+    /** Sum of linked Markets' liquidity (USD). */
+    liquidity: numeric('liquidity').notNull().default('0'),
+    /** Largest absolute price change of any Outcome over ~24h (0..1). Refreshed by the worker. */
+    move24h: numeric('move_24h').notNull().default('0'),
+    /** Heuristic trending score (domain `trendingScore`). Refreshed by the worker. */
+    trendingScore: doublePrecision('trending_score').notNull().default(0),
+    /** Sentence embedding of title + description; null until enriched. */
+    embedding: vector('embedding', { dimensions: EMBEDDING_DIMENSIONS }),
+    /** md5(title || '\n' || description) at embedding time; a mismatch means re-embed. */
+    embeddedHash: text('embedded_hash'),
+    searchTsv: tsvector('search_tsv').generatedAlwaysAs(
+      sql`setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', description), 'B')`,
+    ),
     createdAt: ts('created_at').notNull().defaultNow(),
   },
-  (t) => [index('events_status_volume_idx').on(t.status, t.volume)],
+  (t) => [
+    index('events_status_volume_idx').on(t.status, t.volume),
+    index('events_search_tsv_idx').using('gin', t.searchTsv),
+    index('events_embedding_idx').using('hnsw', t.embedding.op('vector_cosine_ops')),
+  ],
+);
+
+/** Taxonomy tags on an Event (category, topic, entity). Ids come from `TAXONOMY` in @paras/domain. */
+export const eventTags = pgTable(
+  'event_tags',
+  {
+    eventId: uuid('event_id')
+      .notNull()
+      .references(() => events.id, { onDelete: 'cascade' }),
+    tagId: text('tag_id').notNull(),
+    kind: text('kind').$type<'category' | 'topic' | 'entity'>().notNull(),
+    score: numeric('score').notNull(),
+    source: text('source').$type<'venue' | 'keyword' | 'embedding'>().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.eventId, t.tagId] }), index('event_tags_tag_idx').on(t.tagId)],
 );
 
 /** Links a Market to an Event. A Market belongs to exactly one Event. */

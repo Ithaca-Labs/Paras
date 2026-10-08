@@ -1,21 +1,39 @@
 import { apiRoutes, sseRoutes } from '@paras/shared';
 import { QUOTE_STALE_AFTER_MS } from '../deps.js';
 import { HttpError, notFound } from '../errors.js';
-import { eventExists, listEventIds, loadEventQuotes, loadEventViews } from '../events/queries.js';
+import { eventExists, loadEventQuotes, loadEventViews, searchEventIds } from '../events/queries.js';
 import { implement, implementSse } from '../implement.js';
 import type { RoutePlugin } from './index.js';
 
 const DEFAULT_SSE_POLL_MS = 2000;
 
-export const eventRoutes: RoutePlugin = (app, { db, now = () => new Date(), ssePollMs }) => {
+export const eventRoutes: RoutePlugin = (
+  app,
+  { db, embedder, now = () => new Date(), ssePollMs },
+) => {
   implement(app, apiRoutes.listEvents, async ({ query }) => {
     const offset = Number(query.cursor ?? 0);
     if (!Number.isInteger(offset) || offset < 0) {
       throw new HttpError(400, 'validation_error', 'invalid cursor');
     }
-    const ids = await listEventIds(db, {
-      status: query.status,
-      venue: query.venue,
+    // Semantic search is best-effort: if embedding fails, fall back to full-text only.
+    const queryVector =
+      query.q && embedder
+        ? await embedder
+            .embed([query.q])
+            .then(([v]) => v ?? null)
+            .catch((err) => {
+              app.log.warn({ err }, 'query embedding failed; full-text only');
+              return null;
+            })
+        : null;
+    const ids = await searchEventIds(db, {
+      ...query,
+      closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
+      closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,
+      sort: query.sort ?? (query.q ? 'relevance' : 'volume'),
+      queryVector,
+      now: now(),
       limit: query.limit,
       offset,
     });

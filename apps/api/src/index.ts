@@ -6,6 +6,7 @@ import {
   createSxBetAdapter,
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
+import { createTransformersEmbedder } from '@paras/embeddings';
 import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
 import { defaultAuthConfig } from './auth/types.js';
@@ -29,6 +30,12 @@ const app = buildApp(
       maxTtlMs: config.MAGIC_LINK_MAX_TTL_SECONDS * 1000,
       now: () => new Date(),
     },
+    ...(config.EMBEDDING_MODEL !== 'off' && {
+      embedder: createTransformersEmbedder({
+        model: config.EMBEDDING_MODEL,
+        cacheDir: config.EMBEDDING_CACHE_DIR,
+      }),
+    }),
     auth: {
       config: defaultAuthConfig({
         secret: config.AUTH_SECRET ?? 'dev-only-insecure-auth-secret-change-me',

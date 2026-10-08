@@ -1,6 +1,6 @@
 import type { AdapterRegistry } from '@paras/adapters';
 import type { Database } from '@paras/db';
-import type { MagicLinkKeys } from '@paras/domain';
+import type { Embedder, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
 
 export interface MagicLinkDeps {
@@ -19,6 +19,8 @@ export interface AppDeps {
   adapters: AdapterRegistry;
   auth: AuthDeps;
   magicLinks: MagicLinkDeps;
+  /** Embeds search queries for semantic search. Omit for full-text only. */
+  embedder?: Embedder;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** How often SSE streams re-read latest Quotes from Postgres. Default 2000 ms. */

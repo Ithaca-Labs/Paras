@@ -1,6 +1,9 @@
 import type { AdapterRegistry } from '@paras/adapters';
+import { buildTaxonomyIndex, type Embedder } from '@paras/domain';
 import {
+  enrichEvents,
   listPollTargets,
+  refreshEventSignals,
   recordQuotes,
   upsertMarkets,
   upsertVenue,
@@ -12,6 +15,8 @@ import { defineJob } from './define.js';
 export interface VenueJobContext {
   db: Database;
   adapters: AdapterRegistry;
+  /** Embeds + tags Events at ingestion. Omit to skip enrichment (Events stay untagged and unsearchable semantically). */
+  embedder?: Embedder;
   log?: (msg: string, data?: Record<string, unknown>) => void;
 }
 
@@ -31,7 +36,8 @@ export const QuotePollPayload = z.object({
 });
 
 /** Metadata sync: page through a Venue's open Markets and upsert Markets, Outcomes and seed Events. */
-export function createSyncMarketsJob({ db, adapters, log }: VenueJobContext) {
+export function createSyncMarketsJob({ db, adapters, embedder, log }: VenueJobContext) {
+  const taxonomy = embedder && buildTaxonomyIndex(embedder);
   return defineJob({
     name: 'venue.sync-markets',
     payload: VenueSyncPayload,
@@ -50,6 +56,11 @@ export function createSyncMarketsJob({ db, adapters, log }: VenueJobContext) {
         cursor = page.nextCursor ?? undefined;
       } while (cursor && total < maxMarkets);
       log?.('markets synced', { venue, total });
+      if (embedder && taxonomy) {
+        const enriched = await enrichEvents(db, embedder, await taxonomy);
+        await refreshEventSignals(db);
+        log?.('events enriched', { enriched });
+      }
     },
   });
 }
@@ -74,6 +85,7 @@ export function createPollQuotesJob({ db, adapters, log }: VenueJobContext) {
         updated += r.updated;
         snapshots += r.snapshots;
       }
+      await refreshEventSignals(db);
       log?.('quotes polled', { venue, outcomes: targets.length, updated, snapshots });
     },
   });

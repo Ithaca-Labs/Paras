@@ -22,6 +22,9 @@ const Env = z.object({
   MAGIC_LINK_ACTIVE_KID: z.string().optional(),
   MAGIC_LINK_TTL_SECONDS: z.coerce.number().int().min(60).default(3600),
   MAGIC_LINK_MAX_TTL_SECONDS: z.coerce.number().int().min(60).default(86400),
+  /** Hugging Face sentence model (384 dims) for semantic search, or `off` for full-text only. */
+  EMBEDDING_MODEL: z.string().default('Xenova/all-MiniLM-L6-v2'),
+  EMBEDDING_CACHE_DIR: z.string().default('/tmp/paras-models'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 });
 

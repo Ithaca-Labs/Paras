@@ -9,6 +9,7 @@ import {
 import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { getHealth } from './health.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
+import { getCategory, listCategories } from './taxonomy.js';
 
 /**
  * Every API route. Add new route files here; the api, OpenAPI document and typed client
@@ -26,6 +27,8 @@ export const apiRoutes = {
   getEvent,
   createMagicLink,
   resolveMagicLink,
+  listCategories,
+  getCategory,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -34,4 +37,5 @@ export type ApiRoutes = typeof apiRoutes;
 export * from './events.js';
 export * from './health.js';
 export * from './magic-links.js';
+export * from './taxonomy.js';
 export * from './auth.js';

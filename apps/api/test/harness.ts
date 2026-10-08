@@ -1,5 +1,6 @@
 import { createAdapterRegistry, type VenueAdapter } from '@paras/adapters';
 import { createDb } from '@paras/db';
+import type { Embedder } from '@paras/domain';
 import { createApiClient } from '@paras/shared';
 import { createTestDatabase } from '@paras/testkit';
 import type { FastifyInstance } from 'fastify';
@@ -15,6 +16,8 @@ export interface TestAppOptions {
   auth?: Partial<AuthConfig>;
   /** Override Magic Link settings (keys, TTLs, ...). */
   magicLinks?: Partial<MagicLinkDeps>;
+  /** Fake embedder (`createFakeEmbedder`) enabling semantic search; omit for full-text only. */
+  embedder?: Embedder;
   /** Injected clock for freshness (`stale`) assertions. */
   now?: () => Date;
   /** SSE re-read interval; tests use a small value. */
@@ -55,6 +58,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
   const app = buildApp({
     db,
     adapters: createAdapterRegistry(options.adapters),
+    ...(options.embedder && { embedder: options.embedder }),
     ...(options.now && { now: options.now }),
     ssePollMs: options.ssePollMs ?? 50,
     magicLinks: {

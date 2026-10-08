@@ -6,6 +6,7 @@ import {
   createSxBetAdapter,
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
+import { createTransformersEmbedder } from '@paras/embeddings';
 import { loadConfig } from './config.js';
 import { buildJobs, buildSchedules } from './jobs/index.js';
 import { buildWorker } from './worker.js';
@@ -25,6 +26,12 @@ const worker = buildWorker({
   jobs: buildJobs({
     db,
     adapters,
+    ...(config.EMBEDDING_MODEL !== 'off' && {
+      embedder: createTransformersEmbedder({
+        model: config.EMBEDDING_MODEL,
+        cacheDir: config.EMBEDDING_CACHE_DIR,
+      }),
+    }),
     log: (msg, data) => worker.app.log.info(data, msg),
   }),
   schedules: buildSchedules(venues),
