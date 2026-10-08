@@ -44,3 +44,11 @@ Free public REST (`api.sx.bet`, no key): `/markets/active` (100 per page, `pagin
 ## Kalshi
 
 Public trade API v2 (`api.elections.kalshi.com`), unauthenticated, read-only: `/events?with_nested_markets` (metadata; the event carries the series ticker needed for the site URL), `/markets/{ticker}/orderbook` (one call per Market, both sides) and `/series/{s}/markets/{t}/candlesticks`. Outcome ids are `<ticker>:yes` / `<ticker>:no`; a NO bid at p is a YES ask at 1 - p. Kalshi has no volume sort, so `listMarkets` orders within each page only. Volume is contracts (US$1 notional), as the Kalshi site shows it. `NormalizedMarket.url` (exposed as `redirectUrl` by the Event API) is `kalshi.com/markets/<series>/<slug>/<event>`; the slug is cosmetic. `routable: false`: never place orders here.
+
+## PolyRouter (long tail)
+
+`createPolyRouterAdapters({ apiKey })` returns one `VenueAdapter` per long-tail Venue (Myriad, Opinion, Predict.fun, ProphetX, Novig, Polymarket US; Manifold only with `includePlayMoney`). Natively covered Venues are never included. Register with `...polyRouterAdaptersFromEnv(process.env)`: `[]` unless `POLYROUTER_ENABLED=true` (needs `POLYROUTER_API_KEY`). Venue table and regulation labels: `src/polyrouter/venues.ts`.
+
+- No order books for long-tail Venues: Quotes come from Market `current_prices`, depth `0`. One shared 100 req/min budget (throttled).
+- Outcome id is `<market id>:<outcome id>`. A PolyRouter failure only fails that Venue's sync jobs.
+- Fixtures are hand-written from the documented shapes (no key was available to record).

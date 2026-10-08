@@ -1,0 +1,73 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-v2.polyrouter.io/markets?platform=myriad&limit=25&status=open"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "markets": [
+        {
+          "id": "MYR-1",
+          "platform": "myriad",
+          "platform_id": "MYR-1",
+          "title": "Will ETH flip BTC by 2027?",
+          "slug": "myr-1",
+          "market_slug": "myr-1",
+          "description": "Will ETH flip BTC by 2027? Resolves per myriad rules.",
+          "category": "Sports",
+          "tags": [
+            "nfl"
+          ],
+          "status": "open",
+          "market_type": "binary",
+          "outcomes": [
+            {
+              "id": "yes",
+              "name": "Yes"
+            },
+            {
+              "id": "no",
+              "name": "No"
+            }
+          ],
+          "current_prices": {
+            "yes": {
+              "price": 0.04,
+              "bid": 0.03,
+              "ask": 0.05
+            },
+            "no": {
+              "price": 0.96,
+              "bid": 0.95,
+              "ask": 0.97
+            }
+          },
+          "volume_24h": 1000,
+          "volume_total": 50000,
+          "liquidity": 2500,
+          "source_url": "https://myriad.example/markets/myr-1",
+          "trading_end_at": "2026-12-31T00:00:00Z",
+          "last_synced_at": "2026-10-09T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "total": 2,
+        "limit": 25,
+        "has_more": true,
+        "next_cursor": "cur2"
+      },
+      "meta": {
+        "platforms_queried": [
+          "myriad"
+        ],
+        "request_time": 120,
+        "cache_hit": false,
+        "data_freshness": "2026-10-09T00:00:00Z"
+      }
+    }
+  }
+}

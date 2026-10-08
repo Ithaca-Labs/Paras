@@ -31,6 +31,16 @@ export const VenueCapabilities = z.object({
 });
 export type VenueCapabilities = z.infer<typeof VenueCapabilities>;
 
+/** Regulation and availability label shown for every Venue (derived from capabilities). */
+export const VenueLabel = z.object({
+  regulation: Regulation,
+  /** `routable`: Vault can route. `redirect_only`: read-only plus redirect. `play_money`: not real funds. */
+  availability: z.enum(['routable', 'redirect_only', 'play_money']),
+  /** Human text, e.g. "CFTC-regulated, US OK". */
+  text: z.string(),
+});
+export type VenueLabel = z.infer<typeof VenueLabel>;
+
 export const MarketStatus = z.enum(['open', 'closed', 'resolved']);
 export type MarketStatus = z.infer<typeof MarketStatus>;
 

@@ -1,0 +1,73 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-v2.polyrouter.io/markets?platform=myriad&limit=25&cursor=cur2&status=open"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "markets": [
+        {
+          "id": "MYR-2",
+          "platform": "myriad",
+          "platform_id": "MYR-2",
+          "title": "Will Base launch a token in 2026?",
+          "slug": "myr-2",
+          "market_slug": "myr-2",
+          "description": "Will Base launch a token in 2026? Resolves per myriad rules.",
+          "category": "Sports",
+          "tags": [
+            "nfl"
+          ],
+          "status": "open",
+          "market_type": "binary",
+          "outcomes": [
+            {
+              "id": "yes",
+              "name": "Yes"
+            },
+            {
+              "id": "no",
+              "name": "No"
+            }
+          ],
+          "current_prices": {
+            "yes": {
+              "price": 0.22,
+              "bid": 0.21,
+              "ask": 0.23
+            },
+            "no": {
+              "price": 0.78,
+              "bid": 0.77,
+              "ask": 0.79
+            }
+          },
+          "volume_24h": 1000,
+          "volume_total": 50000,
+          "liquidity": 2500,
+          "source_url": "https://myriad.example/markets/myr-2",
+          "trading_end_at": "2026-12-31T00:00:00Z",
+          "last_synced_at": "2026-10-09T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "total": 2,
+        "limit": 25,
+        "has_more": false,
+        "next_cursor": null
+      },
+      "meta": {
+        "platforms_queried": [
+          "myriad"
+        ],
+        "request_time": 120,
+        "cache_hit": false,
+        "data_freshness": "2026-10-09T00:00:00Z"
+      }
+    }
+  }
+}
