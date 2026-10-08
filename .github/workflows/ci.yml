@@ -46,7 +46,7 @@ jobs:
       - if: steps.ws.outputs.present == 'true'
         run: pnpm test
       - if: steps.ws.outputs.present != 'true'
-        run: echo "No pnpm workspace yet (added by #2) — skipping."
+        run: 'echo "No pnpm workspace yet (added by issue 2), skipping."'
 
   contracts:
     runs-on: ubuntu-latest
@@ -63,4 +63,4 @@ jobs:
         working-directory: contracts
         run: forge build --sizes && forge test -vvv
       - if: steps.fp.outputs.present != 'true'
-        run: echo "No Foundry project yet (added by #2) — skipping."
+        run: 'echo "No Foundry project yet (added by issue 2), skipping."'
