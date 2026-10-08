@@ -16,41 +16,41 @@ export const eventRoutes: RoutePlugin = (
     app,
     apiRoutes.listEvents,
     async ({ query }, ctx) => {
-    const offset = Number(query.cursor ?? 0);
-    if (!Number.isInteger(offset) || offset < 0) {
-      throw new HttpError(400, 'validation_error', 'invalid cursor');
-    }
-    // Semantic search is best-effort: if embedding fails, fall back to full-text only.
-    const queryVector =
-      query.q && embedder
-        ? await embedder
-            .embed([query.q])
-            .then(([v]) => v ?? null)
-            .catch((err) => {
-              app.log.warn({ err }, 'query embedding failed; full-text only');
-              return null;
-            })
-        : null;
-    const includePlayMoney = query.includePlayMoney === 'true';
-    const ids = await searchEventIds(db, {
-      ...query,
-      includePlayMoney,
-      closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
-      closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,
-      sort: query.sort ?? (query.q ? 'relevance' : 'volume'),
-      queryVector,
-      now: now(),
-      limit: query.limit,
-      offset,
-    });
-    const page = ids.slice(0, query.limit);
-    const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
-    return {
-      items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, countries, {
+      const offset = Number(query.cursor ?? 0);
+      if (!Number.isInteger(offset) || offset < 0) {
+        throw new HttpError(400, 'validation_error', 'invalid cursor');
+      }
+      // Semantic search is best-effort: if embedding fails, fall back to full-text only.
+      const queryVector =
+        query.q && embedder
+          ? await embedder
+              .embed([query.q])
+              .then(([v]) => v ?? null)
+              .catch((err) => {
+                app.log.warn({ err }, 'query embedding failed; full-text only');
+                return null;
+              })
+          : null;
+      const includePlayMoney = query.includePlayMoney === 'true';
+      const ids = await searchEventIds(db, {
+        ...query,
         includePlayMoney,
-      }),
-      nextCursor: ids.length > query.limit ? String(offset + query.limit) : null,
-    };
+        closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
+        closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,
+        sort: query.sort ?? (query.q ? 'relevance' : 'volume'),
+        queryVector,
+        now: now(),
+        limit: query.limit,
+        offset,
+      });
+      const page = ids.slice(0, query.limit);
+      const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
+      return {
+        items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, countries, {
+          includePlayMoney,
+        }),
+        nextCursor: ids.length > query.limit ? String(offset + query.limit) : null,
+      };
     },
     { auth: 'optional' },
   );
