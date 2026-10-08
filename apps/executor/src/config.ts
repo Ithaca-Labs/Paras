@@ -8,6 +8,31 @@ const Env = z.object({
   EXECUTOR_KEY_BACKEND: z.enum(['env', 'kms']).default('env'),
   /** 32 bytes hex. Encrypts session keys at rest (testnet only). */
   EXECUTOR_MASTER_KEY: z.string().optional(),
+  /**
+   * Run the Intent engine. Needs everything below plus a real CLOB client (follow-up; #35), so it is off by
+   * default and /health-only deployments keep working.
+   */
+  EXECUTOR_INTENTS_ENABLED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+  DATABASE_URL: z.string().optional(),
+  /** Executor key: EXECUTOR_ROLE on the Vault, pays gas for CCTP mints. */
+  EXECUTOR_PRIVATE_KEY: z
+    .string()
+    .regex(/^0x[0-9a-fA-F]{64}$/)
+    .optional(),
+  MONAD_RPC_URL: z.string().url().optional(),
+  VAULT_ADDRESS: z
+    .string()
+    .regex(/^0x[0-9a-fA-F]{40}$/)
+    .optional(),
+  VAULT_CHAIN_ID: z.coerce.number().int().optional(),
+  /** Block the Vault was deployed at: where event scans start. */
+  VAULT_START_BLOCK: z.coerce.number().int().default(0),
+  /** CCTP MessageTransmitterV2 on Monad (same address on every CCTP v2 mainnet). */
+  MONAD_MESSAGE_TRANSMITTER: z.string().default('0x81D40F21F12A8F0E3252Bccb954D722d4c464B64'),
+  IRIS_URL: z.string().url().default('https://iris-api.circle.com'),
   POLYGON_RPC_URL: z.string().url().optional(),
   POLYMARKET_RELAYER_URL: z.string().url().default('https://relayer-v2.polymarket.com'),
   /** Builder credentials (HITL #35). Required for live relayer calls. */

@@ -41,7 +41,13 @@ import {
 } from './profile.js';
 import { getCategory, listCategories } from './taxonomy.js';
 import { listVenues } from './venues.js';
-import { getVaultBalances } from './vault.js';
+import {
+  getDepositWallet,
+  getIntent,
+  getVaultBalances,
+  previewIntent,
+  requestDepositWallet,
+} from './vault.js';
 
 /**
  * Every API route. Add new route files here; the api, OpenAPI document and typed client
@@ -76,6 +82,10 @@ export const apiRoutes = {
   interpretInterest,
   getExplainer,
   getVaultBalances,
+  previewIntent,
+  getIntent,
+  getDepositWallet,
+  requestDepositWallet,
   getFeed,
   recordFeedSignal,
   listFollows,

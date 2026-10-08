@@ -14,8 +14,8 @@ export interface RelayerClient {
   submitBatch(p: { batch: Batch; signature: Hex; signer: Address }): Promise<{ txId: string }>;
   /** Next batch nonce for the wallet. */
   getNonce(wallet: Address): Promise<bigint>;
-  /** Resolves when the tx is confirmed; rejects on failure/timeout. */
-  waitConfirmed(txId: string): Promise<void>;
+  /** Resolves when the tx is confirmed (with its on-chain hash if the relayer reports one); rejects on failure/timeout. */
+  waitConfirmed(txId: string): Promise<{ txHash?: Hex }>;
 }
 
 export interface BuilderCreds {
@@ -115,11 +115,12 @@ export class HttpRelayerClient implements RelayerClient {
   async waitConfirmed(txId: string) {
     const deadline = Date.now() + (this.o.timeoutMs ?? 120_000);
     for (;;) {
-      const r = await this.req<{ state: string }>(
+      const r = await this.req<{ state: string; transactionHash?: Hex }>(
         'GET',
         `/transaction?id=${encodeURIComponent(txId)}`,
       );
-      if (r.state === 'STATE_CONFIRMED') return;
+      if (r.state === 'STATE_CONFIRMED')
+        return r.transactionHash ? { txHash: r.transactionHash } : {};
       if (r.state === 'STATE_FAILED' || r.state === 'STATE_INVALID')
         throw new Error(`relayer tx ${txId}: ${r.state}`);
       if (Date.now() > deadline) throw new Error(`relayer tx ${txId}: timeout in ${r.state}`);

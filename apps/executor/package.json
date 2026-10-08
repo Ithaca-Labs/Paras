@@ -14,10 +14,13 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@paras/adapters": "workspace:*",
     "@paras/db": "workspace:*",
+    "@paras/domain": "workspace:*",
     "@paras/shared": "workspace:*",
     "drizzle-orm": "0.45.4",
     "fastify": "5.12.5",
+    "pg-boss": "11.1.2",
     "viem": "2.57.4"
   },
   "devDependencies": {
