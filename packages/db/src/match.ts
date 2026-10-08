@@ -104,6 +104,10 @@ async function refreshAggregate(tx: Tx | Database, eventId: string) {
   if (!members?.length) return;
   const ref = refOf(members);
   const [m] = await tx.select().from(markets).where(eq(markets.id, ref.id));
+  const [lock] = await tx
+    .select({ labelLocked: events.labelLocked })
+    .from(events)
+    .where(eq(events.id, eventId));
   const all = await tx
     .select({ volume: markets.volume, liquidity: markets.liquidity, status: markets.status })
     .from(eventMarkets)
@@ -114,7 +118,7 @@ async function refreshAggregate(tx: Tx | Database, eventId: string) {
   await tx
     .update(events)
     .set({
-      title: m!.question,
+      ...(!lock?.labelLocked && { title: m!.question }),
       description: m!.description,
       endDate: m!.endDate,
       imageUrl: m!.imageUrl,

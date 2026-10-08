@@ -1,0 +1,1 @@
+ALTER TABLE "events" ADD COLUMN "label_locked" boolean DEFAULT false NOT NULL;

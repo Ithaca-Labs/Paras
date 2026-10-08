@@ -87,3 +87,25 @@ export const splitEvent = defineRoute({
   request: { params: reviewId, body: z.object({ marketId: z.string().uuid() }) },
   response: eventRef,
 });
+
+export const updateEventLabels = defineRoute({
+  method: 'patch',
+  path: '/v1/admin/events/{id}',
+  operationId: 'updateEventLabels',
+  summary: 'Relabel an Event title and/or category; the relabel survives re-sync (admin only)',
+  tags,
+  request: {
+    params: reviewId,
+    body: z
+      .object({
+        title: z.string().trim().min(1).max(300),
+        category: z.string().trim().min(1).max(80),
+      })
+      .partial()
+      .refine(
+        (b) => b.title !== undefined || b.category !== undefined,
+        'title or category required',
+      ),
+  },
+  response: z.object({ id: z.string().uuid(), title: z.string(), category: z.string().nullable() }),
+});

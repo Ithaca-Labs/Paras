@@ -12,6 +12,7 @@ import {
   mergeEvents,
   rejectMatchReview,
   splitEvent,
+  updateEventLabels,
 } from './admin.js';
 import { compareEvent, getEventHistory } from './compare.js';
 import { getEvent, listEvents, streamEventQuotes } from './events.js';
@@ -84,6 +85,7 @@ export const apiRoutes = {
   rejectMatchReview,
   mergeEvents,
   splitEvent,
+  updateEventLabels,
   getDisclosures,
   acknowledgeDisclosures,
   attestJurisdiction,

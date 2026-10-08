@@ -16,6 +16,12 @@ import { createVaultReader } from './vault.js';
 
 const config = loadConfig();
 const { db, close } = createDb(config.DATABASE_URL);
+const csv = (s: string) =>
+  s
+    .split(',')
+    .map((x) => x.trim().toLowerCase())
+    .filter(Boolean);
+
 const app = buildApp(
   {
     db,
@@ -57,6 +63,8 @@ const app = buildApp(
         secret: config.AUTH_SECRET ?? 'dev-only-insecure-auth-secret-change-me',
         domain: config.AUTH_DOMAIN,
         chainIds: config.AUTH_CHAIN_IDS.split(',').map(Number),
+        adminEmails: csv(config.ADMIN_EMAILS),
+        adminWallets: csv(config.ADMIN_WALLETS),
         secureCookie:
           (config.AUTH_COOKIE_SECURE ?? String(process.env.NODE_ENV === 'production')) === 'true',
       }),

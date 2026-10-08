@@ -2,6 +2,7 @@ import type { FeeSchedule, MarketStatus, VenueCapabilities } from '@paras/shared
 import { sql } from 'drizzle-orm';
 import {
   bigserial,
+  boolean,
   customType,
   doublePrecision,
   index,
@@ -86,6 +87,8 @@ export const events = pgTable(
     title: text('title').notNull(),
     description: text('description').notNull().default(''),
     category: text('category'),
+    /** Operator relabelled title/category (PATCH /v1/admin/events/{id}); sync and enrichment leave them alone. */
+    labelLocked: boolean('label_locked').notNull().default(false),
     status: text('status').$type<MarketStatus>().notNull(),
     endDate: ts('end_date'),
     imageUrl: text('image_url'),

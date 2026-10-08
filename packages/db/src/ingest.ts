@@ -127,7 +127,7 @@ export async function upsertMarkets(
       // Single-Market Events mirror their Market (matching merges later; merged Events are left alone).
       await tx.execute(sql`
         update ${events} e set
-          title = m.question,
+          title = case when e.label_locked then e.title else m.question end,
           description = m.description,
           liquidity = m.liquidity,
           status = m.status,

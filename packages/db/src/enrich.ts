@@ -36,7 +36,12 @@ export async function enrichEvents(
   let done = 0;
   while (done < maxEvents) {
     const pending = await db
-      .select({ id: events.id, title: events.title, description: events.description })
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        labelLocked: events.labelLocked,
+      })
       .from(events)
       .where(
         sql`${events.title} <> '' and (${events.embeddedHash} is null
@@ -68,7 +73,11 @@ export async function enrichEvents(
         const result = tagEvent({ ...e, venueLabels, vector }, index, tagging);
         await tx
           .update(events)
-          .set({ embedding: vector, embeddedHash: contentHash(e), category: result.category })
+          .set({
+            embedding: vector,
+            embeddedHash: contentHash(e),
+            ...(!e.labelLocked && { category: result.category }),
+          })
           .where(eq(events.id, e.id));
         await tx.delete(eventTags).where(eq(eventTags.eventId, e.id));
         if (result.tags.length) {
