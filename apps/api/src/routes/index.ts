@@ -7,6 +7,7 @@ import { feedRoutes } from './feed.js';
 import { healthRoutes } from './health.js';
 import { jurisdictionRoutes } from './jurisdiction.js';
 import { magicLinkRoutes } from './magic-links.js';
+import { notificationRoutes } from './notifications.js';
 import { openapiRoutes } from './openapi.js';
 import { profileRoutes } from './profile.js';
 import { taxonomyRoutes } from './taxonomy.js';
@@ -32,5 +33,6 @@ export const routePlugins: RoutePlugin[] = [
   profileRoutes,
   vaultRoutes,
   feedRoutes,
+  notificationRoutes,
   openapiRoutes,
 ];

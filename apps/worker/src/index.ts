@@ -8,6 +8,7 @@ import {
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { createTransformersEmbedder } from '@paras/embeddings';
+import { createMailer } from '@paras/shared';
 import { loadConfig } from './config.js';
 import { buildJobs, buildSchedules } from './jobs/index.js';
 import { buildWorker } from './worker.js';
@@ -29,6 +30,7 @@ const worker = buildWorker({
   jobs: buildJobs({
     db,
     adapters,
+    mailer: createMailer(config, (line) => worker.app.log.info(line)),
     ...(config.EMBEDDING_MODEL !== 'off' && {
       embedder: createTransformersEmbedder({
         model: config.EMBEDDING_MODEL,

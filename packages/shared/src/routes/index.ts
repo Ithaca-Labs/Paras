@@ -11,6 +11,12 @@ import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { addFollow, getFeed, listFollows, recordFeedSignal, removeFollow } from './feed.js';
 import { getHealth } from './health.js';
 import {
+  getNotificationPrefs,
+  listNotifications,
+  markNotificationsRead,
+  updateNotificationPrefs,
+} from './notifications.js';
+import {
   acknowledgeDisclosures,
   attestJurisdiction,
   getDisclosures,
@@ -68,6 +74,10 @@ export const apiRoutes = {
   listFollows,
   addFollow,
   removeFollow,
+  listNotifications,
+  markNotificationsRead,
+  getNotificationPrefs,
+  updateNotificationPrefs,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -80,6 +90,7 @@ export * from './magic-links.js';
 export * from './taxonomy.js';
 export * from './profile.js';
 export * from './feed.js';
+export * from './notifications.js';
 export * from './auth.js';
 export * from './venues.js';
 export * from './jurisdiction.js';

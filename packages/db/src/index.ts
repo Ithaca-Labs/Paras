@@ -9,3 +9,4 @@ export {
   type RecordQuotesOptions,
 } from './ingest.js';
 export { enrichEvents, refreshEventSignals, type EnrichOptions } from './enrich.js';
+export { notify, type NotifyInput, type NotifyMailer } from './notify.js';
