@@ -108,3 +108,20 @@ export {
   type FollowKind,
   type SignalKind,
 } from './feed.js';
+export {
+  ALERT_KINDS,
+  DEFAULT_ALERT_THRESHOLDS,
+  DEFAULT_NOTIFICATION_PREFS,
+  NOTIFICATION_FREQUENCIES,
+  NOTIFICATION_KINDS,
+  deliveryChannels,
+  detectAlerts,
+  digestPicks,
+  weekKey,
+  type AlertDraft,
+  type AlertEvent,
+  type AlertThresholds,
+  type NotificationFrequency,
+  type NotificationKind,
+  type NotificationPrefs,
+} from './notifications.js';
