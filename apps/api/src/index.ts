@@ -4,7 +4,7 @@ import {
   createLimitlessAdapter,
   createPolymarketAdapter,
   createSxBetAdapter,
-  polyRouterAdaptersFromEnv,
+  longTailAdaptersFromEnv,
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { createTransformersEmbedder } from '@paras/embeddings';
@@ -24,8 +24,8 @@ const app = buildApp(
       createLimitlessAdapter(),
       createSxBetAdapter(),
       createKalshiAdapter(),
-      // Long-tail Venues; [] unless POLYROUTER_ENABLED=true.
-      ...polyRouterAdaptersFromEnv(process.env),
+      // Long-tail Venues; key-gated ones are off while their key is unset.
+      ...longTailAdaptersFromEnv(process.env),
     ]),
     ...(config.MONAD_RPC_URL &&
       config.VAULT_ADDRESS && {

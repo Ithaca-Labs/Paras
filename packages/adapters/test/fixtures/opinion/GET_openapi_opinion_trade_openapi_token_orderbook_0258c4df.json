@@ -1,0 +1,41 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://openapi.opinion.trade/openapi/token/orderbook?token_id=30855947370351358952326667326829759123027516976930542473930806788720541985825"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "errmsg": "",
+      "errno": 0,
+      "result": {
+        "asks": [
+          {
+            "price": "0.943",
+            "size": "1146.48"
+          }
+        ],
+        "bids": [
+          {
+            "price": "0.801",
+            "size": "42.896379525593005"
+          },
+          {
+            "price": "0.8",
+            "size": "60"
+          },
+          {
+            "price": "0.2",
+            "size": "18.06"
+          }
+        ],
+        "market": "d8590593e05e9b10f1eed59574ab887904f59912a657e1ad5daf1219be755b65",
+        "timestamp": 1791499343763,
+        "tokenId": "30855947370351358952326667326829759123027516976930542473930806788720541985825"
+      }
+    }
+  }
+}

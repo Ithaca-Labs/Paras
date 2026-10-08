@@ -42,7 +42,7 @@ Use PRD glossary terms exactly in code, UI and docs: Venue, Market, Outcome, Eve
 - The user chooses the Event, Outcome and amount. The Vault only chooses the Venue. No autonomous strategies.
 - Kalshi is read-only plus a redirect. V1 routes to Polymarket only. Keep the Route interface venue-agnostic.
 - Vault execution is gated by jurisdiction (eligibility matrix). US users get discovery plus redirects.
-- Data sources must be free. Use native adapters for Polymarket, Kalshi, Limitless and SX Bet. Long-tail Venues go through the feature-flagged PolyRouter adapter. Paid vendors must never be on the critical path.
+- Data sources must be free. Use native adapters for Polymarket, Kalshi, Limitless and SX Bet. Long-tail Venues (Polymarket US, Opinion, Myriad, Probable, Novig, Predict.fun, ProphetX) also use native adapters; key-gated ones stay off while their key is unset. No aggregator (PolyRouter is dropped). Paid vendors must never be on the critical path.
 - The MCP server and web app hold no business logic. It lives in the API and domain modules.
 
 ## Git workflow (mandatory)

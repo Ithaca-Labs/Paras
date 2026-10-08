@@ -1,0 +1,163 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-v2.myriadprotocol.com/markets/549?network_id=2741"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "id": 549,
+      "networkId": 2741,
+      "slug": "polymarket-or-kalshi",
+      "title": "Polymarket or Kalshi?",
+      "shortName": null,
+      "ctaName": null,
+      "description": "**There are zero trading fees charged for this market.**\n\n**This market is to gauge social sentiment, is trading only, and will never be resolved towards either option.**\n\nPolymarket vs Kalshi: Both have emerged as strong contenders in the prediction race. While each has its own strengths and weaknesses, the main distinction in the public eye lies in their relationship with blockchain \u2014 one operates on-chain, the other off-chain.\n\nWith all things considered \u2014 the product, the team, the markets, and the overall experience \u2014 which do you prefer: **Polymarket or Kalshi?**\n\n**Resolution Criteria:**\n\n- This market will not resolve.\n\n**Resolution Details:**\n\n- No resolution can be triggered in this market.\n\n**Cancellation or Invalidity Conditions:**\n\n- Myriad Markets undergoes a change of its contract that demands a cancellation of all active markets, or similar technical or business imperatives.\n- Myriad Markets decides it is time for this market to cease to exist.\n\n*In the event of cancellation, participants may claim their stakes at the market value of their open positions at the time of cancellation. This may result in a profit or loss depending on share prices.*",
+      "publishedAt": "2025-11-08T11:02:20.000Z",
+      "expiresAt": "2100-01-01T00:01:00.000Z",
+      "resolvesAt": null,
+      "fees": {
+        "buy": {
+          "fee": 0,
+          "treasury_fee": 0,
+          "distributor_fee": 0
+        },
+        "sell": {
+          "fee": 0,
+          "treasury_fee": 0,
+          "distributor_fee": 0
+        },
+        "treasury": "0x5E3EbEc100e2294C0EB2264FC96225dF067AAaa3",
+        "distributor": "0xE44984C586FeBB31605D23b6316cA11B6f4D86b2"
+      },
+      "state": "open",
+      "voided": false,
+      "resolvedOutcomeId": -1,
+      "topics": [
+        "Sentiment"
+      ],
+      "tags": [],
+      "resolutionSource": "https://x.com/myriadmarkets",
+      "resolutionTitle": "You",
+      "token": {
+        "name": "Bridged USDC (Stargate)",
+        "address": "0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1",
+        "symbol": "USDC.e",
+        "decimals": 6
+      },
+      "imageUrl": "https://cdn.polkamarkets.com/QmaHmjD4WmrBLKg4Nd92KwQMC9P1KfYaUcZQFb2AfWUws7",
+      "bannerImageUrl": "https://imagedelivery.net/YN1-rdnufJQJCgu3i1CbVw/20176323-324a-4b47-283e-8c2f6e1d0900/public",
+      "ogImageUrl": "https://imagedelivery.net/YN1-rdnufJQJCgu3i1CbVw/690adcc0-6c22-4efb-50bf-fbaa8ebcbe00/public",
+      "liquidity": 1000,
+      "liquidityPrice": 0.83918023,
+      "volume": 15095415.269981,
+      "volume24h": 1,
+      "volumeNotional": 20204367.698193,
+      "volumeNotional24h": 4.392866,
+      "users": 1107,
+      "shares": 2384.070387,
+      "featured": false,
+      "featuredAt": null,
+      "inPlay": false,
+      "inPlayStartsAt": null,
+      "perpetual": true,
+      "moneyline": false,
+      "executionMode": 0,
+      "tradingModel": "amm",
+      "topHolders": [
+        "0x44d4b4189ACFD8B18d9939f7E76a78672eAd40c2",
+        "0x304fc7881ce775dd94607B4165006b70D885b441",
+        "0x861652c9E0eFCC39A1AC33A5334D2C46DDaC7ac2"
+      ],
+      "outcomes": [
+        {
+          "id": 0,
+          "title": "Polymarket",
+          "shares": 543.4864,
+          "sharesHeld": 1455.210207,
+          "price": 0.77203425,
+          "closingPrice": null,
+          "priceChange24h": -0.00083813,
+          "bestBid": null,
+          "bestAsk": null,
+          "imageUrl": "https://cdn.polkamarkets.com/QmaHmjD4WmrBLKg4Nd92KwQMC9P1KfYaUcZQFb2AfWUws7",
+          "holders": 115,
+          "tokenId": "1098",
+          "price_charts": [
+            {
+              "timeframe": "24h",
+              "prices": [],
+              "change_percent": 0
+            },
+            {
+              "timeframe": "7d",
+              "prices": [],
+              "change_percent": 0
+            },
+            {
+              "timeframe": "30d",
+              "prices": [],
+              "change_percent": 0
+            },
+            {
+              "timeframe": "all",
+              "prices": [],
+              "change_percent": 0
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Kalshi",
+          "shares": 1840.583987,
+          "sharesHeld": 158.11262,
+          "price": 0.22796575,
+          "closingPrice": null,
+          "priceChange24h": 0.0028489,
+          "bestBid": null,
+          "bestAsk": null,
+          "imageUrl": null,
+          "holders": 12,
+          "tokenId": "1099",
+          "price_charts": [
+            {
+              "timeframe": "24h",
+              "prices": [],
+              "change_percent": 0
+            },
+            {
+              "timeframe": "7d",
+              "prices": [],
+              "change_percent": 0
+            },
+            {
+              "timeframe": "30d",
+              "prices": [],
+              "change_percent": 0
+            },
+            {
+              "timeframe": "all",
+              "prices": [],
+              "change_percent": 0
+            }
+          ]
+        }
+      ],
+      "eventId": null,
+      "outcomeIndex": null,
+      "negRisk": false,
+      "oracle": {
+        "address": null,
+        "name": "Myriad",
+        "url": "https://myriad.markets",
+        "image_url": "https://wp.decrypt.co/wp-content/uploads/2026/05/myriad.png",
+        "data": null
+      },
+      "scoreboard": null,
+      "externalSources": []
+    }
+  }
+}

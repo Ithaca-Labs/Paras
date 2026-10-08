@@ -1,0 +1,2571 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api-v2.myriadprotocol.com/markets/120473?network_id=56"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "id": 120473,
+      "networkId": 56,
+      "slug": "crude-oil-s-next-move-pump-to-120-or-dump-to-55",
+      "title": "Crude Oil\u2019s next move: Pump to $120 or Dump to $55?",
+      "shortName": null,
+      "ctaName": null,
+      "description": "### **Market Details:**\n\n- **Market Close:** This market will only be closed once a resolution is achieved.\n- **Resolution Deadline:** The resolution will be determined as soon as an outcome is reached.\n- **Pump Target:** 120.000\n- **Dump Target**: 55.000\n\n### **Resolution Criteria:**\n\n- The market resolves based on which condition is met first:\n  - **\u201c$120\u201d** if the Crude Oil WTI (USD/Bbl) at Trading Economics reaches or exceeds the Pump Target.\n  - **\u201c$55\u201d** if the Crude Oil WTI (USD/Bbl) at Trading Economics\u00a0drops to equal or below the Dump Target.\n\n### **Resolution Details:**\n\n- The market resolves based on the one-minute (1m) price updates on the Crude Oil WTI (USD/Bbl) chart on the Trading Economics website.\n- Only the Crude Oil WTI (USD/Bbl) on Trading Economics\u00a0will be considered.\n\n### **Cancellation (Invalidity) Conditions:**\n\n- The [Crude Oil WTI (USD/Bbl) at Trading Economics](https://tradingeconomics.com/commodity/crude-oil) becomes unavailable, compromised, or fails to update for seven days straight.\n- Any circumstance prevents reliable price tracking.\n- Myriad Markets undergoes a change in its contract that demands a cancellation of all active markets, or a similar significant technical change.\n\nIn the event of cancellation, participants may claim their stakes at the market value of their open positions at the time of cancellation. This could result in a profit or a loss, depending on the price of their outstanding shares.",
+      "publishedAt": "2026-03-11T15:04:29.000Z",
+      "expiresAt": "2100-01-01T00:01:00.000Z",
+      "resolvesAt": null,
+      "fees": {
+        "buy": {
+          "fee": 0,
+          "treasury_fee": 0,
+          "distributor_fee": 0
+        },
+        "sell": {
+          "fee": 0,
+          "treasury_fee": 0,
+          "distributor_fee": 0
+        },
+        "treasury": "0x5E3EbEc100e2294C0EB2264FC96225dF067AAaa3",
+        "distributor": "0xE44984C586FeBB31605D23b6316cA11B6f4D86b2"
+      },
+      "state": "open",
+      "voided": false,
+      "resolvedOutcomeId": -1,
+      "topics": [
+        "Economy"
+      ],
+      "tags": [],
+      "resolutionSource": "https://tradingeconomics.com/commodity/crude-oil",
+      "resolutionTitle": "Trading Economics",
+      "token": {
+        "name": "World Liberty Financial USD",
+        "address": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+        "symbol": "USD1",
+        "decimals": 18
+      },
+      "imageUrl": "https://cdn.polkamarkets.com/QmYWuwsHv8ZRYthkFc5SF7DZNTfqv8pvG1mJRKW2uzFP2M",
+      "bannerImageUrl": "https://imagedelivery.net/YN1-rdnufJQJCgu3i1CbVw/e11bc0f6-a97f-4e7b-981e-2340057bb700/public",
+      "ogImageUrl": "https://imagedelivery.net/YN1-rdnufJQJCgu3i1CbVw/f33626ab-c863-4aee-4a52-b8c91f6b9500/public",
+      "liquidity": 1500,
+      "liquidityPrice": 0.8935663,
+      "volume": 8492952.35666103,
+      "volume24h": 5554.10653332,
+      "volumeNotional": 13672984.11840455,
+      "volumeNotional24h": 10517.38541834,
+      "users": 4090,
+      "shares": 2746.90916945,
+      "featured": true,
+      "featuredAt": "2027-05-15T15:56:25.212Z",
+      "inPlay": false,
+      "inPlayStartsAt": null,
+      "perpetual": false,
+      "moneyline": false,
+      "executionMode": 0,
+      "tradingModel": "amm",
+      "topHolders": [
+        "0x3288F8C54C9C63D55Ba159e8B6076FcA2960c602",
+        "0x6fD3a753943802d0F42B6b885d0Ee496116550b3",
+        "0xCEe198c0e83a969768e061c5f5aFD59700087AE2"
+      ],
+      "outcomes": [
+        {
+          "id": 0,
+          "title": "$120",
+          "shares": 1160.2213664,
+          "sharesHeld": 3897.41800226,
+          "price": 0.5776266,
+          "closingPrice": null,
+          "priceChange24h": 0.08411956,
+          "bestBid": null,
+          "bestAsk": null,
+          "imageUrl": "https://cdn.polkamarkets.com/QmYWuwsHv8ZRYthkFc5SF7DZNTfqv8pvG1mJRKW2uzFP2M",
+          "holders": 104,
+          "tokenId": "240946",
+          "price_charts": [
+            {
+              "timeframe": "24h",
+              "prices": [
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791470100,
+                  "date": "2026-10-08T14:35:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791470400,
+                  "date": "2026-10-08T14:40:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791470700,
+                  "date": "2026-10-08T14:45:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791471000,
+                  "date": "2026-10-08T14:50:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791471300,
+                  "date": "2026-10-08T14:55:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791471600,
+                  "date": "2026-10-08T15:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791471900,
+                  "date": "2026-10-08T15:05:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791472200,
+                  "date": "2026-10-08T15:10:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791472500,
+                  "date": "2026-10-08T15:15:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791472800,
+                  "date": "2026-10-08T15:20:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791473100,
+                  "date": "2026-10-08T15:25:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791473400,
+                  "date": "2026-10-08T15:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791473700,
+                  "date": "2026-10-08T15:35:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791474000,
+                  "date": "2026-10-08T15:40:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791474300,
+                  "date": "2026-10-08T15:45:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791474600,
+                  "date": "2026-10-08T15:50:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791474900,
+                  "date": "2026-10-08T15:55:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791475500,
+                  "date": "2026-10-08T16:05:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791475800,
+                  "date": "2026-10-08T16:10:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791476100,
+                  "date": "2026-10-08T16:15:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791476400,
+                  "date": "2026-10-08T16:20:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791476700,
+                  "date": "2026-10-08T16:25:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791477000,
+                  "date": "2026-10-08T16:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791477300,
+                  "date": "2026-10-08T16:35:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791477600,
+                  "date": "2026-10-08T16:40:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791477900,
+                  "date": "2026-10-08T16:45:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791478200,
+                  "date": "2026-10-08T16:50:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791478500,
+                  "date": "2026-10-08T16:55:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791478800,
+                  "date": "2026-10-08T17:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791479100,
+                  "date": "2026-10-08T17:05:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791479400,
+                  "date": "2026-10-08T17:10:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791479700,
+                  "date": "2026-10-08T17:15:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791480000,
+                  "date": "2026-10-08T17:20:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791480300,
+                  "date": "2026-10-08T17:25:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791480600,
+                  "date": "2026-10-08T17:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791480900,
+                  "date": "2026-10-08T17:35:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791481200,
+                  "date": "2026-10-08T17:40:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791481500,
+                  "date": "2026-10-08T17:45:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791481800,
+                  "date": "2026-10-08T17:50:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791482100,
+                  "date": "2026-10-08T17:55:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791482400,
+                  "date": "2026-10-08T18:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791482700,
+                  "date": "2026-10-08T18:05:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791483000,
+                  "date": "2026-10-08T18:10:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791483300,
+                  "date": "2026-10-08T18:15:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791483600,
+                  "date": "2026-10-08T18:20:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791483900,
+                  "date": "2026-10-08T18:25:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791484200,
+                  "date": "2026-10-08T18:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791484500,
+                  "date": "2026-10-08T18:35:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791484800,
+                  "date": "2026-10-08T18:40:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791485100,
+                  "date": "2026-10-08T18:45:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791485400,
+                  "date": "2026-10-08T18:50:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791485700,
+                  "date": "2026-10-08T18:55:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791486000,
+                  "date": "2026-10-08T19:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791486300,
+                  "date": "2026-10-08T19:05:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791486600,
+                  "date": "2026-10-08T19:10:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791486900,
+                  "date": "2026-10-08T19:15:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791487200,
+                  "date": "2026-10-08T19:20:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791487500,
+                  "date": "2026-10-08T19:25:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791487800,
+                  "date": "2026-10-08T19:30:00.000Z"
+                }
+              ],
+              "change_percent": 0.07540495252280763
+            },
+            {
+              "timeframe": "7d",
+              "prices": [
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791381600,
+                  "date": "2026-10-07T14:00:00.000Z"
+                },
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791383400,
+                  "date": "2026-10-07T14:30:00.000Z"
+                },
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791385200,
+                  "date": "2026-10-07T15:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791387000,
+                  "date": "2026-10-07T15:30:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791388800,
+                  "date": "2026-10-07T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791390600,
+                  "date": "2026-10-07T16:30:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791392400,
+                  "date": "2026-10-07T17:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791394200,
+                  "date": "2026-10-07T17:30:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791396000,
+                  "date": "2026-10-07T18:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791397800,
+                  "date": "2026-10-07T18:30:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791399600,
+                  "date": "2026-10-07T19:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791401400,
+                  "date": "2026-10-07T19:30:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791403200,
+                  "date": "2026-10-07T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791405000,
+                  "date": "2026-10-07T20:30:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791406800,
+                  "date": "2026-10-07T21:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791408600,
+                  "date": "2026-10-07T21:30:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791410400,
+                  "date": "2026-10-07T22:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791412200,
+                  "date": "2026-10-07T22:30:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791414000,
+                  "date": "2026-10-07T23:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791415800,
+                  "date": "2026-10-07T23:30:00.000Z"
+                },
+                {
+                  "value": 0.5329,
+                  "timestamp": 1791417600,
+                  "date": "2026-10-08T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791419400,
+                  "date": "2026-10-08T00:30:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791421200,
+                  "date": "2026-10-08T01:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791423000,
+                  "date": "2026-10-08T01:30:00.000Z"
+                },
+                {
+                  "value": 0.533,
+                  "timestamp": 1791424800,
+                  "date": "2026-10-08T02:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791426600,
+                  "date": "2026-10-08T02:30:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791428400,
+                  "date": "2026-10-08T03:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791430200,
+                  "date": "2026-10-08T03:30:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791432000,
+                  "date": "2026-10-08T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791433800,
+                  "date": "2026-10-08T04:30:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791435600,
+                  "date": "2026-10-08T05:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791437400,
+                  "date": "2026-10-08T05:30:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791439200,
+                  "date": "2026-10-08T06:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791441000,
+                  "date": "2026-10-08T06:30:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791442800,
+                  "date": "2026-10-08T07:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791444600,
+                  "date": "2026-10-08T07:30:00.000Z"
+                },
+                {
+                  "value": 0.5477,
+                  "timestamp": 1791446400,
+                  "date": "2026-10-08T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5477,
+                  "timestamp": 1791448200,
+                  "date": "2026-10-08T08:30:00.000Z"
+                },
+                {
+                  "value": 0.5477,
+                  "timestamp": 1791450000,
+                  "date": "2026-10-08T09:00:00.000Z"
+                },
+                {
+                  "value": 0.5477,
+                  "timestamp": 1791451800,
+                  "date": "2026-10-08T09:30:00.000Z"
+                },
+                {
+                  "value": 0.5601,
+                  "timestamp": 1791453600,
+                  "date": "2026-10-08T10:00:00.000Z"
+                },
+                {
+                  "value": 0.5779,
+                  "timestamp": 1791455400,
+                  "date": "2026-10-08T10:30:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791457200,
+                  "date": "2026-10-08T11:00:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791459000,
+                  "date": "2026-10-08T11:30:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791460800,
+                  "date": "2026-10-08T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791462600,
+                  "date": "2026-10-08T12:30:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791464400,
+                  "date": "2026-10-08T13:00:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791466200,
+                  "date": "2026-10-08T13:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791468000,
+                  "date": "2026-10-08T14:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791469800,
+                  "date": "2026-10-08T14:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791471600,
+                  "date": "2026-10-08T15:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791473400,
+                  "date": "2026-10-08T15:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791477000,
+                  "date": "2026-10-08T16:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791478800,
+                  "date": "2026-10-08T17:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791480600,
+                  "date": "2026-10-08T17:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791482400,
+                  "date": "2026-10-08T18:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791484200,
+                  "date": "2026-10-08T18:30:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791486000,
+                  "date": "2026-10-08T19:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791487800,
+                  "date": "2026-10-08T19:30:00.000Z"
+                }
+              ],
+              "change_percent": -0.012987012987013073
+            },
+            {
+              "timeframe": "30d",
+              "prices": [
+                {
+                  "value": 0.6039,
+                  "timestamp": 1790625600,
+                  "date": "2026-09-28T20:00:00.000Z"
+                },
+                {
+                  "value": 0.6048,
+                  "timestamp": 1790640000,
+                  "date": "2026-09-29T00:00:00.000Z"
+                },
+                {
+                  "value": 0.6214,
+                  "timestamp": 1790654400,
+                  "date": "2026-09-29T04:00:00.000Z"
+                },
+                {
+                  "value": 0.6214,
+                  "timestamp": 1790668800,
+                  "date": "2026-09-29T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5876,
+                  "timestamp": 1790683200,
+                  "date": "2026-09-29T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5909,
+                  "timestamp": 1790697600,
+                  "date": "2026-09-29T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5909,
+                  "timestamp": 1790712000,
+                  "date": "2026-09-29T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5909,
+                  "timestamp": 1790726400,
+                  "date": "2026-09-30T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5905,
+                  "timestamp": 1790740800,
+                  "date": "2026-09-30T04:00:00.000Z"
+                },
+                {
+                  "value": 0.6013,
+                  "timestamp": 1790755200,
+                  "date": "2026-09-30T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5832,
+                  "timestamp": 1790769600,
+                  "date": "2026-09-30T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5832,
+                  "timestamp": 1790784000,
+                  "date": "2026-09-30T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5855,
+                  "timestamp": 1790798400,
+                  "date": "2026-09-30T20:00:00.000Z"
+                },
+                {
+                  "value": 0.586,
+                  "timestamp": 1790812800,
+                  "date": "2026-10-01T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790827200,
+                  "date": "2026-10-01T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790841600,
+                  "date": "2026-10-01T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790856000,
+                  "date": "2026-10-01T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790870400,
+                  "date": "2026-10-01T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790884800,
+                  "date": "2026-10-01T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790899200,
+                  "date": "2026-10-02T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5916,
+                  "timestamp": 1790913600,
+                  "date": "2026-10-02T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5731,
+                  "timestamp": 1790928000,
+                  "date": "2026-10-02T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5595,
+                  "timestamp": 1790942400,
+                  "date": "2026-10-02T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5595,
+                  "timestamp": 1790956800,
+                  "date": "2026-10-02T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5565,
+                  "timestamp": 1790971200,
+                  "date": "2026-10-02T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5563,
+                  "timestamp": 1790985600,
+                  "date": "2026-10-03T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5667,
+                  "timestamp": 1791000000,
+                  "date": "2026-10-03T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5714,
+                  "timestamp": 1791014400,
+                  "date": "2026-10-03T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5363,
+                  "timestamp": 1791028800,
+                  "date": "2026-10-03T12:00:00.000Z"
+                },
+                {
+                  "value": 0.539,
+                  "timestamp": 1791043200,
+                  "date": "2026-10-03T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5363,
+                  "timestamp": 1791057600,
+                  "date": "2026-10-03T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5362,
+                  "timestamp": 1791072000,
+                  "date": "2026-10-04T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5361,
+                  "timestamp": 1791086400,
+                  "date": "2026-10-04T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5356,
+                  "timestamp": 1791100800,
+                  "date": "2026-10-04T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5556,
+                  "timestamp": 1791115200,
+                  "date": "2026-10-04T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5362,
+                  "timestamp": 1791129600,
+                  "date": "2026-10-04T16:00:00.000Z"
+                },
+                {
+                  "value": 0.54,
+                  "timestamp": 1791144000,
+                  "date": "2026-10-04T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5357,
+                  "timestamp": 1791158400,
+                  "date": "2026-10-05T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5357,
+                  "timestamp": 1791172800,
+                  "date": "2026-10-05T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5357,
+                  "timestamp": 1791187200,
+                  "date": "2026-10-05T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791201600,
+                  "date": "2026-10-05T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791216000,
+                  "date": "2026-10-05T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791230400,
+                  "date": "2026-10-05T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5367,
+                  "timestamp": 1791244800,
+                  "date": "2026-10-06T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5367,
+                  "timestamp": 1791259200,
+                  "date": "2026-10-06T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5367,
+                  "timestamp": 1791273600,
+                  "date": "2026-10-06T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791288000,
+                  "date": "2026-10-06T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5366,
+                  "timestamp": 1791302400,
+                  "date": "2026-10-06T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5366,
+                  "timestamp": 1791316800,
+                  "date": "2026-10-06T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5362,
+                  "timestamp": 1791331200,
+                  "date": "2026-10-07T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791345600,
+                  "date": "2026-10-07T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791360000,
+                  "date": "2026-10-07T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791374400,
+                  "date": "2026-10-07T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791388800,
+                  "date": "2026-10-07T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791403200,
+                  "date": "2026-10-07T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791417600,
+                  "date": "2026-10-08T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791432000,
+                  "date": "2026-10-08T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791446400,
+                  "date": "2026-10-08T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791460800,
+                  "date": "2026-10-08T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                }
+              ],
+              "change_percent": 0.05865102639296193
+            },
+            {
+              "timeframe": "all",
+              "prices": [
+                {
+                  "value": 0.6039,
+                  "timestamp": 1790625600,
+                  "date": "2026-09-28T20:00:00.000Z"
+                },
+                {
+                  "value": 0.6048,
+                  "timestamp": 1790640000,
+                  "date": "2026-09-29T00:00:00.000Z"
+                },
+                {
+                  "value": 0.6214,
+                  "timestamp": 1790654400,
+                  "date": "2026-09-29T04:00:00.000Z"
+                },
+                {
+                  "value": 0.6214,
+                  "timestamp": 1790668800,
+                  "date": "2026-09-29T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5876,
+                  "timestamp": 1790683200,
+                  "date": "2026-09-29T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5909,
+                  "timestamp": 1790697600,
+                  "date": "2026-09-29T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5909,
+                  "timestamp": 1790712000,
+                  "date": "2026-09-29T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5909,
+                  "timestamp": 1790726400,
+                  "date": "2026-09-30T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5905,
+                  "timestamp": 1790740800,
+                  "date": "2026-09-30T04:00:00.000Z"
+                },
+                {
+                  "value": 0.6013,
+                  "timestamp": 1790755200,
+                  "date": "2026-09-30T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5832,
+                  "timestamp": 1790769600,
+                  "date": "2026-09-30T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5832,
+                  "timestamp": 1790784000,
+                  "date": "2026-09-30T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5855,
+                  "timestamp": 1790798400,
+                  "date": "2026-09-30T20:00:00.000Z"
+                },
+                {
+                  "value": 0.586,
+                  "timestamp": 1790812800,
+                  "date": "2026-10-01T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790827200,
+                  "date": "2026-10-01T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790841600,
+                  "date": "2026-10-01T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790856000,
+                  "date": "2026-10-01T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790870400,
+                  "date": "2026-10-01T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790884800,
+                  "date": "2026-10-01T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5852,
+                  "timestamp": 1790899200,
+                  "date": "2026-10-02T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5916,
+                  "timestamp": 1790913600,
+                  "date": "2026-10-02T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5731,
+                  "timestamp": 1790928000,
+                  "date": "2026-10-02T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5595,
+                  "timestamp": 1790942400,
+                  "date": "2026-10-02T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5595,
+                  "timestamp": 1790956800,
+                  "date": "2026-10-02T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5565,
+                  "timestamp": 1790971200,
+                  "date": "2026-10-02T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5563,
+                  "timestamp": 1790985600,
+                  "date": "2026-10-03T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5667,
+                  "timestamp": 1791000000,
+                  "date": "2026-10-03T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5714,
+                  "timestamp": 1791014400,
+                  "date": "2026-10-03T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5363,
+                  "timestamp": 1791028800,
+                  "date": "2026-10-03T12:00:00.000Z"
+                },
+                {
+                  "value": 0.539,
+                  "timestamp": 1791043200,
+                  "date": "2026-10-03T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5363,
+                  "timestamp": 1791057600,
+                  "date": "2026-10-03T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5362,
+                  "timestamp": 1791072000,
+                  "date": "2026-10-04T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5361,
+                  "timestamp": 1791086400,
+                  "date": "2026-10-04T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5356,
+                  "timestamp": 1791100800,
+                  "date": "2026-10-04T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5556,
+                  "timestamp": 1791115200,
+                  "date": "2026-10-04T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5362,
+                  "timestamp": 1791129600,
+                  "date": "2026-10-04T16:00:00.000Z"
+                },
+                {
+                  "value": 0.54,
+                  "timestamp": 1791144000,
+                  "date": "2026-10-04T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5357,
+                  "timestamp": 1791158400,
+                  "date": "2026-10-05T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5357,
+                  "timestamp": 1791172800,
+                  "date": "2026-10-05T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5357,
+                  "timestamp": 1791187200,
+                  "date": "2026-10-05T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791201600,
+                  "date": "2026-10-05T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791216000,
+                  "date": "2026-10-05T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791230400,
+                  "date": "2026-10-05T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5367,
+                  "timestamp": 1791244800,
+                  "date": "2026-10-06T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5367,
+                  "timestamp": 1791259200,
+                  "date": "2026-10-06T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5367,
+                  "timestamp": 1791273600,
+                  "date": "2026-10-06T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791288000,
+                  "date": "2026-10-06T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5366,
+                  "timestamp": 1791302400,
+                  "date": "2026-10-06T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5366,
+                  "timestamp": 1791316800,
+                  "date": "2026-10-06T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5362,
+                  "timestamp": 1791331200,
+                  "date": "2026-10-07T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791345600,
+                  "date": "2026-10-07T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5334,
+                  "timestamp": 1791360000,
+                  "date": "2026-10-07T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791374400,
+                  "date": "2026-10-07T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5371,
+                  "timestamp": 1791388800,
+                  "date": "2026-10-07T16:00:00.000Z"
+                },
+                {
+                  "value": 0.5328,
+                  "timestamp": 1791403200,
+                  "date": "2026-10-07T20:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791417600,
+                  "date": "2026-10-08T00:00:00.000Z"
+                },
+                {
+                  "value": 0.5338,
+                  "timestamp": 1791432000,
+                  "date": "2026-10-08T04:00:00.000Z"
+                },
+                {
+                  "value": 0.5811,
+                  "timestamp": 1791446400,
+                  "date": "2026-10-08T08:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791460800,
+                  "date": "2026-10-08T12:00:00.000Z"
+                },
+                {
+                  "value": 0.5776,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                }
+              ],
+              "change_percent": 0.3948321661434435
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "$55",
+          "shares": 1586.68780306,
+          "sharesHeld": 3470.9515656,
+          "price": 0.4223734,
+          "closingPrice": null,
+          "priceChange24h": -0.0959336,
+          "bestBid": null,
+          "bestAsk": null,
+          "imageUrl": null,
+          "holders": 29,
+          "tokenId": "240947",
+          "price_charts": [
+            {
+              "timeframe": "24h",
+              "prices": [
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791470100,
+                  "date": "2026-10-08T14:35:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791470400,
+                  "date": "2026-10-08T14:40:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791470700,
+                  "date": "2026-10-08T14:45:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791471000,
+                  "date": "2026-10-08T14:50:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791471300,
+                  "date": "2026-10-08T14:55:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791471600,
+                  "date": "2026-10-08T15:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791471900,
+                  "date": "2026-10-08T15:05:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791472200,
+                  "date": "2026-10-08T15:10:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791472500,
+                  "date": "2026-10-08T15:15:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791472800,
+                  "date": "2026-10-08T15:20:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791473100,
+                  "date": "2026-10-08T15:25:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791473400,
+                  "date": "2026-10-08T15:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791473700,
+                  "date": "2026-10-08T15:35:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791474000,
+                  "date": "2026-10-08T15:40:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791474300,
+                  "date": "2026-10-08T15:45:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791474600,
+                  "date": "2026-10-08T15:50:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791474900,
+                  "date": "2026-10-08T15:55:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791475500,
+                  "date": "2026-10-08T16:05:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791475800,
+                  "date": "2026-10-08T16:10:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791476100,
+                  "date": "2026-10-08T16:15:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791476400,
+                  "date": "2026-10-08T16:20:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791476700,
+                  "date": "2026-10-08T16:25:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791477000,
+                  "date": "2026-10-08T16:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791477300,
+                  "date": "2026-10-08T16:35:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791477600,
+                  "date": "2026-10-08T16:40:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791477900,
+                  "date": "2026-10-08T16:45:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791478200,
+                  "date": "2026-10-08T16:50:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791478500,
+                  "date": "2026-10-08T16:55:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791478800,
+                  "date": "2026-10-08T17:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791479100,
+                  "date": "2026-10-08T17:05:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791479400,
+                  "date": "2026-10-08T17:10:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791479700,
+                  "date": "2026-10-08T17:15:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791480000,
+                  "date": "2026-10-08T17:20:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791480300,
+                  "date": "2026-10-08T17:25:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791480600,
+                  "date": "2026-10-08T17:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791480900,
+                  "date": "2026-10-08T17:35:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791481200,
+                  "date": "2026-10-08T17:40:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791481500,
+                  "date": "2026-10-08T17:45:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791481800,
+                  "date": "2026-10-08T17:50:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791482100,
+                  "date": "2026-10-08T17:55:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791482400,
+                  "date": "2026-10-08T18:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791482700,
+                  "date": "2026-10-08T18:05:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791483000,
+                  "date": "2026-10-08T18:10:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791483300,
+                  "date": "2026-10-08T18:15:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791483600,
+                  "date": "2026-10-08T18:20:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791483900,
+                  "date": "2026-10-08T18:25:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791484200,
+                  "date": "2026-10-08T18:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791484500,
+                  "date": "2026-10-08T18:35:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791484800,
+                  "date": "2026-10-08T18:40:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791485100,
+                  "date": "2026-10-08T18:45:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791485400,
+                  "date": "2026-10-08T18:50:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791485700,
+                  "date": "2026-10-08T18:55:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791486000,
+                  "date": "2026-10-08T19:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791486300,
+                  "date": "2026-10-08T19:05:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791486600,
+                  "date": "2026-10-08T19:10:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791486900,
+                  "date": "2026-10-08T19:15:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791487200,
+                  "date": "2026-10-08T19:20:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791487500,
+                  "date": "2026-10-08T19:25:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791487800,
+                  "date": "2026-10-08T19:30:00.000Z"
+                }
+              ],
+              "change_percent": -0.08749189889825013
+            },
+            {
+              "timeframe": "7d",
+              "prices": [
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791381600,
+                  "date": "2026-10-07T14:00:00.000Z"
+                },
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791383400,
+                  "date": "2026-10-07T14:30:00.000Z"
+                },
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791385200,
+                  "date": "2026-10-07T15:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791387000,
+                  "date": "2026-10-07T15:30:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791388800,
+                  "date": "2026-10-07T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791390600,
+                  "date": "2026-10-07T16:30:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791392400,
+                  "date": "2026-10-07T17:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791394200,
+                  "date": "2026-10-07T17:30:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791396000,
+                  "date": "2026-10-07T18:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791397800,
+                  "date": "2026-10-07T18:30:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791399600,
+                  "date": "2026-10-07T19:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791401400,
+                  "date": "2026-10-07T19:30:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791403200,
+                  "date": "2026-10-07T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791405000,
+                  "date": "2026-10-07T20:30:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791406800,
+                  "date": "2026-10-07T21:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791408600,
+                  "date": "2026-10-07T21:30:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791410400,
+                  "date": "2026-10-07T22:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791412200,
+                  "date": "2026-10-07T22:30:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791414000,
+                  "date": "2026-10-07T23:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791415800,
+                  "date": "2026-10-07T23:30:00.000Z"
+                },
+                {
+                  "value": 0.4671,
+                  "timestamp": 1791417600,
+                  "date": "2026-10-08T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791419400,
+                  "date": "2026-10-08T00:30:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791421200,
+                  "date": "2026-10-08T01:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791423000,
+                  "date": "2026-10-08T01:30:00.000Z"
+                },
+                {
+                  "value": 0.467,
+                  "timestamp": 1791424800,
+                  "date": "2026-10-08T02:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791426600,
+                  "date": "2026-10-08T02:30:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791428400,
+                  "date": "2026-10-08T03:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791430200,
+                  "date": "2026-10-08T03:30:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791432000,
+                  "date": "2026-10-08T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791433800,
+                  "date": "2026-10-08T04:30:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791435600,
+                  "date": "2026-10-08T05:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791437400,
+                  "date": "2026-10-08T05:30:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791439200,
+                  "date": "2026-10-08T06:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791441000,
+                  "date": "2026-10-08T06:30:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791442800,
+                  "date": "2026-10-08T07:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791444600,
+                  "date": "2026-10-08T07:30:00.000Z"
+                },
+                {
+                  "value": 0.4523,
+                  "timestamp": 1791446400,
+                  "date": "2026-10-08T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4523,
+                  "timestamp": 1791448200,
+                  "date": "2026-10-08T08:30:00.000Z"
+                },
+                {
+                  "value": 0.4523,
+                  "timestamp": 1791450000,
+                  "date": "2026-10-08T09:00:00.000Z"
+                },
+                {
+                  "value": 0.4523,
+                  "timestamp": 1791451800,
+                  "date": "2026-10-08T09:30:00.000Z"
+                },
+                {
+                  "value": 0.4399,
+                  "timestamp": 1791453600,
+                  "date": "2026-10-08T10:00:00.000Z"
+                },
+                {
+                  "value": 0.4221,
+                  "timestamp": 1791455400,
+                  "date": "2026-10-08T10:30:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791457200,
+                  "date": "2026-10-08T11:00:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791459000,
+                  "date": "2026-10-08T11:30:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791460800,
+                  "date": "2026-10-08T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791462600,
+                  "date": "2026-10-08T12:30:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791464400,
+                  "date": "2026-10-08T13:00:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791466200,
+                  "date": "2026-10-08T13:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791468000,
+                  "date": "2026-10-08T14:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791469800,
+                  "date": "2026-10-08T14:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791471600,
+                  "date": "2026-10-08T15:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791473400,
+                  "date": "2026-10-08T15:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791477000,
+                  "date": "2026-10-08T16:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791478800,
+                  "date": "2026-10-08T17:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791480600,
+                  "date": "2026-10-08T17:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791482400,
+                  "date": "2026-10-08T18:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791484200,
+                  "date": "2026-10-08T18:30:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791486000,
+                  "date": "2026-10-08T19:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791487800,
+                  "date": "2026-10-08T19:30:00.000Z"
+                }
+              ],
+              "change_percent": 0.018322082931533257
+            },
+            {
+              "timeframe": "30d",
+              "prices": [
+                {
+                  "value": 0.3961,
+                  "timestamp": 1790625600,
+                  "date": "2026-09-28T20:00:00.000Z"
+                },
+                {
+                  "value": 0.3952,
+                  "timestamp": 1790640000,
+                  "date": "2026-09-29T00:00:00.000Z"
+                },
+                {
+                  "value": 0.3786,
+                  "timestamp": 1790654400,
+                  "date": "2026-09-29T04:00:00.000Z"
+                },
+                {
+                  "value": 0.3786,
+                  "timestamp": 1790668800,
+                  "date": "2026-09-29T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4124,
+                  "timestamp": 1790683200,
+                  "date": "2026-09-29T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4091,
+                  "timestamp": 1790697600,
+                  "date": "2026-09-29T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4091,
+                  "timestamp": 1790712000,
+                  "date": "2026-09-29T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4091,
+                  "timestamp": 1790726400,
+                  "date": "2026-09-30T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4095,
+                  "timestamp": 1790740800,
+                  "date": "2026-09-30T04:00:00.000Z"
+                },
+                {
+                  "value": 0.3987,
+                  "timestamp": 1790755200,
+                  "date": "2026-09-30T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4168,
+                  "timestamp": 1790769600,
+                  "date": "2026-09-30T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4168,
+                  "timestamp": 1790784000,
+                  "date": "2026-09-30T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4145,
+                  "timestamp": 1790798400,
+                  "date": "2026-09-30T20:00:00.000Z"
+                },
+                {
+                  "value": 0.414,
+                  "timestamp": 1790812800,
+                  "date": "2026-10-01T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790827200,
+                  "date": "2026-10-01T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790841600,
+                  "date": "2026-10-01T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790856000,
+                  "date": "2026-10-01T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790870400,
+                  "date": "2026-10-01T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790884800,
+                  "date": "2026-10-01T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790899200,
+                  "date": "2026-10-02T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4084,
+                  "timestamp": 1790913600,
+                  "date": "2026-10-02T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4269,
+                  "timestamp": 1790928000,
+                  "date": "2026-10-02T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4405,
+                  "timestamp": 1790942400,
+                  "date": "2026-10-02T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4405,
+                  "timestamp": 1790956800,
+                  "date": "2026-10-02T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4435,
+                  "timestamp": 1790971200,
+                  "date": "2026-10-02T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4437,
+                  "timestamp": 1790985600,
+                  "date": "2026-10-03T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4333,
+                  "timestamp": 1791000000,
+                  "date": "2026-10-03T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4286,
+                  "timestamp": 1791014400,
+                  "date": "2026-10-03T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4637,
+                  "timestamp": 1791028800,
+                  "date": "2026-10-03T12:00:00.000Z"
+                },
+                {
+                  "value": 0.461,
+                  "timestamp": 1791043200,
+                  "date": "2026-10-03T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4637,
+                  "timestamp": 1791057600,
+                  "date": "2026-10-03T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4638,
+                  "timestamp": 1791072000,
+                  "date": "2026-10-04T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4639,
+                  "timestamp": 1791086400,
+                  "date": "2026-10-04T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4644,
+                  "timestamp": 1791100800,
+                  "date": "2026-10-04T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4444,
+                  "timestamp": 1791115200,
+                  "date": "2026-10-04T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4638,
+                  "timestamp": 1791129600,
+                  "date": "2026-10-04T16:00:00.000Z"
+                },
+                {
+                  "value": 0.46,
+                  "timestamp": 1791144000,
+                  "date": "2026-10-04T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4643,
+                  "timestamp": 1791158400,
+                  "date": "2026-10-05T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4643,
+                  "timestamp": 1791172800,
+                  "date": "2026-10-05T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4643,
+                  "timestamp": 1791187200,
+                  "date": "2026-10-05T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791201600,
+                  "date": "2026-10-05T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791216000,
+                  "date": "2026-10-05T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791230400,
+                  "date": "2026-10-05T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4633,
+                  "timestamp": 1791244800,
+                  "date": "2026-10-06T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4633,
+                  "timestamp": 1791259200,
+                  "date": "2026-10-06T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4633,
+                  "timestamp": 1791273600,
+                  "date": "2026-10-06T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791288000,
+                  "date": "2026-10-06T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4634,
+                  "timestamp": 1791302400,
+                  "date": "2026-10-06T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4634,
+                  "timestamp": 1791316800,
+                  "date": "2026-10-06T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4638,
+                  "timestamp": 1791331200,
+                  "date": "2026-10-07T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791345600,
+                  "date": "2026-10-07T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791360000,
+                  "date": "2026-10-07T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791374400,
+                  "date": "2026-10-07T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791388800,
+                  "date": "2026-10-07T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791403200,
+                  "date": "2026-10-07T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791417600,
+                  "date": "2026-10-08T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791432000,
+                  "date": "2026-10-08T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791446400,
+                  "date": "2026-10-08T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791460800,
+                  "date": "2026-10-08T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                }
+              ],
+              "change_percent": -0.07042253521126766
+            },
+            {
+              "timeframe": "all",
+              "prices": [
+                {
+                  "value": 0.3961,
+                  "timestamp": 1790625600,
+                  "date": "2026-09-28T20:00:00.000Z"
+                },
+                {
+                  "value": 0.3952,
+                  "timestamp": 1790640000,
+                  "date": "2026-09-29T00:00:00.000Z"
+                },
+                {
+                  "value": 0.3786,
+                  "timestamp": 1790654400,
+                  "date": "2026-09-29T04:00:00.000Z"
+                },
+                {
+                  "value": 0.3786,
+                  "timestamp": 1790668800,
+                  "date": "2026-09-29T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4124,
+                  "timestamp": 1790683200,
+                  "date": "2026-09-29T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4091,
+                  "timestamp": 1790697600,
+                  "date": "2026-09-29T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4091,
+                  "timestamp": 1790712000,
+                  "date": "2026-09-29T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4091,
+                  "timestamp": 1790726400,
+                  "date": "2026-09-30T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4095,
+                  "timestamp": 1790740800,
+                  "date": "2026-09-30T04:00:00.000Z"
+                },
+                {
+                  "value": 0.3987,
+                  "timestamp": 1790755200,
+                  "date": "2026-09-30T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4168,
+                  "timestamp": 1790769600,
+                  "date": "2026-09-30T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4168,
+                  "timestamp": 1790784000,
+                  "date": "2026-09-30T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4145,
+                  "timestamp": 1790798400,
+                  "date": "2026-09-30T20:00:00.000Z"
+                },
+                {
+                  "value": 0.414,
+                  "timestamp": 1790812800,
+                  "date": "2026-10-01T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790827200,
+                  "date": "2026-10-01T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790841600,
+                  "date": "2026-10-01T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790856000,
+                  "date": "2026-10-01T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790870400,
+                  "date": "2026-10-01T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790884800,
+                  "date": "2026-10-01T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4148,
+                  "timestamp": 1790899200,
+                  "date": "2026-10-02T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4084,
+                  "timestamp": 1790913600,
+                  "date": "2026-10-02T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4269,
+                  "timestamp": 1790928000,
+                  "date": "2026-10-02T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4405,
+                  "timestamp": 1790942400,
+                  "date": "2026-10-02T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4405,
+                  "timestamp": 1790956800,
+                  "date": "2026-10-02T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4435,
+                  "timestamp": 1790971200,
+                  "date": "2026-10-02T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4437,
+                  "timestamp": 1790985600,
+                  "date": "2026-10-03T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4333,
+                  "timestamp": 1791000000,
+                  "date": "2026-10-03T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4286,
+                  "timestamp": 1791014400,
+                  "date": "2026-10-03T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4637,
+                  "timestamp": 1791028800,
+                  "date": "2026-10-03T12:00:00.000Z"
+                },
+                {
+                  "value": 0.461,
+                  "timestamp": 1791043200,
+                  "date": "2026-10-03T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4637,
+                  "timestamp": 1791057600,
+                  "date": "2026-10-03T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4638,
+                  "timestamp": 1791072000,
+                  "date": "2026-10-04T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4639,
+                  "timestamp": 1791086400,
+                  "date": "2026-10-04T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4644,
+                  "timestamp": 1791100800,
+                  "date": "2026-10-04T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4444,
+                  "timestamp": 1791115200,
+                  "date": "2026-10-04T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4638,
+                  "timestamp": 1791129600,
+                  "date": "2026-10-04T16:00:00.000Z"
+                },
+                {
+                  "value": 0.46,
+                  "timestamp": 1791144000,
+                  "date": "2026-10-04T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4643,
+                  "timestamp": 1791158400,
+                  "date": "2026-10-05T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4643,
+                  "timestamp": 1791172800,
+                  "date": "2026-10-05T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4643,
+                  "timestamp": 1791187200,
+                  "date": "2026-10-05T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791201600,
+                  "date": "2026-10-05T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791216000,
+                  "date": "2026-10-05T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791230400,
+                  "date": "2026-10-05T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4633,
+                  "timestamp": 1791244800,
+                  "date": "2026-10-06T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4633,
+                  "timestamp": 1791259200,
+                  "date": "2026-10-06T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4633,
+                  "timestamp": 1791273600,
+                  "date": "2026-10-06T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791288000,
+                  "date": "2026-10-06T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4634,
+                  "timestamp": 1791302400,
+                  "date": "2026-10-06T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4634,
+                  "timestamp": 1791316800,
+                  "date": "2026-10-06T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4638,
+                  "timestamp": 1791331200,
+                  "date": "2026-10-07T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791345600,
+                  "date": "2026-10-07T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4666,
+                  "timestamp": 1791360000,
+                  "date": "2026-10-07T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791374400,
+                  "date": "2026-10-07T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4629,
+                  "timestamp": 1791388800,
+                  "date": "2026-10-07T16:00:00.000Z"
+                },
+                {
+                  "value": 0.4672,
+                  "timestamp": 1791403200,
+                  "date": "2026-10-07T20:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791417600,
+                  "date": "2026-10-08T00:00:00.000Z"
+                },
+                {
+                  "value": 0.4662,
+                  "timestamp": 1791432000,
+                  "date": "2026-10-08T04:00:00.000Z"
+                },
+                {
+                  "value": 0.4189,
+                  "timestamp": 1791446400,
+                  "date": "2026-10-08T08:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791460800,
+                  "date": "2026-10-08T12:00:00.000Z"
+                },
+                {
+                  "value": 0.4224,
+                  "timestamp": 1791475200,
+                  "date": "2026-10-08T16:00:00.000Z"
+                }
+              ],
+              "change_percent": -0.279057859703021
+            }
+          ]
+        }
+      ],
+      "eventId": null,
+      "outcomeIndex": null,
+      "negRisk": false,
+      "oracle": {
+        "address": null,
+        "name": "Myriad",
+        "url": "https://myriad.markets",
+        "image_url": "https://wp.decrypt.co/wp-content/uploads/2026/05/myriad.png",
+        "data": null
+      },
+      "scoreboard": null,
+      "externalSources": []
+    }
+  }
+}

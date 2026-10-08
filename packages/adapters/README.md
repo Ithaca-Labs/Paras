@@ -45,10 +45,20 @@ Free public REST (`api.sx.bet`, no key): `/markets/active` (100 per page, `pagin
 
 Public trade API v2 (`api.elections.kalshi.com`), unauthenticated, read-only: `/events?with_nested_markets` (metadata; the event carries the series ticker needed for the site URL), `/markets/{ticker}/orderbook` (one call per Market, both sides) and `/series/{s}/markets/{t}/candlesticks`. Outcome ids are `<ticker>:yes` / `<ticker>:no`; a NO bid at p is a YES ask at 1 - p. Kalshi has no volume sort, so `listMarkets` orders within each page only. Volume is contracts (US$1 notional), as the Kalshi site shows it. `NormalizedMarket.url` (exposed as `redirectUrl` by the Event API) is `kalshi.com/markets/<series>/<slug>/<event>`; the slug is cosmetic. `routable: false`: never place orders here.
 
-## PolyRouter (long tail)
+## Long tail (native adapters)
 
-`createPolyRouterAdapters({ apiKey })` returns one `VenueAdapter` per long-tail Venue (Myriad, Opinion, Predict.fun, ProphetX, Novig, Polymarket US; Manifold only with `includePlayMoney`). Natively covered Venues are never included. Register with `...polyRouterAdaptersFromEnv(process.env)`: `[]` unless `POLYROUTER_ENABLED=true` (needs `POLYROUTER_API_KEY`). Venue table and regulation labels: `src/polyrouter/venues.ts`.
+Seven read-only adapters, registered together with `...longTailAdaptersFromEnv(process.env)` (api + worker). Shared HTTP helper (`src/http.ts`): spaced requests per Venue rate limit, 404 -> null. A Venue failing only fails its own sync jobs. Keys: `docs/BLOCKERS.md`, "Venue API keys".
 
-- No order books for long-tail Venues: Quotes come from Market `current_prices`, depth `0`. One shared 100 req/min budget (throttled).
-- Outcome id is `<market id>:<outcome id>`. A PolyRouter failure only fails that Venue's sync jobs.
-- Fixtures are hand-written from the documented shapes (no key was available to record).
+| Venue (`id`)                    | API                                                               | Key                                    | Books                                            | History                   | Outcome id                     |
+| ------------------------------- | ----------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------ | ------------------------- | ------------------------------ |
+| Polymarket US (`polymarket-us`) | `gateway.polymarket.us/v1`                                        | none                                   | long book, short = mirror                        | yes                       | `<slug>:long                   | short` |
+| Opinion (`opinion`)             | `openapi.opinion.trade/openapi`, 5 req/s                          | none                                   | per token                                        | yes                       | token id                       |
+| Myriad (`myriad`)               | `api-v2.myriadprotocol.com`                                       | optional `MYRIAD_API_KEY`              | `ob` Markets only; AMM = listed price, depth 0   | from market detail charts | `<network>:<market>:<outcome>` |
+| Probable (`probable`)           | `market-api.` (metadata) + `api.probable.markets` (book, history) | none                                   | per token                                        | yes                       | token id                       |
+| Novig (`novig`)                 | `api.novig.com/v3/public/catalog`                                 | none                                   | bids = own orders, asks = other outcome at 1 - p | no                        | `<market>:<outcome>`           |
+| Predict.fun (`predict-fun`)     | `api.predict.fun/v1`                                              | `PREDICTFUN_API_KEY` (testnet keyless) | YES book, NO = mirror                            | yes                       | `<market>:yes                  | no`    |
+| ProphetX (`prophetx`)           | Market Data API `cash.api.prophetx.co/partner`                    | `PROPHETX_API_KEY`                     | none: buy-only, American odds -> ask             | no                        | `<event>:<market>:<strike_id>` |
+
+- Myriad skips points (`PTS`) Markets (play money). Probable and Predict.fun deep links, and Polymarket US `/market/<slug>`, are unverified guesses at the site URL scheme.
+- Fixtures: Polymarket US, Opinion, Myriad, Probable, Novig and Predict.fun are recorded (Predict.fun from the keyless testnet host). ProphetX and Myriad order-book Markets are hand-written from the docs (no key / no live `ob` Market).
+- Regulation labels: Polymarket US `cftc_regulated`; Opinion, Myriad, Probable, Predict.fun `offshore`; Novig and ProphetX `unknown` (needs legal confirmation).

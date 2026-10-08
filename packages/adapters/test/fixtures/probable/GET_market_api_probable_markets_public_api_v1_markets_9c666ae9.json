@@ -1,0 +1,374 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://market-api.probable.markets/public/api/v1/markets?page=1&limit=10&active=true&closed=false"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json;charset=utf-8"
+    },
+    "body": {
+      "markets": [
+        {
+          "id": "1645",
+          "event_id": "787",
+          "condition_id": "0x262f4a164bd8cb8c094a0f1d2cb53d403be9f0c38f68d0d808afacb8cac5c00f",
+          "question": "Will Jesus Christ return before 2027?",
+          "question_id": "0xd175be850d96d0753aaff6b7db267abdee33437808261baa91a2809103d12907",
+          "market_slug": "will-jesus-christ-return-before-2027",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "171998.00000000",
+          "liquidity": "10.989840",
+          "clobTokenIds": "[\"27452705055748034758802658620991210391247685593276752628962888820558958260632\",\"12472061478157368054150210876288795444385799546115054194409549061807272712731\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2026-02-23T14:00:00.200000Z",
+          "endDate": "2027-01-01T05:00:00.000000Z",
+          "tokens": [
+            {
+              "token_id": "27452705055748034758802658620991210391247685593276752628962888820558958260632",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "12472061478157368054150210876288795444385799546115054194409549061807272712731",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/763a1dc28f9f4ee7ac1486d5a50a4ce67810d503b36f4653801a5a477a0190e0.jpg",
+          "description": "This market will resolve to \"Yes\" if The Second Coming of Jesus Christ occurs by December 31, 2026, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nThe resolution source for this market will be a consensus of credible sources.",
+          "tags": [],
+          "groupItemTitle": "Will Jesus Christ return before 2027?",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1629",
+          "event_id": "771",
+          "condition_id": "0x3678132b33ba88360279798a4e8736d5f1a887bed7b4209c16e19bb3d2c8d5c2",
+          "question": "Will the US confirm that aliens exist before 2027?",
+          "question_id": "0xfc0f0a0a8c720b8332c735cec72782880657aca7246e24ac5f13abcea09a37e5",
+          "market_slug": "will-the-us-confirm-that-aliens-exist-before-2027",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "144481.00000000",
+          "liquidity": "0.000000",
+          "clobTokenIds": "[\"34757970086144788028547425530253621797470401611028266936623258788279047042522\",\"60054590374491006795405297078605213528605773206983323423894073670992135538994\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2026-02-20T11:30:00.700000Z",
+          "endDate": "2027-01-01T05:00:00.000000Z",
+          "tokens": [
+            {
+              "token_id": "34757970086144788028547425530253621797470401611028266936623258788279047042522",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "60054590374491006795405297078605213528605773206983323423894073670992135538994",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/0a84c696f751ba9938b3de8d1da3fd46b4eb182e11132d14abe931ca5dcae05f.jpg",
+          "description": "This market will resolve to \"Yes\" if the President of the United States, any member of the Cabinet of the United States, any member of the Joint Chiefs of Staff, or any US federal agency definitively states that extraterrestrial life or technology exists by December 31, 2026, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nThe primary resolution source for this market will be official information from the government of the United States, however a consensus of credible reporting will also be used.",
+          "tags": [],
+          "groupItemTitle": "Will the US confirm that aliens exist before 2027",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1563",
+          "event_id": "737",
+          "condition_id": "0x2ead7980c931ac3d01430c2bddb19a8ce898e917cb6044c5dd794ae9e8722d09",
+          "question": "Will JB Pritzker win the 2028 US Presidential Election?",
+          "question_id": "0x62eeb4f066590eb446fb8bad3f36b47f9ffe991841c5387a75f2c1f2b26ae9a2",
+          "market_slug": "will-jb-pritzker-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "2702759.00000000",
+          "liquidity": "125.561400",
+          "clobTokenIds": "[\"79904570539272109106521719862353593763004906129332234151672056970368389399900\",\"22086546254137147081577717957971925762197567798342223548129488181250454718227\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:06:00.600000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "79904570539272109106521719862353593763004906129332234151672056970368389399900",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "22086546254137147081577717957971925762197567798342223548129488181250454718227",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/63281cbed951c1cee0f36d843e1f9cc3be21d11354313fa3c6b1176357e00002.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "JB Pritzker",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1562",
+          "event_id": "737",
+          "condition_id": "0x02abb8ac65d447d6f6938f44fbf4a2de6581b9f62db9e3b081742ff697b31b31",
+          "question": "Will Kamala Harris win the 2028 US Presidential Election?",
+          "question_id": "0x59ae99132feeeea4e83703bdd4ca3edbd72dfbd24ba3a215ebb6298f9eb78a8d",
+          "market_slug": "will-kamala-harris-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "25296.00000000",
+          "liquidity": "128.457900",
+          "clobTokenIds": "[\"99632325468692228153541311128849134233836447806312372353999690094985647233200\",\"40496444872963524670960219298766179781753639928565519945406537299297420947465\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:05:58.600000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "99632325468692228153541311128849134233836447806312372353999690094985647233200",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "40496444872963524670960219298766179781753639928565519945406537299297420947465",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/610ab3ecf13b5aa89a537241a6c9ad6b7986d88f38a61c70e95fb265290d6ae4.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Kamala Harris",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1561",
+          "event_id": "737",
+          "condition_id": "0xdb2e2b20c58d139d5ba643f7a0132076094d1a82a55371e3a66440723c97d6d6",
+          "question": "Will Andy Beshear win the 2028 US Presidential Election?",
+          "question_id": "0xac79c7492fd08efb6afd98e7fd7bd318ae87b60c6fc3e856bd324285eb65ab37",
+          "market_slug": "will-andy-beshear-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "24822.00000000",
+          "liquidity": "1.210000",
+          "clobTokenIds": "[\"66423006773666254006516529556715977831751506525876509293487253773159360985809\",\"16691988203367394583918289073122155783870247404341548659359228372661085994445\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:05:56.700000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "66423006773666254006516529556715977831751506525876509293487253773159360985809",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "16691988203367394583918289073122155783870247404341548659359228372661085994445",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/4a66bb6f58ed5a8ec6dabb074ac06fe91ab232dd193e3c78b031d0849e93283b.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Andy Beshear",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1560",
+          "event_id": "737",
+          "condition_id": "0x1c3689cfe8ded6d8c92286e6b5761ca85c9c0bcfae0876a97d2919f4c570759d",
+          "question": "Will Ron DeSantis win the 2028 US Presidential Election?",
+          "question_id": "0xa86429b49a941875f93351ae9b366769b2bb13469e2b88a93493ae6001b7976f",
+          "market_slug": "will-ron-desantis-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "20310.00000000",
+          "liquidity": "5.000000",
+          "clobTokenIds": "[\"42257669633234482870591111592119385276493612404155501505197478526182681396147\",\"2712733623839244383733522923177291056046282816958061629854348557953977869333\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:06:06.500000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "42257669633234482870591111592119385276493612404155501505197478526182681396147",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "2712733623839244383733522923177291056046282816958061629854348557953977869333",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/58593b7471ff9d03489e27053b43f2879dcf93eead549220fefed2882e4cec11.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Ron DeSantis",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1559",
+          "event_id": "737",
+          "condition_id": "0xb2d4c33cb3b217297e5ae42c36f49997a06859ecc54de63d1fa19fd0b7b50ce2",
+          "question": "Will Donald Trump win the 2028 US Presidential Election?",
+          "question_id": "0x19185a3e30a5fb024ece3f6e6ad2581d596b6a8158c641c304af28d2d633ccbc",
+          "market_slug": "will-donald-trump-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "19709.00000000",
+          "liquidity": "10.500000",
+          "clobTokenIds": "[\"115121066703051949312139644923514114723599438414054156359633404326133754212706\",\"108988594584214694127125390786791583081600063078675438539089843495882362938940\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:06:02.500000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "115121066703051949312139644923514114723599438414054156359633404326133754212706",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "108988594584214694127125390786791583081600063078675438539089843495882362938940",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/7152aaa62234ea0d991ee52359f7c5c0225f0470275e049b21f2c7fec8a14444.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Donald Trump",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1558",
+          "event_id": "737",
+          "condition_id": "0xf450052f31777e55f7c32bfc2cec0d77414ddef7f143adfec6aee9c2a224aa20",
+          "question": "Will Alexandria Ocasio-Cortez win the 2028 US Presidential Election?",
+          "question_id": "0x1d60ef81ac303f0650daf4b928fb48fbda17cb97bdd1d454c27f846a3e94e4ab",
+          "market_slug": "will-alexandria-ocasio-cortez-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "339345.00000000",
+          "liquidity": "55.285100",
+          "clobTokenIds": "[\"86307022326893586382721307353010557151016206967200908389876175276438979487930\",\"50179663998630250081157061763518656701437531594586553871596723158751707318217\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:05:48.400000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "86307022326893586382721307353010557151016206967200908389876175276438979487930",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "50179663998630250081157061763518656701437531594586553871596723158751707318217",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/74ee9d1508dcbbf731da4397458cabfbfdab4821c2ac6c29fdca60ba14080012.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Alexandria Ocasio-Cortez",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1557",
+          "event_id": "737",
+          "condition_id": "0xb237a262864c7bee8ba2baf03e8c1ec1dc19a0dd9393b7c105e4ff62c1806447",
+          "question": "Will Josh Shapiro win the 2028 US Presidential Election?",
+          "question_id": "0xeebf3714526fe56418f96cb6a81400dc9e99d982f068f33e7224f76db9571547",
+          "market_slug": "will-josh-shapiro-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "14931.00000000",
+          "liquidity": "51.329100",
+          "clobTokenIds": "[\"94201088036873638603941791079108707066109194471063304831162069061692592611220\",\"101905905486057295018368294497272074676461905699838161004317091495011153949185\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:05:50.600000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "94201088036873638603941791079108707066109194471063304831162069061692592611220",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "101905905486057295018368294497272074676461905699838161004317091495011153949185",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/6ef06371d52d697ec46b58e4fe159460648573711d163061300fb715807215df.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Josh Shapiro",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        },
+        {
+          "id": "1556",
+          "event_id": "737",
+          "condition_id": "0x2b898dfcce52bdc87a01601ce8615f6a9d9fec91eb351b422a1ba8cb98d5c322",
+          "question": "Will Jon Ossoff win the 2028 US Presidential Election?",
+          "question_id": "0x6a109cced6dc131c9d89760dfc468876bb79fae9e9561503d868ab7100e68227",
+          "market_slug": "will-jon-ossoff-win-the-2028-us-presidential-election",
+          "outcomes": "[\"Yes\",\"No\"]",
+          "volume24hr": "16298.00000000",
+          "liquidity": "1.978000",
+          "clobTokenIds": "[\"43724614763670755123571419388219797889466418558260336185397489539760436500017\",\"80080538932924199577736729688825734548861106706072347922573220639879068787885\"]",
+          "active": true,
+          "closed": false,
+          "archived": false,
+          "startDate": "2025-07-13T03:06:20.800000Z",
+          "endDate": "2028-11-07T00:00:00Z",
+          "tokens": [
+            {
+              "token_id": "43724614763670755123571419388219797889466418558260336185397489539760436500017",
+              "outcome": "Yes"
+            },
+            {
+              "token_id": "80080538932924199577736729688825734548861106706072347922573220639879068787885",
+              "outcome": "No"
+            }
+          ],
+          "icon": "https://locales.probable.markets/images/ceaad693696f68738272142476fe7c5e6bcaabc59992ca559c94111388fcfd75.png",
+          "description": "The 2028 US Presidential Election is scheduled to take place on November 7, 2028.\n\nThis market will resolve to the person who wins the 2028 US Presidential Election.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources call the race for the same candidate. If all three sources haven’t called the race for the same candidate by the inauguration date (January 20, 2029) this market will resolve based on who is inaugurated.",
+          "tags": [],
+          "groupItemTitle": "Jon Ossoff",
+          "resolved": false,
+          "liveness": "7200",
+          "disputed": false,
+          "proposal_history": []
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalResults": 109,
+        "totalPages": 11,
+        "hasMore": true,
+        "hasPrevPage": false
+      }
+    }
+  }
+}
