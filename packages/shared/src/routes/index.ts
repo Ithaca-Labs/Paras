@@ -6,6 +6,7 @@ import {
   logout,
   getMe,
 } from './auth.js';
+import { compareEvent, getEventHistory } from './compare.js';
 import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { getHealth } from './health.js';
 import {
@@ -32,6 +33,8 @@ export const apiRoutes = {
   getMe,
   listEvents,
   getEvent,
+  compareEvent,
+  getEventHistory,
   createMagicLink,
   resolveMagicLink,
   listCategories,
@@ -47,6 +50,7 @@ export const sseRoutes = { streamEventQuotes } as const;
 export type ApiRoutes = typeof apiRoutes;
 
 export * from './events.js';
+export * from './compare.js';
 export * from './health.js';
 export * from './magic-links.js';
 export * from './taxonomy.js';

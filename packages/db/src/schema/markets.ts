@@ -143,6 +143,8 @@ export const eventMarkets = pgTable(
     confidence: numeric('confidence').notNull().default('1'),
     /** `same`: outcomes line up; `inverse`: Market's YES is the Event's NO. */
     direction: text('direction').$type<'same' | 'inverse'>().notNull().default('same'),
+    /** Multi-outcome Events: the candidate this binary Market's YES stands for (e.g. "Alice"). */
+    candidate: text('candidate'),
     source: text('source').$type<'auto' | 'operator'>().notNull().default('auto'),
   },
   (t) => [primaryKey({ columns: [t.eventId, t.marketId] })],

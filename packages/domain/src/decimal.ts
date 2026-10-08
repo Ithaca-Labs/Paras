@@ -26,3 +26,6 @@ export function formatDecimal(value: Scaled): string {
 
 /** a * b, truncated toward zero at the shared scale. */
 export const mulDecimal = (a: Scaled, b: Scaled): Scaled => (a * b) / ONE;
+
+/** a / b, truncated toward zero at the shared scale. b must be non-zero. */
+export const divDecimal = (a: Scaled, b: Scaled): Scaled => (a * ONE) / b;

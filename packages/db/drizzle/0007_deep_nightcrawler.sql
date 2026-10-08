@@ -1,0 +1,1 @@
+ALTER TABLE "event_markets" ADD COLUMN "candidate" text;

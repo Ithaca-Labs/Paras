@@ -16,7 +16,6 @@ export {
   type MagicLinkVerdict,
 } from './magic-link.js';
 export { venueLabel, type VenueLabel, type VenueLabelInput } from './venue-label.js';
-export { DECIMAL_SCALE, formatDecimal, mulDecimal, parseDecimal, type Scaled } from './decimal.js';
 export {
   EMBEDDING_DIMENSIONS,
   cosine,
@@ -60,3 +59,24 @@ export {
   type VenueRestrictions,
 } from './eligibility.js';
 export { RISK_DISCLOSURES } from './disclosures.js';
+export {
+  alignSeries,
+  feePerShare,
+  midSpread,
+  pickBest,
+  priceQuote,
+  walkAsks,
+  type Candidate,
+  type FeeModel,
+  type Fill,
+  type PricedQuote,
+  type QuoteInput,
+} from './compare.js';
+export {
+  DECIMAL_SCALE,
+  divDecimal,
+  formatDecimal,
+  mulDecimal,
+  parseDecimal,
+  type Scaled,
+} from './decimal.js';
