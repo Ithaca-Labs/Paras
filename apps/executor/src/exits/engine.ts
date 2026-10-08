@@ -95,7 +95,17 @@ export class ExitEngine {
       });
       approvalTx = (await this.d.relayer.waitConfirmed(txId)).txHash ?? txId;
     }
-    return this.go(row, 'ordering', { approvalTx, orderKey: `paras:exit:${row.id}` });
+    // Fixed before any order exists, so a restart after the fill (balance already gone) re-sends the same order.
+    const addr = getAddress((await this.wallet(pos)).walletAddress);
+    const held = await this.d.polygon.ctfBalance(addr, pos.tokenId);
+    const want = BigInt(row.shares!);
+    const sellable = held < want ? held : want;
+    if (sellable === 0n) return this.fail(row, 'wallet holds no shares of this position');
+    return this.go(row, 'ordering', {
+      approvalTx,
+      orderKey: `paras:exit:${row.id}`,
+      sellShares: sellable.toString(),
+    });
   }
 
   private async sell(row: ExitRow, pos: PositionRow): Promise<ExitStepResult> {
@@ -105,10 +115,7 @@ export class ExitEngine {
 
     if (!ctx.orderId) {
       if (!(await this.d.geoblock.allowed())) return 'wait';
-      const held = await this.d.polygon.ctfBalance(addr, pos.tokenId);
-      const want = BigInt(row.shares!);
-      const sellable = held < want ? held : want;
-      if (sellable === 0n) return this.fail(row, 'wallet holds no shares of this position');
+      const sellable = BigInt(ctx.sellShares!);
       await this.d.wallets.checkClob(wallet.id, { kind: 'order', maker: addr, signer: addr });
       const shares = formatUnits(sellable, 6);
       const { orderId } = await this.d.clob.placeOrder({
@@ -121,7 +128,7 @@ export class ExitEngine {
         amountUsd: formatUnits((sellable * parseUnits(row.minPrice!, 6)) / 1_000_000n, 6),
         type: 'FAK',
       });
-      return this.patch(row, { orderId, sellShares: sellable.toString() });
+      return this.patch(row, { orderId });
     }
 
     const o = await this.d.clob.getOrder(ctx.orderId);
