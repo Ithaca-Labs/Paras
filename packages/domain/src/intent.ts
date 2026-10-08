@@ -69,13 +69,15 @@ const domain = (d: Domain) => ({
 });
 
 /** EIP-712 payload for `Vault.submitIntent` (viem `signTypedData` shape; amounts are bigints). */
-export function intentTypedData(p: Domain & {
-  user: string;
-  id: string;
-  amount: bigint;
-  expiry: bigint;
-  detailsHash: string;
-}) {
+export function intentTypedData(
+  p: Domain & {
+    user: string;
+    id: string;
+    amount: bigint;
+    expiry: bigint;
+    detailsHash: string;
+  },
+) {
   return {
     domain: domain(p),
     types: {

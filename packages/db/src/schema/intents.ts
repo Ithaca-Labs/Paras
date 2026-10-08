@@ -1,5 +1,14 @@
 import type { IntentDetails, IntentStatus } from '@paras/domain';
-import { bigserial, index, jsonb, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
+import {
+  bigserial,
+  index,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { users } from './identity.js';
 
 const tz = (name: string) => timestamp(name, { withTimezone: true });
@@ -52,7 +61,10 @@ export const intents = pgTable(
     createdAt: tz('created_at').notNull().defaultNow(),
     updatedAt: tz('updated_at').notNull().defaultNow(),
   },
-  (t) => [unique('intents_user_intent_uq').on(t.userAddress, t.intentId), index('intents_status_idx').on(t.status)],
+  (t) => [
+    unique('intents_user_intent_uq').on(t.userAddress, t.intentId),
+    index('intents_status_idx').on(t.status),
+  ],
 );
 
 /** Append-only status timeline per Intent. */

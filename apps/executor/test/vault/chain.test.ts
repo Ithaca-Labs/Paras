@@ -93,10 +93,14 @@ describe('Iris client', () => {
       createIris({ fetch: (async () => new Response(JSON.stringify(body), { status })) as never });
     expect(await mk(404, {}).attestation(15, '0x01')).toBeNull();
     expect(
-      await mk(200, { messages: [{ status: 'pending_confirmations', message: '0x', attestation: 'PENDING' }] }).attestation(15, '0x01'),
+      await mk(200, {
+        messages: [{ status: 'pending_confirmations', message: '0x', attestation: 'PENDING' }],
+      }).attestation(15, '0x01'),
     ).toBeNull();
     expect(
-      await mk(200, { messages: [{ status: 'complete', message: '0xaa', attestation: '0xbb' }] }).attestation(15, '0x01'),
+      await mk(200, {
+        messages: [{ status: 'complete', message: '0xaa', attestation: '0xbb' }],
+      }).attestation(15, '0x01'),
     ).toEqual({ message: '0xaa', attestation: '0xbb' });
   });
 });
@@ -108,7 +112,10 @@ describe('pollVault', () => {
     const seen: unknown[] = [];
     const vault = {
       events: async (from: bigint) => ({
-        events: from === 5n ? [{ kind: 'cancelled' as const, user: user as never, id: '0x01' as Hex, block: 5n }] : [],
+        events:
+          from === 5n
+            ? [{ kind: 'cancelled' as const, user: user as never, id: '0x01' as Hex, block: 5n }]
+            : [],
         toBlock: from + 2n,
       }),
     };

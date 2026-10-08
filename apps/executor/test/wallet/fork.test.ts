@@ -129,7 +129,8 @@ describe.skipIf(!forkUrl)('Polygon fork: real DepositWallet (set POLYGON_FORK_RP
       relayer,
       now: () => now,
       chain: {
-        walletOwner: async (w: Address) => pub.readContract({ address: w, abi: depositWalletAbi, functionName: 'owner' }),
+        walletOwner: async (w: Address) =>
+          pub.readContract({ address: w, abi: depositWalletAbi, functionName: 'owner' }),
         predictWalletAddress: (id: Hex) =>
           pub.readContract({
             address: POLYGON.walletFactory,

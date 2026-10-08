@@ -51,7 +51,10 @@ export interface PolygonChain {
 
 /** Circle Iris: attestation for a burn tx. Null while pending. */
 export interface Iris {
-  attestation(sourceDomain: number, txHash: Hex): Promise<{ message: Hex; attestation: Hex } | null>;
+  attestation(
+    sourceDomain: number,
+    txHash: Hex,
+  ): Promise<{ message: Hex; attestation: Hex } | null>;
 }
 
 export interface ClobOrderRequest {

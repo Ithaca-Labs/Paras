@@ -1,4 +1,12 @@
-import { createPublicClient, createWalletClient, getAddress, type Address, type Hex, type LocalAccount, type Transport } from 'viem';
+import {
+  createPublicClient,
+  createWalletClient,
+  getAddress,
+  type Address,
+  type Hex,
+  type LocalAccount,
+  type Transport,
+} from 'viem';
 import { polygon } from 'viem/chains';
 import { erc20BalanceAbi, messageTransmitterAbi } from '../vault/abi.js';
 import { depositWalletAbi, walletFactoryAbi } from '../wallet/abi.js';
@@ -15,7 +23,12 @@ export function createPolygon(o: {
   const pub = createPublicClient({ chain: polygon, transport: o.transport });
   const wallet = createWalletClient({ chain: polygon, transport: o.transport, account: o.account });
   const bal = (token: Address, who: Address) =>
-    pub.readContract({ address: token, abi: erc20BalanceAbi, functionName: 'balanceOf', args: [who] });
+    pub.readContract({
+      address: token,
+      abi: erc20BalanceAbi,
+      functionName: 'balanceOf',
+      args: [who],
+    });
   return {
     async balances(w) {
       const [native, usdce, pusd] = await Promise.all([

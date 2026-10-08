@@ -39,7 +39,16 @@ export class World {
   native = 0n;
   usdce = 0n;
   pusd = 0n;
-  count = { dispatch: 0, mint: 0, batches: 0, orders: 0, cancels: 0, settles: 0, closes: 0, expires: 0 };
+  count = {
+    dispatch: 0,
+    mint: 0,
+    batches: 0,
+    orders: 0,
+    cancels: 0,
+    settles: 0,
+    closes: 0,
+    expires: 0,
+  };
   geoblocked = false;
   clobMode: ClobMode = 'full';
   asks = [{ price: '0.50', size: '10000' }];
@@ -142,7 +151,9 @@ export class World {
   relayer: RelayerClient = {
     deployWallet: async () => ({ txId: 'deploy' }),
     getNonce: async () => BigInt(this.nonce),
-    waitConfirmed: async (txId) => ({ txHash: pad(toHex(Number(txId.split('-')[1] ?? 0) + 1000), { size: 32 }) }),
+    waitConfirmed: async (txId) => ({
+      txHash: pad(toHex(Number(txId.split('-')[1] ?? 0) + 1000), { size: 32 }),
+    }),
     submitBatch: async ({ batch }) => {
       this.nonce++;
       this.count.batches++;
@@ -175,7 +186,8 @@ export class World {
     } else if (target === POLYGON.onramp || target === POLYGON.offramp) {
       const { functionName, args } = decodeFunctionData({ abi: rampAbi, data });
       const amount = args[2] as bigint;
-      if (functionName === 'wrap') [this.usdce, this.pusd] = [this.usdce - amount, this.pusd + amount];
+      if (functionName === 'wrap')
+        [this.usdce, this.pusd] = [this.usdce - amount, this.pusd + amount];
       else [this.pusd, this.usdce] = [this.pusd - amount, this.usdce + amount];
     } else if (target === POLYGON.tokenMessengerV2) {
       this.native -= decodeFunctionData({ abi: tokenMessengerAbi, data }).args[0] as bigint;
@@ -192,7 +204,12 @@ export interface Harness {
   clock: { now: Date };
   engine: () => IntentEngine;
   /** Inserts a previewed Intent, reserves it on the fake Vault and applies the `submitted` event. */
-  newIntent: (o?: { amount?: number; maxPrice?: string; remainder?: 'rest' | 'return'; expiresInMs?: number }) => Promise<string>;
+  newIntent: (o?: {
+    amount?: number;
+    maxPrice?: string;
+    remainder?: 'rest' | 'return';
+    expiresInMs?: number;
+  }) => Promise<string>;
   close: () => Promise<void>;
 }
 
@@ -219,7 +236,12 @@ export async function createHarness(): Promise<Harness> {
   await svc.registerWithVault(
     w.id,
     await owner.signTypedData(
-      registerTypedData({ vault: VAULT, chainId: 143, user: owner.address, wallet: getAddress(w.walletAddress) }),
+      registerTypedData({
+        vault: VAULT,
+        chainId: 143,
+        user: owner.address,
+        wallet: getAddress(w.walletAddress),
+      }),
     ),
   );
   const p = await svc.beginSessionKeyChange(w.id);

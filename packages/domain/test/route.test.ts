@@ -23,7 +23,12 @@ const kalshi: RouteVenue = {
 
 describe('Route (venue-agnostic)', () => {
   it('routes to the routable Venue and hints at a cheaper read-only Venue', () => {
-    const r = computeRoute({ venues: [poly, kalshi], stake: '10', maxPrice: '0.55', countries: ['IN'] });
+    const r = computeRoute({
+      venues: [poly, kalshi],
+      stake: '10',
+      maxPrice: '0.55',
+      countries: ['IN'],
+    });
     expect(r.kind).toBe('route');
     if (r.kind !== 'route') return;
     expect(r.route.venueId).toBe('polymarket');
@@ -45,13 +50,20 @@ describe('Route (venue-agnostic)', () => {
     expect(cap).toMatchObject({ kind: 'none', reason: 'max_price' });
     const empty = computeRoute({ ...base, venues: [{ ...poly, asks: [] }], maxPrice: '0.9' });
     expect(empty).toMatchObject({ kind: 'none', reason: 'no_depth' });
-    const us = computeRoute({ ...base, venues: [poly, kalshi], maxPrice: '0.9', countries: ['US'] });
+    const us = computeRoute({
+      ...base,
+      venues: [poly, kalshi],
+      maxPrice: '0.9',
+      countries: ['US'],
+    });
     expect(us).toMatchObject({ kind: 'none', reason: 'no_routable_venue' });
     if (us.kind === 'none') expect(us.redirects.map((x) => x.venueId)).toEqual(['kalshi']);
   });
 
   it('unknown country fails closed (no route)', () => {
-    expect(computeRoute({ venues: [poly], stake: '10', maxPrice: '0.9', countries: [] }).kind).toBe('none');
+    expect(computeRoute({ venues: [poly], stake: '10', maxPrice: '0.9', countries: [] }).kind).toBe(
+      'none',
+    );
   });
 });
 
@@ -81,7 +93,13 @@ describe('Intent commitments', () => {
       expiry: 99n,
       detailsHash: intentDetailsHash(d),
     });
-    expect(t.types.Intent.map((f) => f.name)).toEqual(['user', 'id', 'amount', 'expiry', 'detailsHash']);
+    expect(t.types.Intent.map((f) => f.name)).toEqual([
+      'user',
+      'id',
+      'amount',
+      'expiry',
+      'detailsHash',
+    ]);
     expect(t.domain).toMatchObject({ name: 'ParasVault', version: '1', chainId: 143 });
   });
 });

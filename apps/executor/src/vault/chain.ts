@@ -11,12 +11,7 @@ import {
 import { messageNonce } from '../intents/cctp.js';
 import type { VaultChain, VaultEvent } from '../intents/ports.js';
 import type { VaultRegistry } from '../wallet/service.js';
-import {
-  messageTransmitterAbi,
-  vaultAbi,
-  vaultDispatchedEvent,
-  vaultIntentEvents,
-} from './abi.js';
+import { messageTransmitterAbi, vaultAbi, vaultDispatchedEvent, vaultIntentEvents } from './abi.js';
 
 export interface MonadOptions {
   transport: Transport;
@@ -44,7 +39,11 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
     nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
     rpcUrls: { default: { http: [] } },
   });
-  const pub = createPublicClient({ chain: monad, transport: o.transport, pollingInterval: o.pollingMs });
+  const pub = createPublicClient({
+    chain: monad,
+    transport: o.transport,
+    pollingInterval: o.pollingMs,
+  });
   const wallet = createWalletClient({ chain: monad, transport: o.transport, account: o.account });
 
   const mined = async (hash: Hex): Promise<Hex> => {
@@ -73,7 +72,12 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
           const { amount, expiry, detailsHash } = l.args;
           return { kind: 'submitted', user, id, amount, expiry, detailsHash, block } as VaultEvent;
         }
-        return { kind: l.eventName === 'IntentCancelled' ? 'cancelled' : 'expired', user, id, block } as VaultEvent;
+        return {
+          kind: l.eventName === 'IntentCancelled' ? 'cancelled' : 'expired',
+          user,
+          id,
+          block,
+        } as VaultEvent;
       });
       return { events, toBlock };
     },

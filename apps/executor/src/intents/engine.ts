@@ -8,7 +8,15 @@ import type { RelayerClient } from '../wallet/relayer.js';
 import type { WalletService } from '../wallet/service.js';
 import { VAULT_STATUS } from '../vault/abi.js';
 import { mintedAmount } from './cctp.js';
-import type { BookSource, Clob, Geoblock, Iris, PolygonChain, VaultChain, VaultEvent } from './ports.js';
+import type {
+  BookSource,
+  Clob,
+  Geoblock,
+  Iris,
+  PolygonChain,
+  VaultChain,
+  VaultEvent,
+} from './ports.js';
 
 const { intents, intentEvents } = schema;
 type IntentRow = typeof intents.$inferSelect;
@@ -19,7 +27,10 @@ export type StepResult = 'progress' | 'wait' | 'done';
 
 export interface EngineDeps {
   db: Database;
-  wallets: Pick<WalletService, 'registeredWalletOf' | 'openIntent' | 'submitSessionBatch' | 'checkClob'>;
+  wallets: Pick<
+    WalletService,
+    'registeredWalletOf' | 'openIntent' | 'submitSessionBatch' | 'checkClob'
+  >;
   relayer: Pick<RelayerClient, 'waitConfirmed'>;
   vault: VaultChain;
   polygon: PolygonChain;
@@ -195,8 +206,13 @@ export class IntentEngine {
       const { asks, fee } = await this.d.books.asks(details);
       // Max price + depth: nothing within the cap to buy now and no resting order wanted -> give the funds back.
       const { fill } = fillWithinMaxPrice({ asks, fee }, formatUnits(pusd, 6), details.maxPrice);
-      if (!fill && !rest) return this.startReturn(row, pusd, 'failed', 'no liquidity within max price');
-      await this.d.wallets.checkClob(ctx.walletId!, { kind: 'order', maker: wallet, signer: wallet });
+      if (!fill && !rest)
+        return this.startReturn(row, pusd, 'failed', 'no liquidity within max price');
+      await this.d.wallets.checkClob(ctx.walletId!, {
+        kind: 'order',
+        maker: wallet,
+        signer: wallet,
+      });
       const { orderId } = await this.d.clob.placeOrder({
         key: ctx.orderKey!,
         wallet,
@@ -237,7 +253,9 @@ export class IntentEngine {
 
     if (!ctx.returnRelayerTx) {
       if ((await this.d.polygon.balances(wallet)).pusd < pusd)
-        return this.finish(row, 'failed', { reason: 'return submitted but not recorded; needs ops' });
+        return this.finish(row, 'failed', {
+          reason: 'return submitted but not recorded; needs ops',
+        });
       const { txId } = await this.d.wallets.submitSessionBatch({
         walletId: ctx.walletId!,
         intentId: row.id,
@@ -265,7 +283,10 @@ export class IntentEngine {
     if (!(await this.d.vault.messageUsed(ctx.returnMessage as Hex)))
       await this.d.vault.settle(ctx.returnMessage as Hex, ctx.returnAttestation as Hex, id);
     // Nothing was bought: write off the swap-slippage remainder so the Vault shows no in-flight claim.
-    if (!(Number(ctx.filledShares ?? 0) > 0) && (await this.d.vault.intentStatus(user, id)) === VAULT_STATUS.Dispatched)
+    if (
+      !(Number(ctx.filledShares ?? 0) > 0) &&
+      (await this.d.vault.intentStatus(user, id)) === VAULT_STATUS.Dispatched
+    )
       await this.d.vault.closeIntent(user, id);
     return this.finish(row, ctx.then!, {});
   }
@@ -307,7 +328,7 @@ export class IntentEngine {
   }
 
   private async finish(row: IntentRow, to: IntentStatus, ctx: Partial<Ctx>): Promise<StepResult> {
-    if (await this.transition(row, to, ctx) && NOTIFY.includes(to)) {
+    if ((await this.transition(row, to, ctx)) && NOTIFY.includes(to)) {
       const c = { ...row.ctx, ...ctx };
       const text: Record<string, string> = {
         filled: `Your bet filled: ${c.filledShares} shares.`,
@@ -339,9 +360,12 @@ export class IntentEngine {
         .where(and(eq(intents.id, row.id), eq(intents.status, row.status)))
         .returning({ id: intents.id });
       if (!moved.length) return false;
-      await tx
-        .insert(intentEvents)
-        .values({ intentRowId: row.id, status: to, note: ctx.reason ? { reason: ctx.reason } : {}, at: this.now() });
+      await tx.insert(intentEvents).values({
+        intentRowId: row.id,
+        status: to,
+        note: ctx.reason ? { reason: ctx.reason } : {},
+        at: this.now(),
+      });
       return true;
     });
   }

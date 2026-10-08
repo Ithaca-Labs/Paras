@@ -123,7 +123,12 @@ export function computeRoute(p: {
   }
   return {
     kind: 'route',
-    route: { venueId: c.v.venueId, fill: c.fill!, overhead: c.overhead, redirectUrl: c.v.redirectUrl },
+    route: {
+      venueId: c.v.venueId,
+      fill: c.fill!,
+      overhead: c.overhead,
+      redirectUrl: c.v.redirectUrl,
+    },
     hint,
   };
 }

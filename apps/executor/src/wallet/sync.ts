@@ -17,7 +17,8 @@ export async function syncWalletRequests(
   for (const r of await db.select().from(walletRequests)) {
     try {
       const w = await svc.provision({ userId: r.userId, owner: getAddress(r.owner) });
-      if (w.status === 'deployed' && r.signature) await svc.registerWithVault(w.id, r.signature as Hex);
+      if (w.status === 'deployed' && r.signature)
+        await svc.registerWithVault(w.id, r.signature as Hex);
     } catch (err) {
       log?.('wallet request failed', { userId: r.userId, err });
     }

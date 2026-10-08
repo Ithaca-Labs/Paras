@@ -2,7 +2,13 @@ import { createDb, schema, type DbHandle } from '@paras/db';
 import { createTestDatabase, type TestDatabase } from '@paras/testkit';
 import { eq } from 'drizzle-orm';
 import { registerTypedData } from '@paras/domain';
-import { decodeFunctionData, getAddress, recoverTypedDataAddress, type Address, type Hex } from 'viem';
+import {
+  decodeFunctionData,
+  getAddress,
+  recoverTypedDataAddress,
+  type Address,
+  type Hex,
+} from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { depositWalletAbi } from '../../src/wallet/abi.js';
@@ -155,9 +161,9 @@ describe('WalletService (Seam 4: provisioning, session keys, rotation, policy)',
     await expect(
       svc.registerWithVault(walletId, await regSig(owner.address, walletAddress, other)),
     ).rejects.toThrow(/signature invalid/);
-    await expect(svc.registerWithVault(walletId, await regSig(owner.address, attacker))).rejects.toThrow(
-      /signature invalid/,
-    );
+    await expect(
+      svc.registerWithVault(walletId, await regSig(owner.address, attacker)),
+    ).rejects.toThrow(/signature invalid/);
     expect(registered).toHaveLength(0);
   });
 

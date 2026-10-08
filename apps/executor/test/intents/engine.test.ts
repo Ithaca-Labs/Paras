@@ -13,9 +13,7 @@ describe('Intent engine (Seam 4: Intent -> route -> bridge -> order -> fill)', (
   const row = async (id: string) =>
     (await t.db.select().from(schema.intents).where(eq(schema.intents.id, id)))[0]!;
   const timeline = async (id: string) =>
-    (
-      await t.db.select().from(schema.intentEvents).where(eq(schema.intentEvents.intentRowId, id))
-    )
+    (await t.db.select().from(schema.intentEvents).where(eq(schema.intentEvents.intentRowId, id)))
       .sort((a, b) => a.id - b.id)
       .map((e) => e.status);
   const notes = async () => t.db.select().from(schema.notifications);
@@ -39,7 +37,7 @@ describe('Intent engine (Seam 4: Intent -> route -> bridge -> order -> fill)', (
     expect(w.count).toMatchObject({ dispatch: 1, mint: 1, batches: 1, orders: 1, settles: 0 });
     // One policy-checked batch: approve, swap native->USDC.e, approve, wrap, approve exchange.
     expect(w.submitted[0]!.calls).toHaveLength(5);
-    expect(w.pusd).toBe(USDC(10) - USDC(10) / 10_000n * 50n); // minOut at 50 bps slippage
+    expect(w.pusd).toBe(USDC(10) - (USDC(10) / 10_000n) * 50n); // minOut at 50 bps slippage
     expect(Number(r.ctx.filledShares)).toBeCloseTo(18.09, 2); // 9.95 pUSD at the 0.55 limit
     const n = await notes();
     expect(n).toHaveLength(1);

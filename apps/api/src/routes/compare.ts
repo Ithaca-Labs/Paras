@@ -10,7 +10,8 @@ import {
 import { apiRoutes, type EventComparison, type EventHistory, type OrderBook } from '@paras/shared';
 import { QUOTE_STALE_AFTER_MS } from '../deps.js';
 import { HttpError, notFound } from '../errors.js';
-import { loadOutcomeGroups, type CompareRow } from '../events/compare.js';
+import { fetchBooks } from '../events/books.js';
+import { loadOutcomeGroups } from '../events/compare.js';
 import { eventExists } from '../events/queries.js';
 import { implement } from '../implement.js';
 import type { RoutePlugin } from './index.js';
@@ -25,33 +26,13 @@ export const compareRoutes: RoutePlugin = (app, { db, adapters, now = () => new 
     return groups;
   }
 
-  /** Live books for open Markets, keyed `venue|outcomeExternalId`. A failing Venue is skipped. */
-  async function fetchBooks(rows: CompareRow[]): Promise<Map<string, OrderBook>> {
-    const byVenue = new Map<string, string[]>();
-    for (const r of rows) {
-      if (r.market.status !== 'open') continue;
-      byVenue.set(r.venue.id, [...(byVenue.get(r.venue.id) ?? []), r.outcome.externalId]);
-    }
-    const books = new Map<string, OrderBook>();
-    await Promise.all(
-      [...byVenue].map(async ([venueId, ids]) => {
-        try {
-          for (const b of (await adapters.get(venueId)?.fetchOrderBooks?.(ids)) ?? []) {
-            books.set(`${venueId}|${b.outcomeExternalId}`, b);
-          }
-        } catch (err) {
-          app.log.warn({ err, venueId }, 'order book fetch failed');
-        }
-      }),
-    );
-    return books;
-  }
-
   implement(app, apiRoutes.compareEvent, async ({ params, query }) => {
     const { stake, divergenceThreshold } = query;
     const groups = await groupsOr404(params.id);
     const books = stake
-      ? await fetchBooks([...groups.values()].flat())
+      ? await fetchBooks(adapters, [...groups.values()].flat(), (err, venueId) =>
+          app.log.warn({ err, venueId }, 'order book fetch failed'),
+        )
       : new Map<string, OrderBook>();
     const asOf = now();
 

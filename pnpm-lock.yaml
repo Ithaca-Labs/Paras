@@ -78,6 +78,9 @@ importers:
 
   apps/executor:
     dependencies:
+      '@paras/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
       '@paras/db':
         specifier: workspace:*
         version: link:../../packages/db
