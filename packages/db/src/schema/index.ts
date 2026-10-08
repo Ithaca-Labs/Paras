@@ -2,3 +2,4 @@
 // Then: `pnpm db:generate` and commit the new SQL in packages/db/drizzle.
 export * from './identity.js';
 export * from './markets.js';
+export * from './magic-links.js';

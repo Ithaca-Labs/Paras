@@ -7,4 +7,12 @@ export {
   type MergeCandidate,
 } from './identity.js';
 export { bookToQuote, isStale, type BookInput, type BookLevel, type BookQuote } from './book.js';
+export {
+  signMagicLink,
+  verifyMagicLink,
+  type MagicLinkClaims,
+  type MagicLinkKeys,
+  type MagicLinkSource,
+  type MagicLinkVerdict,
+} from './magic-link.js';
 export { DECIMAL_SCALE, formatDecimal, mulDecimal, parseDecimal, type Scaled } from './decimal.js';

@@ -5,6 +5,7 @@ import { createTestDatabase } from '@paras/testkit';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { MemoryMailer } from '../src/auth/mailer.js';
+import type { MagicLinkDeps } from '../src/deps.js';
 import { defaultAuthConfig, type AuthConfig } from '../src/auth/types.js';
 
 export interface TestAppOptions {
@@ -12,6 +13,8 @@ export interface TestAppOptions {
   adapters?: VenueAdapter[];
   /** Override auth settings (TTLs, rate limits, ...). */
   auth?: Partial<AuthConfig>;
+  /** Override Magic Link settings (keys, TTLs, ...). */
+  magicLinks?: Partial<MagicLinkDeps>;
   /** Injected clock for freshness (`stale`) assertions. */
   now?: () => Date;
   /** SSE re-read interval; tests use a small value. */
@@ -19,6 +22,7 @@ export interface TestAppOptions {
 }
 
 export const TEST_AUTH_DOMAIN = 'paras.test';
+export const TEST_WEB_BASE_URL = 'https://web.paras.test';
 
 /** `fetch` that dispatches in-process via fastify.inject: no sockets, no network. */
 function injectFetch(app: FastifyInstance): typeof fetch {
@@ -53,6 +57,14 @@ export async function createTestApp(options: TestAppOptions = {}) {
     adapters: createAdapterRegistry(options.adapters),
     ...(options.now && { now: options.now }),
     ssePollMs: options.ssePollMs ?? 50,
+    magicLinks: {
+      keys: { activeKid: 'k1', keys: { k1: 'test-magic-key-test-magic-key-0001' } },
+      webBaseUrl: TEST_WEB_BASE_URL,
+      defaultTtlMs: 3600_000,
+      maxTtlMs: 86_400_000,
+      now: () => new Date(Date.now() + clock.offsetMs),
+      ...options.magicLinks,
+    },
     auth: {
       config: defaultAuthConfig({
         secret: 'test-secret-test-secret-test-secret-00',
