@@ -1,6 +1,8 @@
 import { z, type ErrorResponse } from '@paras/shared';
 import Fastify, { type FastifyServerOptions } from 'fastify';
+import { registerAuthGuard } from './auth/guard.js';
 import type { AppDeps } from './deps.js';
+import { HttpError } from './errors.js';
 import { routePlugins } from './routes/index.js';
 
 export function buildApp(deps: AppDeps, opts: FastifyServerOptions = {}) {
@@ -12,6 +14,10 @@ export function buildApp(deps: AppDeps, opts: FastifyServerOptions = {}) {
         error: { code: 'validation_error', message: 'Invalid request', issues: err.issues },
       };
       return reply.status(400).send(body);
+    }
+    if (err instanceof HttpError) {
+      const body: ErrorResponse = { error: { code: err.code, message: err.message } };
+      return reply.status(err.statusCode).send(body);
     }
     const status = err.statusCode ?? 500;
     if (status >= 500) req.log.error({ err }, 'unhandled error');
@@ -28,6 +34,7 @@ export function buildApp(deps: AppDeps, opts: FastifyServerOptions = {}) {
     return reply.status(404).send(body);
   });
 
+  registerAuthGuard(app, deps.db, deps.auth);
   for (const plugin of routePlugins) plugin(app, deps);
   return app;
 }

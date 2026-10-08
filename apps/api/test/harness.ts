@@ -4,11 +4,17 @@ import { createApiClient } from '@paras/shared';
 import { createTestDatabase } from '@paras/testkit';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
+import { MemoryMailer } from '../src/auth/mailer.js';
+import { defaultAuthConfig, type AuthConfig } from '../src/auth/types.js';
 
 export interface TestAppOptions {
   /** Fake Venue adapters (fixture-backed) injected instead of the real ones. */
   adapters?: VenueAdapter[];
+  /** Override auth settings (TTLs, rate limits, ...). */
+  auth?: Partial<AuthConfig>;
 }
+
+export const TEST_AUTH_DOMAIN = 'paras.test';
 
 /** `fetch` that dispatches in-process via fastify.inject: no sockets, no network. */
 function injectFetch(app: FastifyInstance): typeof fetch {
@@ -36,11 +42,29 @@ function injectFetch(app: FastifyInstance): typeof fetch {
 export async function createTestApp(options: TestAppOptions = {}) {
   const testDb = await createTestDatabase();
   const { db, close: closeDb } = createDb(testDb.url);
-  const app = buildApp({ db, adapters: createAdapterRegistry(options.adapters) });
+  const mailer = new MemoryMailer();
+  const clock = { offsetMs: 0, advance: (ms: number) => void (clock.offsetMs += ms) };
+  const app = buildApp({
+    db,
+    adapters: createAdapterRegistry(options.adapters),
+    auth: {
+      config: defaultAuthConfig({
+        secret: 'test-secret-test-secret-test-secret-00',
+        domain: TEST_AUTH_DOMAIN,
+        ...options.auth,
+      }),
+      mailer,
+      now: () => new Date(Date.now() + clock.offsetMs),
+    },
+  });
   await app.ready();
   return {
     app,
     db,
+    /** Captures outbound email (sign-in codes). */
+    mailer,
+    /** `clock.advance(ms)` moves the time the app sees (expiry tests). */
+    clock,
     /** Typed client from @paras/shared, wired to this app. */
     client: createApiClient({ baseUrl: 'http://api.test', fetch: injectFetch(app) }),
     async close() {

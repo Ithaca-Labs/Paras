@@ -64,6 +64,8 @@ Other packages reuse it via `@paras/api/testing`. Suites needing Postgres set `g
 
 **Fixture tests (Venue adapters).** Adapters take an injectable `fetch`. In tests pass `createFixtureFetch({ dir: new URL('./fixtures/<venue>/', import.meta.url) })` from `@paras/testkit`. It replays JSON files and throws on a missing fixture; it never touches the network. To record: `RECORD_FIXTURES=1 pnpm --filter <pkg> test`, review the written files in `test/fixtures/`, commit them. Recording is refused when `CI` is set. Only content-type is stored from response headers.
 
+**Require sign-in (auth guard).** `implement(app, apiRoutes.x, (req, ctx) => ..., { auth: 'required' })` answers 401 `unauthorized` for signed-out callers and passes `ctx.auth.userId` (also `sessionId`, `token`). `{ auth: 'optional' }` gives `ctx.auth: AuthContext | null`. Outside `implement` (e.g. SSE) use `await app.requireUser(req)` / `await app.authenticate(req)`. Callers authenticate with `Authorization: Bearer <token>` or the httpOnly `paras_session` cookie. Tests: sign in via `/v1/auth/email/request` + `t.mailer.lastCode(email)` + `/v1/auth/email/verify` (see `apps/api/test/auth.test.ts`). `returnTo` (relative paths only) is stored when a flow starts and echoed by verify, so Magic Links can resume after sign-in. When adding a table owned by a User, repoint it in `mergeUsers` (`apps/api/src/auth/users.ts`).
+
 **Add a job.** One file in `apps/worker/src/jobs/` using `defineJob` (name, zod payload, handler), registered in `jobs/index.ts`.
 
 **Add an MCP tool.** In `apps/mcp/src/server.ts`; thin wrapper over the typed client. Read-only, always.
