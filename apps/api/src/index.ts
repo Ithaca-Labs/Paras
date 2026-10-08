@@ -35,6 +35,10 @@ const app = buildApp(
           chainId: config.VAULT_CHAIN_ID,
         }),
       }),
+    oauth: {
+      issuer: config.OAUTH_ISSUER,
+      ...(config.OAUTH_CONSENT_URL && { consentUrl: config.OAUTH_CONSENT_URL }),
+    },
     magicLinks: {
       keys: loadMagicLinkKeys(config),
       webBaseUrl: config.WEB_BASE_URL,

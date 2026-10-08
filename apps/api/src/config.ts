@@ -16,6 +16,10 @@ const Env = z.object({
   EMAIL_FROM: z.string().default('Paras <login@paras.local>'),
   /** Public web app origin for Magic Link URLs (the web app is built later). */
   WEB_BASE_URL: z.string().url().default('http://localhost:5173'),
+  /** Public origin of this API: OAuth issuer in /.well-known metadata. */
+  OAUTH_ISSUER: z.string().url().default('http://localhost:3000'),
+  /** Web consent page for /oauth/authorize; unset = plain built-in fallback page. */
+  OAUTH_CONSENT_URL: z.string().url().optional(),
   /** Comma-separated `kid:secret` pairs (secret >= 32 chars). Required in production. */
   MAGIC_LINK_KEYS: z.string().optional(),
   /** Key used to sign new links; defaults to the first in MAGIC_LINK_KEYS. */

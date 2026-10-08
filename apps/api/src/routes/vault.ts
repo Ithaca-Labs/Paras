@@ -43,6 +43,6 @@ export const vaultRoutes: RoutePlugin = (app, { db, vault }) => {
         })),
       };
     },
-    { auth: 'required' },
+    { auth: 'required', scope: 'portfolio:read' },
   );
 };

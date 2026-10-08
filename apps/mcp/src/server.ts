@@ -1,11 +1,12 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z, type ApiClient, type EventView } from '@paras/shared';
+import { ApiError, z, type ApiClient, type EventView } from '@paras/shared';
 
 /**
  * Read-only MCP server: each tool is a thin wrapper over the typed API client (@paras/shared).
  * Never add a tool that moves money or places trades. No business logic here.
+ * `me` is the client carrying the caller's OAuth bearer (personal tools only).
  */
-export function createMcpServer(api: ApiClient): McpServer {
+export function createMcpServer(api: ApiClient, me: ApiClient = api): McpServer {
   const server = new McpServer({ name: 'paras', version: '0.0.0' });
 
   const source = z
@@ -136,6 +137,53 @@ export function createMcpServer(api: ApiClient): McpServer {
       },
     },
     async (args) => out(await api.createMagicLink({ body: { ...args, bindToUser: false } })),
+  );
+
+  server.registerTool(
+    'get_my_feed',
+    {
+      description:
+        "The user's personalized Feed (same ranking as the Paras web Feed), with Magic Links. Requires the feed:read scope.",
+      inputSchema: {
+        limit: z.number().int().min(1).max(20).default(10),
+        cursor: z.string().optional(),
+        source,
+      },
+    },
+    async ({ limit, cursor, source: src }) => {
+      const feed = await me.getFeed({ query: { limit, ...(cursor && { cursor }) } });
+      const events = await withLinks(
+        feed.items.map((i) => i.event),
+        src,
+      );
+      return out({
+        personalized: feed.personalized,
+        items: feed.items.map((i, n) => ({ reason: i.reason, score: i.score, ...events[n]! })),
+        nextCursor: feed.nextCursor,
+      });
+    },
+  );
+
+  server.registerTool(
+    'get_portfolio',
+    {
+      description:
+        "The user's Vault balances (idle, reserved, in-flight USDC). Read-only. Requires the portfolio:read scope. Empty until the Vault is live.",
+      inputSchema: {},
+    },
+    async () => {
+      try {
+        return out(await me.getVaultBalances());
+      } catch (e) {
+        if (!(e instanceof ApiError && e.status === 503)) throw e;
+        return out({
+          vault: null,
+          total: { idle: '0', reserved: '0', inFlight: '0' },
+          accounts: [],
+          note: 'The Vault is not live yet.',
+        });
+      }
+    },
   );
 
   return server;

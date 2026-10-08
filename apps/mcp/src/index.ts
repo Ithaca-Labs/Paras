@@ -2,7 +2,12 @@ import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
 
 const config = loadConfig();
-const app = buildApp({ apiUrl: config.API_URL, logger: { level: config.LOG_LEVEL } });
+const app = buildApp({
+  apiUrl: config.API_URL,
+  publicUrl: config.MCP_URL,
+  issuer: config.OAUTH_ISSUER ?? config.API_URL,
+  logger: { level: config.LOG_LEVEL },
+});
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) process.once(signal, () => void app.close());
 
