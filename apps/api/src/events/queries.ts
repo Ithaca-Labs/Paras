@@ -1,4 +1,5 @@
 import {
+  isLowConfidence,
   isStale,
   reciprocalRankFusion,
   taxonomyNode,
@@ -234,6 +235,10 @@ export async function loadEventViews(
       availability: venueAvailabilityFor(venue.id, venue.capabilities, countries),
       redirectUrl: market.url,
       matchConfidence: link.confidence,
+      lowConfidence: isLowConfidence(Number(link.confidence), link.source),
+      direction: link.direction,
+      candidate: link.candidate,
+      matchSource: link.source,
       outcomes: rows.map(({ outcome, quote }) => ({
         id: outcome.id,
         label: outcome.label,
@@ -273,6 +278,7 @@ export async function loadEventViews(
         volume: e.volume,
         liquidity: e.liquidity,
         move24h: e.move24h,
+        lowConfidence: ms.some((m) => m.lowConfidence),
         tags: tagRows.flatMap((t) =>
           t.eventId === id
             ? [{ id: t.tagId, label: taxonomyNode(t.tagId)?.label ?? t.tagId, kind: t.kind }]

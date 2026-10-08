@@ -3,26 +3,21 @@ import { isStale } from '@paras/domain';
 import { apiRoutes, type VenueHealth } from '@paras/shared';
 import { asc, desc, eq, gt, max, sql } from 'drizzle-orm';
 import { QUOTE_STALE_AFTER_MS } from '../deps.js';
+import { assertAdmin } from '../auth/admin.js';
 import { HttpError } from '../errors.js';
 import { implement } from '../implement.js';
 import type { RoutePlugin } from './index.js';
 
-const { executorPauses, latestQuotes, markets, outcomes, users, venueRuns, venues } = schema;
+const { executorPauses, latestQuotes, markets, outcomes, venueRuns, venues } = schema;
 const DAY_MS = 24 * 3600_000;
 
 export const opsRoutes: RoutePlugin = (app, { db, vault, now = () => new Date() }) => {
   const admin = { auth: 'required' as const };
-  /** 403 unless the caller's User has the `admin` role. */
-  const assertAdmin = async (userId: string) => {
-    const [u] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId));
-    if (u?.role !== 'admin') throw new HttpError(403, 'forbidden', 'Admin only');
-  };
-
   implement(
     app,
     apiRoutes.getVenueHealth,
     async (_req, { auth }) => {
-      await assertAdmin(auth.userId);
+      await assertAdmin(db, auth.userId);
       const t = now();
       const since = new Date(t.getTime() - DAY_MS);
       const [vs, quotes, runs, last] = await Promise.all([
@@ -94,7 +89,7 @@ export const opsRoutes: RoutePlugin = (app, { db, vault, now = () => new Date() 
     app,
     apiRoutes.getPauses,
     async (_req, { auth }) => {
-      await assertAdmin(auth.userId);
+      await assertAdmin(db, auth.userId);
       const rows = await db.select().from(executorPauses).orderBy(asc(executorPauses.scope));
       return {
         items: rows.map((p) => ({
@@ -112,7 +107,7 @@ export const opsRoutes: RoutePlugin = (app, { db, vault, now = () => new Date() 
     app,
     apiRoutes.pauseExecutor,
     async ({ params, body }, { auth }) => {
-      await assertAdmin(auth.userId);
+      await assertAdmin(db, auth.userId);
       if (params.scope !== 'global') {
         const [v] = await db
           .select({ id: venues.id })
@@ -142,7 +137,7 @@ export const opsRoutes: RoutePlugin = (app, { db, vault, now = () => new Date() 
     app,
     apiRoutes.unpauseExecutor,
     async ({ params }, { auth }) => {
-      await assertAdmin(auth.userId);
+      await assertAdmin(db, auth.userId);
       const gone = await db
         .delete(executorPauses)
         .where(eq(executorPauses.scope, params.scope))

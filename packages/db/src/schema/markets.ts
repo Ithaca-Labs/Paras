@@ -101,6 +101,8 @@ export const events = pgTable(
     embedding: vector('embedding', { dimensions: EMBEDDING_DIMENSIONS }),
     /** md5(title || '\n' || description) at embedding time; a mismatch means re-embed. */
     embeddedHash: text('embedded_hash'),
+    /** `embedded_hash` when matching last scanned this Event as a seed; a mismatch means re-scan. */
+    matchedHash: text('matched_hash'),
     searchTsv: tsvector('search_tsv').generatedAlwaysAs(
       sql`setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', description), 'B')`,
     ),
@@ -148,6 +150,37 @@ export const eventMarkets = pgTable(
     source: text('source').$type<'auto' | 'operator'>().notNull().default('auto'),
   },
   (t) => [primaryKey({ columns: [t.eventId, t.marketId] })],
+);
+
+/**
+ * Operator review queue: a medium-confidence proposal to link `marketId` into `eventId`.
+ * Rejected rows stay as tombstones so matching never proposes the pair again.
+ */
+export const matchReviews = pgTable(
+  'match_reviews',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    marketId: uuid('market_id')
+      .notNull()
+      .references(() => markets.id, { onDelete: 'cascade' }),
+    eventId: uuid('event_id')
+      .notNull()
+      .references(() => events.id, { onDelete: 'cascade' }),
+    confidence: numeric('confidence').notNull(),
+    direction: text('direction').$type<'same' | 'inverse'>().notNull().default('same'),
+    candidate: text('candidate'),
+    status: text('status')
+      .$type<'pending' | 'approved' | 'rejected'>()
+      .notNull()
+      .default('pending'),
+    createdAt: ts('created_at').notNull().defaultNow(),
+    decidedAt: ts('decided_at'),
+    decidedBy: uuid('decided_by'),
+  },
+  (t) => [
+    unique('match_reviews_pair_uq').on(t.marketId, t.eventId),
+    index('match_reviews_status_idx').on(t.status, t.confidence),
+  ],
 );
 
 /** Most recent Quote per Outcome. Hot read path for the API and SSE. */

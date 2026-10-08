@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { AppDeps } from '../deps.js';
+import { adminRoutes } from './admin.js';
 import { authRoutes } from './auth.js';
 import { compareRoutes } from './compare.js';
 import { eventRoutes } from './events.js';
@@ -38,5 +39,6 @@ export const routePlugins: RoutePlugin[] = [
   notificationRoutes,
   oauthRoutes,
   opsRoutes,
+  adminRoutes,
   openapiRoutes,
 ];

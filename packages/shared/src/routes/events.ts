@@ -62,6 +62,14 @@ export const MarketView = z.object({
   redirectUrl: z.string().url(),
   /** Confidence that this Market belongs to the Event (1 for the Event's own seed Market). */
   matchConfidence: DecimalString,
+  /** Automatic link below the high-confidence bar: show a warning. Operator-confirmed links are never low. */
+  lowConfidence: z.boolean(),
+  /** `inverse`: this Market's YES is the Event's NO (already normalized in comparisons). */
+  direction: z.enum(['same', 'inverse']),
+  /** Multi-outcome Events: the candidate this binary Market's YES stands for. */
+  candidate: z.string().nullable(),
+  /** Who decided the link. */
+  matchSource: z.enum(['auto', 'operator']),
   outcomes: z.array(OutcomeView),
   /** Newest Quote observation across this Market's Outcomes. */
   quotesUpdatedAt: z.iso.datetime().nullable(),
@@ -91,6 +99,8 @@ export const EventView = z.object({
   move24h: DecimalString,
   /** Taxonomy tags (category, topics, entities), best match first. */
   tags: z.array(TagView),
+  /** Any linked Market is a low-confidence match. */
+  lowConfidence: z.boolean(),
   /** Newest Quote observation across all Venues. */
   quotesUpdatedAt: z.iso.datetime().nullable(),
   markets: z.array(MarketView),
