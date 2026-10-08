@@ -16,6 +16,9 @@ export interface AuthConfig {
   maxCodesPerEmail: number;
   /** Max codes per IP per hour. */
   maxCodesPerIp: number;
+  /** Lowercase identities promoted to `admin` on sign-in (ADMIN_EMAILS / ADMIN_WALLETS). */
+  adminEmails: string[];
+  adminWallets: string[];
 }
 
 export interface AuthDeps {
@@ -37,5 +40,7 @@ export const defaultAuthConfig = (
   maxCodeAttempts: 5,
   maxCodesPerEmail: 3,
   maxCodesPerIp: 20,
+  adminEmails: [],
+  adminWallets: [],
   ...over,
 });

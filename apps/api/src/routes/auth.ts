@@ -1,3 +1,5 @@
+import { schema } from '@paras/db';
+import { eq } from 'drizzle-orm';
 import { apiRoutes, type AuthResult } from '@paras/shared';
 import { requestEmailCode, consumeEmailCode } from '../auth/email.js';
 import { issueNonce, verifySiweMessage } from '../auth/siwe.js';
@@ -22,6 +24,16 @@ export const authRoutes: RoutePlugin = (app, { db, auth }) => {
   ): Promise<AuthResult> {
     const current = await app.authenticate(ctx.request);
     const outcome = await resolveIdentity(db, identity, current?.userId ?? null);
+    const listed =
+      identity.kind === 'email'
+        ? auth.config.adminEmails.includes(identity.email.toLowerCase())
+        : auth.config.adminWallets.includes(identity.address.toLowerCase());
+    if (listed) {
+      await db
+        .update(schema.users)
+        .set({ role: 'admin' })
+        .where(eq(schema.users.id, outcome.userId));
+    }
     let token: string;
     let expiresAt: Date;
     if (current) {

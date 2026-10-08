@@ -36,6 +36,9 @@ const Env = z.object({
     .regex(/^0x[0-9a-fA-F]{40}$/)
     .optional(),
   VAULT_CHAIN_ID: z.coerce.number().int().default(10143),
+  /** Comma-separated emails / wallet addresses that become admins on sign-in. */
+  ADMIN_EMAILS: z.string().default(''),
+  ADMIN_WALLETS: z.string().default(''),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 });
 

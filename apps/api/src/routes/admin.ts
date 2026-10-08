@@ -142,4 +142,20 @@ export const adminRoutes: RoutePlugin = (app, { db }) => {
     },
     { auth: 'required' },
   );
+
+  implement(
+    app,
+    apiRoutes.updateEventLabels,
+    async ({ params, body }, { auth }) => {
+      await assertAdmin(db, auth.userId);
+      const [row] = await db
+        .update(events)
+        .set({ ...body, labelLocked: true })
+        .where(eq(events.id, params.id))
+        .returning({ id: events.id, title: events.title, category: events.category });
+      if (!row) throw new HttpError(404, 'not_found', 'Event not found');
+      return row;
+    },
+    { auth: 'required' },
+  );
 };
