@@ -24,6 +24,13 @@ import {
 } from './jurisdiction.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
 import {
+  authorizeOAuth,
+  getOAuthClient,
+  getTokenInfo,
+  listConnectedApps,
+  revokeConnectedApp,
+} from './oauth.js';
+import {
   getExplainer,
   getOnboardingOptions,
   getProfile,
@@ -78,6 +85,11 @@ export const apiRoutes = {
   markNotificationsRead,
   getNotificationPrefs,
   updateNotificationPrefs,
+  getOAuthClient,
+  authorizeOAuth,
+  getTokenInfo,
+  listConnectedApps,
+  revokeConnectedApp,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -95,3 +107,4 @@ export * from './auth.js';
 export * from './venues.js';
 export * from './jurisdiction.js';
 export * from './vault.js';
+export * from './oauth.js';

@@ -53,13 +53,15 @@ describe('mcp', () => {
     expect(await res.json()).toEqual({ status: 'ok' });
   });
 
-  it('exposes only read tools plus create_magic_link: nothing that trades or moves money', async () => {
+  it('exposes only read tools (public + personal) plus create_magic_link: nothing that trades or moves money', async () => {
     const client = await connect();
     const names = (await client.listTools()).tools.map((x) => x.name).sort();
     expect(names).toEqual([
       'compare_prices',
       'create_magic_link',
       'get_event',
+      'get_my_feed',
+      'get_portfolio',
       'list_closing_soon',
       'list_trending',
       'search_events',

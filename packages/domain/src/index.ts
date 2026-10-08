@@ -125,3 +125,11 @@ export {
   type NotificationKind,
   type NotificationPrefs,
 } from './notifications.js';
+export {
+  OAUTH_SCOPES,
+  parseScopes,
+  pkceMatches,
+  redirectUriMatches,
+  validRedirectUri,
+  type OAuthScope,
+} from './oauth.js';

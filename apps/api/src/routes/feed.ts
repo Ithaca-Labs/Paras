@@ -175,7 +175,7 @@ export const feedRoutes: RoutePlugin = (
         nextCursor: ranked.length > offset + query.limit ? String(offset + query.limit) : null,
       };
     },
-    { auth: 'optional' },
+    { auth: 'optional', scope: 'feed:read' },
   );
 
   implement(

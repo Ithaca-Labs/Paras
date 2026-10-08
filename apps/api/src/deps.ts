@@ -15,12 +15,21 @@ export interface MagicLinkDeps {
   now: () => Date;
 }
 
+export interface OAuthDeps {
+  /** Public origin of this API (OAuth issuer / metadata base). */
+  issuer: string;
+  /** Web consent page; when set, /oauth/authorize redirects there instead of the plain fallback. */
+  consentUrl?: string;
+}
+
 /** Everything routes may touch. Tests build this with a fresh DB and fake adapters. */
 export interface AppDeps {
   db: Database;
   adapters: AdapterRegistry;
   auth: AuthDeps;
   magicLinks: MagicLinkDeps;
+  /** OAuth AS settings; defaults to localhost. */
+  oauth?: OAuthDeps;
   /** Embeds search queries for semantic search. Omit for full-text only. */
   embedder?: Embedder;
   /** Country resolver; default trusts the CDN country header. */

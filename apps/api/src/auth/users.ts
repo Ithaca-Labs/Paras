@@ -64,6 +64,8 @@ export async function mergeUsers(tx: Tx, aId: string, bId: string): Promise<stri
     schema.emailIdentities,
     schema.authSessions,
     schema.magicLinks,
+    schema.oauthGrants,
+    schema.oauthCodes,
   ]) {
     await tx.update(t).set({ userId: survivor.id }).where(eq(t.userId, absorbed.id));
   }

@@ -7,6 +7,7 @@ import {
   type SseRoute,
 } from '@paras/shared';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import type { OAuthScope } from '@paras/domain';
 import type { AuthContext } from './auth/guard.js';
 
 export interface HandlerCtx<A = undefined> {
@@ -27,7 +28,8 @@ type Handler<R extends Route, A> = (
  * response schema, so the wire format always matches the OpenAPI document.
  *
  * Auth: `{ auth: 'required' }` answers 401 for signed-out callers and gives the handler
- * `ctx.auth` (userId, ...). `{ auth: 'optional' }` gives `AuthContext | null`.
+ * `ctx.auth` (userId, ...). `{ auth: 'optional' }` gives `AuthContext | null`. Add `scope` to also
+ * accept OAuth access tokens holding it (never do this for routes that write or move money).
  */
 export function implement<R extends Route>(
   app: FastifyInstance,
@@ -38,29 +40,35 @@ export function implement<R extends Route>(
   app: FastifyInstance,
   route: R,
   handler: Handler<R, AuthContext>,
-  opts: { auth: 'required' },
+  opts: { auth: 'required'; scope?: OAuthScope },
 ): void;
 export function implement<R extends Route>(
   app: FastifyInstance,
   route: R,
   handler: Handler<R, AuthContext | null>,
-  opts: { auth: 'optional' },
+  opts: { auth: 'optional'; scope?: OAuthScope },
 ): void;
 export function implement<R extends Route>(
   app: FastifyInstance,
   route: R,
   handler: Handler<R, never>,
-  opts?: { auth?: 'required' | 'optional' },
+  opts?: { auth?: 'required' | 'optional'; scope?: OAuthScope },
 ): void {
   app.route({
     method: route.method.toUpperCase() as Uppercase<R['method']>,
     url: toFastifyPath(route.path),
     handler: async (req, reply) => {
+      // `scope` additionally lets OAuth access tokens (MCP clients) in; see authenticateScoped.
+      const scoped = opts?.scope;
       const auth =
         opts?.auth === 'required'
-          ? await app.requireUser(req)
+          ? scoped
+            ? ((await app.authenticateScoped(req, scoped)) ?? (await app.requireUser(req)))
+            : await app.requireUser(req)
           : opts?.auth === 'optional'
-            ? await app.authenticate(req)
+            ? scoped
+              ? await app.authenticateScoped(req, scoped)
+              : await app.authenticate(req)
             : undefined;
       const input = {
         ...(route.request.params && { params: route.request.params.parse(req.params) }),

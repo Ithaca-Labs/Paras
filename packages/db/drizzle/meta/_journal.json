@@ -78,6 +78,13 @@
       "when": 1791501050772,
       "tag": "0010_needy_chat",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791501499013,
+      "tag": "0011_nasty_virginia_dare",
+      "breakpoints": true
     }
   ]
 }
