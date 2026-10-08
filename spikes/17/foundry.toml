@@ -1,0 +1,7 @@
+# Throwaway spike project (#17). Not part of CI.
+# Run: forge test --root spikes/17 --fork-url <rpc> -vv
+[profile.default]
+src = "src"
+test = "test"
+libs = ["../../contracts/lib"]
+solc = "0.8.28"
