@@ -9,6 +9,7 @@ import { jurisdictionRoutes } from './jurisdiction.js';
 import { magicLinkRoutes } from './magic-links.js';
 import { notificationRoutes } from './notifications.js';
 import { oauthRoutes } from './oauth.js';
+import { opsRoutes } from './ops.js';
 import { openapiRoutes } from './openapi.js';
 import { profileRoutes } from './profile.js';
 import { taxonomyRoutes } from './taxonomy.js';
@@ -36,5 +37,6 @@ export const routePlugins: RoutePlugin[] = [
   feedRoutes,
   notificationRoutes,
   oauthRoutes,
+  opsRoutes,
   openapiRoutes,
 ];

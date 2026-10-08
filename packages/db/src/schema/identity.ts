@@ -19,6 +19,8 @@ export const users = pgTable('users', {
   /** Self-attested ISO 3166-1 alpha-2 country of residence (jurisdiction gating, #16). */
   attestedCountry: text('attested_country'),
   attestedAt: tz('attested_at'),
+  /** `admin` unlocks /v1/admin (operator review queue, merge/split). Set by SQL; there is no self-serve path. */
+  role: text('role').$type<'user' | 'admin'>().notNull().default('user'),
 });
 
 /** Risk-disclosure acknowledgements, one per (User, disclosure version). */

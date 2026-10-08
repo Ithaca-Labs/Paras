@@ -13,11 +13,14 @@ export interface VaultReader {
   readonly vault: Address;
   readonly chainId: number;
   accounts(users: Address[]): Promise<VaultAccount[]>;
+  /** On-chain pause flag (set by the multisig pauser; read-only here). */
+  paused?(): Promise<boolean>;
 }
 
 const abi = parseAbi([
   'function balanceOf(address) view returns (uint256 idle, uint256 reserved, uint256 inFlight)',
   'function depositWalletOf(address) view returns (address)',
+  'function paused() view returns (bool)',
 ]);
 
 export function createVaultReader(p: {
@@ -29,6 +32,7 @@ export function createVaultReader(p: {
   return {
     vault: p.vault,
     chainId: p.chainId,
+    paused: () => client.readContract({ address: p.vault, abi, functionName: 'paused' }),
     async accounts(users) {
       const reads = await Promise.all(
         users.map(async (u) => {

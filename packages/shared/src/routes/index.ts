@@ -40,6 +40,7 @@ import {
   updateProfile,
 } from './profile.js';
 import { getCategory, listCategories } from './taxonomy.js';
+import { getPauses, getVenueHealth, pauseExecutor, unpauseExecutor } from './ops.js';
 import { listVenues } from './venues.js';
 import {
   getDepositWallet,
@@ -100,6 +101,10 @@ export const apiRoutes = {
   getTokenInfo,
   listConnectedApps,
   revokeConnectedApp,
+  getVenueHealth,
+  getPauses,
+  pauseExecutor,
+  unpauseExecutor,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -118,3 +123,4 @@ export * from './venues.js';
 export * from './jurisdiction.js';
 export * from './vault.js';
 export * from './oauth.js';
+export * from './ops.js';

@@ -7,6 +7,7 @@ import {
   recordQuotes,
   upsertMarkets,
   upsertVenue,
+  withVenueRun,
   type Database,
 } from '@paras/db';
 import { z } from '@paras/shared';
@@ -41,27 +42,28 @@ export function createSyncMarketsJob({ db, adapters, embedder, log }: VenueJobCo
   return defineJob({
     name: 'venue.sync-markets',
     payload: VenueSyncPayload,
-    handler: async ({ venue, maxMarkets }) => {
-      const adapter = adapters.get(venue);
-      if (!adapter) throw new Error(`unknown venue: ${venue}`);
-      await upsertVenue(db, adapter);
-      let cursor: string | undefined;
-      let total = 0;
-      do {
-        const page = await adapter.listMarkets({
-          cursor,
-          limit: Math.min(PAGE_SIZE, maxMarkets - total),
-        });
-        total += await upsertMarkets(db, page.items);
-        cursor = page.nextCursor ?? undefined;
-      } while (cursor && total < maxMarkets);
-      log?.('markets synced', { venue, total });
-      if (embedder && taxonomy) {
-        const enriched = await enrichEvents(db, embedder, await taxonomy);
-        await refreshEventSignals(db);
-        log?.('events enriched', { enriched });
-      }
-    },
+    handler: ({ venue, maxMarkets }) =>
+      withVenueRun(db, venue, 'markets', async () => {
+        const adapter = adapters.get(venue);
+        if (!adapter) throw new Error(`unknown venue: ${venue}`);
+        await upsertVenue(db, adapter);
+        let cursor: string | undefined;
+        let total = 0;
+        do {
+          const page = await adapter.listMarkets({
+            cursor,
+            limit: Math.min(PAGE_SIZE, maxMarkets - total),
+          });
+          total += await upsertMarkets(db, page.items);
+          cursor = page.nextCursor ?? undefined;
+        } while (cursor && total < maxMarkets);
+        log?.('markets synced', { venue, total });
+        if (embedder && taxonomy) {
+          const enriched = await enrichEvents(db, embedder, await taxonomy);
+          await refreshEventSignals(db);
+          log?.('events enriched', { enriched });
+        }
+      }),
   });
 }
 
@@ -73,20 +75,21 @@ export function createPollQuotesJob({ db, adapters, log }: VenueJobContext) {
   return defineJob({
     name: 'venue.poll-quotes',
     payload: QuotePollPayload,
-    handler: async ({ venue, topMarkets }) => {
-      const adapter = adapters.get(venue);
-      if (!adapter) throw new Error(`unknown venue: ${venue}`);
-      const targets = await listPollTargets(db, venue, topMarkets);
-      let updated = 0;
-      let snapshots = 0;
-      for (let i = 0; i < targets.length; i += QUOTE_BATCH) {
-        const quotes = await adapter.fetchQuotes(targets.slice(i, i + QUOTE_BATCH));
-        const r = await recordQuotes(db, venue, quotes);
-        updated += r.updated;
-        snapshots += r.snapshots;
-      }
-      await refreshEventSignals(db);
-      log?.('quotes polled', { venue, outcomes: targets.length, updated, snapshots });
-    },
+    handler: ({ venue, topMarkets }) =>
+      withVenueRun(db, venue, 'quotes', async () => {
+        const adapter = adapters.get(venue);
+        if (!adapter) throw new Error(`unknown venue: ${venue}`);
+        const targets = await listPollTargets(db, venue, topMarkets);
+        let updated = 0;
+        let snapshots = 0;
+        for (let i = 0; i < targets.length; i += QUOTE_BATCH) {
+          const quotes = await adapter.fetchQuotes(targets.slice(i, i + QUOTE_BATCH));
+          const r = await recordQuotes(db, venue, quotes);
+          updated += r.updated;
+          snapshots += r.snapshots;
+        }
+        await refreshEventSignals(db);
+        log?.('quotes polled', { venue, outcomes: targets.length, updated, snapshots });
+      }),
   });
 }
