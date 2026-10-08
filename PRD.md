@@ -473,7 +473,100 @@ Parallel backend tracks after #2: discovery (#3→#4→#5→#6, #7, #8, #9), ide
 
 ## Vault risk findings
 
-_To be filled by #17._
+Spike #17 (2026-10-09). Evidence: public RPCs (Monad 143, Polygon 137, Monad testnet 10143), Circle Iris API, verified Deposit Wallet source (Sourcify), and Foundry fork tests on live Polygon/Monad state. Scripts: `spikes/17/` (throwaway, not in CI). No funds and no Polymarket credentials were used.
+
+| # | Risk | Verdict |
+|---|---|---|
+| 1 | CCTP v2 Monad to Polygon | **GO** |
+| 2a | POLY_1271 orders and API key binding (py-clob-client-v2 #77) | **CONDITIONAL GO**: needs a live test with a real Deposit Wallet |
+| 2b | "Scoped" session key | **NO-GO as designed**: no on-chain scope. Workaround below |
+| 2c | USDC to pUSD wrap on Polygon | **GO with design change**: native USDC cannot be wrapped; swap to USDC.e first |
+| 2d | Builder relayer and tier limits | **GO**, apply for Verified early |
+| 2e | Geoblock for an operator server | **GO**, constraints below |
+| 3 | Polymarket ToS on third-party operators | **UNRESOLVED**: legal text not retrievable; HITL |
+
+### 1. CCTP v2 Monad to Polygon: GO
+
+- Domains: Monad **15**, Polygon PoS **7** (read from `localDomain()` on-chain). Both support standard transfer, forwarding service and upfront fees (Monad testnet lacks upfront fees). Fast Transfer is "N/A" on both: standard attestation is already quick.
+- Contracts: identical address on both chains and both directions. Verified on-chain: code present, `localMinter` set, `remoteTokenMessengers` cross-registered, and `getLocalToken` maps Monad USDC to Polygon USDC and back.
+
+| Contract | Mainnet (Monad 143 and Polygon 137) | Testnet (Monad 10143 and Amoy 80002) |
+|---|---|---|
+| TokenMessengerV2 | `0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d` | `0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA` |
+| MessageTransmitterV2 | `0x81D40F21F12A8F0E3252Bccb954D722d4c464B64` | `0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275` |
+| TokenMinterV2 | `0xfd78EE919681417d192449715b2594ab58f5D002` | `0xb43db544E2c27092c107639Ad201b3dEfAbcF192` |
+
+- Native USDC (6 decimals): Monad `0x754704Bc059F8C67012fEd69BC8A327a5aafb603`, Polygon `0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359`; testnet Monad `0x534b2f3A21130d7a60830c2Df862319e593943A3`, Amoy `0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582`. Testnet: TokenMessenger code and `localDomain()` confirmed on Monad testnet (15) and Amoy (7).
+- **Fees:** Iris `GET /v2/burn/USDC/fees/15/7` and `/7/15` returned `minimumFee: 0` for both finality thresholds (1000 and 2000). Circle docs: standard transfer is 0 bps. The real cost is destination gas (POL on Polygon, MON on Monad) for `receiveMessage`, unless the Forwarding Service is used (adds a fee; not needed).
+- **Latency (Circle docs, not measured live):** Monad standard about 5 s (1 confirmation), Polygon standard about 8 s (2-3 confirmations). Live burn-to-mint timing needs real USDC; see follow-up.
+- **mintRecipient:** a `bytes32` with no constraint. Fork tests: `depositForBurnWithHook` on Monad with a contract recipient emits `MessageSent`. On Polygon, delivery via `handleReceiveFinalizedMessage` (impersonating MessageTransmitterV2, i.e. the post-attestation step) mints native USDC straight to a contract with no callbacks. The recipient need not be deployed at mint time, so a counterfactual Deposit Wallet address works.
+- **Hooks:** `hookData` is opaque metadata in the signed message; CCTP v2 core never executes it. Nothing can auto-wrap on arrival, so wrapping needs a separate wallet batch (see 2c).
+- **destinationCaller:** use `bytes32(0)` on the outbound burn (permissionless relay, so the user is never stuck if the Executor is down; the mint goes only to `mintRecipient`). Use `destinationCaller = Vault` on the return burn.
+- **Design change for #18/#20 (return path):** Vault `settle` must not trust Executor-supplied `(user, amount)`. The Executor submits `(message, attestation)` to the Vault; the Vault calls `MessageTransmitterV2.receiveMessage` itself, decodes the BurnMessageV2 and credits the user mapped from the burn's `messageSender` (the registered Deposit Wallet) by the minted amount. `mintRecipient = Vault`, `destinationCaller = Vault`. This binds credits to the burning wallet on-chain and keeps `sum(balances) == USDC held - in-flight`.
+
+### 2a. POLY_1271 and API-key binding (py-clob-client-v2 #77): CONDITIONAL GO
+
+- Signature types: 0 EOA, 1 POLY_PROXY, 2 GNOSIS_SAFE, 3 DEPOSIT_WALLET (SDK name `POLY_1271`). Type 3 is the default for accounts deployed on or after 2026-05-04.
+- SDK source (`py_clob_client_v2` 1.1.0, `order_builder/builder.py`): for type 3 the order `signer` and `maker` are the Deposit Wallet (`_v2_order_signer` returns `funder`). L1 auth (`create_or_derive_api_key`) always signs `ClobAuth` with the EOA, so the API key is bound to the **signer EOA**. Docs (`trading/wallets-auth`) say this is by design: "The CLOB API key is bound to the signer address, not the wallet address".
+- Issue #77 (opened 2026-05-24, still OPEN): order rejected with `the order signer address has to be the address of the API KEY`. The only comment (2026-07-03) says it works with the stock client on a genuine deployed wallet (`signature_type=3`, `funder` = wallet, EOA key), that EOA key binding is expected, and that a wrong `signature_type` (1) derives a key reporting 0 balance.
+- **Our probe (2026-10-09, `spikes/17/clob_auth_probe.py`, throwaway EOA, fake undeployed wallet, no funds):** API key creation succeeded; the order post returned exactly `the order signer address has to be the address of the API KEY`. This is consistent with both "still broken" and "no wallet registered for this signer", so it neither reproduces nor refutes #77 for a real wallet. A real test needs a deployed Deposit Wallet, which only Polymarket's factory operators (the relayer) can create.
+- Verdict: proceed assuming the July report is right; gate #19/#20 acceptance on a live staging test (follow-up HITL issue). Fallback if it fails: the session-signer flow (the session key does its own L1 auth and gets its own API key, `POLY_ADDRESS` = session signer, order maker/signer = wallet); if that also fails, escalate to builder@polymarket.com. Do not fall back to type 1/2 (legacy, not creatable for new users).
+
+### 2b. Session keys: NO-GO as "scoped", workaround required
+
+The `DepositWallet` implementation `0xf7f27C29e60fe6325beF8dA7F93250353d2e3294` (beacon `0x7A18EDfe055488A3128f01F563e5B479D92ffc3a`, factory `0x00000000000Fb5C9ADea0298D729A0CB3823Cc07`, timelock delay 3600 s) is verified on Sourcify. Fork tests against the real contracts (`spikes/17/test/DepositWalletFork.t.sol`, 6 pass):
+
+- `execute` is `onlyFactory`, and the factory's `proxy` and `deploy` are `onlyOperator`. **The Executor cannot submit anything on-chain itself**; every wallet action goes through Polymarket's relayer.
+- A session signer (`authorizeSessionSigner(addr, validUntil)`, set by an owner-signed batch) can sign batches that call **any target except the wallet itself and the beacon**. Test `test_sessionSignerCanTransferToArbitraryAddress`: a session-signed batch `pUSD.transfer(attacker, 1000e6)` succeeds. It cannot self-call (so it cannot rotate the owner or add signers); unauthorized and expired signers are rejected.
+- The `CLOB`, `COMBOSRFQ`, `ALL` scopes in the docs are **not on-chain**. They are enforced by Polymarket's relayer/CLOB, with no documented target allowlist. Validity is fixed at now + 180 days (other values are rejected). The feature is beta and needs a Builder API key plus contact with builder@polymarket.com. The docs claim a session key "cannot withdraw", which is true only of the owner-only `withdrawERC20` path.
+- The docs do not say whether the relayer accepts session-signed `WALLET` batches (needed for wrap, redeem and bridge-back). Unknown.
+- Owner-only escape hatch: `pause()` then, after the 1 h timelock, `withdrawERC20/1155/Native` to any address. The owner may be an ERC-1271 contract (`SignatureVerifierLib` tries ECDSA, then falls back to `isValidSignature` on a deployed owner).
+
+**Consequence:** the non-negotiable "Executor can only move a user's funds to that user's own Deposit Wallet or back to that user" is enforceable on Monad (Vault) but **not on Polygon with Polymarket's session keys**. #19's acceptance criterion "session key cannot transfer to arbitrary address" cannot be met on-chain with the stock wallet.
+
+Options (decision needed, see the HITL issue; non-negotiables are not changed here):
+- **A. Policy owner contract (recommended hardening):** make the wallet `owner` a per-user Paras `PolicyOwner` ERC-1271 contract. Its `isValidSignature(digest, sig)` accepts (i) the user's EOA for anything, and (ii) the Executor key only if the signature payload carries a batch whose recomputed digest matches and whose calls pass an allowlist (approve to Onramp/exchanges, swap/wrap into the wallet itself, CTF redeem, CCTP burn with `mintRecipient = Vault`). This gives real on-chain scope without relying on beta session keys. Unknowns: whether the CLOB accepts a contract owner (L1 auth is ECDSA by the signer EOA), and whether the relayer accepts batches signed this way. Needs a follow-up spike with Polymarket access.
+- **B. Stock session key plus off-chain controls (V1 fallback):** the Executor holds only a `CLOB`-scope session key. Non-CLOB steps go through owner-signed batches by the user (UX cost) or, if the relayer accepts it, session-signed batches. Blast radius is limited by: the Vault dispatches only the Intent amount; proceeds are swept back after each fill; KMS signer, per-key spend limits and alerting; rotation by `revokeSessionSigner` (owner batch) and re-authorize before the 180-day expiry; emergency pause plus timelocked withdraw by the owner.
+- **C. Executor-controlled owner key:** rejected, equals custody.
+
+### 2c. pUSD wrap: GO with design change
+
+- Addresses (Polygon, code verified on-chain): pUSD proxy `0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB` (6 decimals), CollateralOnramp `0x93070a847efEf7F70739046A929D47a521F5B8ee`, CollateralOfframp `0x2957922Eb93258b93368531d39fAcCA3B4dC5854`, PermissionedRamp `0xebC2459Ec962869ca4c0bd1E06368272732BCb08` (witness-signed; not usable by us), CTF `0x4D97DCd97eC945f40cF65F87097ACe5EA0476045`, CTF Exchange `0xE111180000d2663C0091e4f400237545B87B996B`, Neg Risk Exchange `0xe2222d279d744050d28e00520010520000310F59`, V2 Exchange `0xe3333700cA9d93003F00f0F71f8515005F6c00Aa`, PositionManager `0x006F54F7f9A22e0000CC2AB60031000000ae9fEF`.
+- `Onramp.wrap(address asset, address to, uint256 amount)` is permissionless (approve the **Onramp**, not pUSD; `to` can be any address). **`paused(native USDC)` is `true` on mainnet today; `paused(USDC.e 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174)` is `false`.** CCTP mints **native** USDC, so it cannot be wrapped directly (fork test `test_nativeUsdcWrapIsPaused`).
+- **Working path (fork test `test_swapNativeToUsdceThenWrap`):** native USDC to USDC.e via Uniswap V3 SwapRouter02 `0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45`, fee tier 100 pool `0xD36ec33c8bed5a9F7B6630855f1533455b98a418` (about 126M USDC / 110M USDC.e), then `Onramp.wrap(USDC.e, wallet, out)`. 10,000 USDC returned 9,999.08 pUSD (about 0.9 bps). Return path: `Offramp.unwrap` to USDC.e, swap to native USDC, CCTP burn.
+- Impact on #19/#20: Route steps become burn, mint, swap, wrap, order (and the reverse), all as wallet batches via the relayer (one batch can hold approve + swap + approve + wrap). Pool depth and the pause on native USDC are external risks: monitor `Onramp.paused(native)`; if Polymarket re-enables native wrap, drop the swap. A slippage cap on the swap (`amountOutMinimum`) is mandatory. Intent preview fees must include about 1 bps swap cost.
+
+### 2d. Builder relayer and tier limits: GO
+
+- Relayer `https://relayer-v2.polymarket.com`: `WALLET-CREATE` (deploy; `to` = factory; poll to `STATE_CONFIRMED`; returns `proxyAddress`) and `WALLET` (EIP-712 `Batch`, domain `DepositWallet` v1 chain 137, wallet nonce from `/v1/account/transactions/params`). Auth: Builder HMAC headers (`POLY_BUILDER_*`) or Relayer API key headers.
+- Limits: Unverified **100 relayer txs/day**, Verified **10,000/day** (manual approval via builder@polymarket.com), Partner unlimited. `/submit` is also capped at 25 requests/min. Rough estimate of 2-3 relayer txs per Intent (deploy once, buy batch, exit/redeem batch), so unverified supports about 30-40 Intents/day: **apply for Verified before any beta**. A Relayer API key (own wallet only) is unlimited but cannot be used for other users.
+- Attach the builder code to every order; builders may charge fees (docs: all tiers).
+
+### 2e. Geoblock for an operator server: GO with constraints
+
+- `GET https://polymarket.com/api/geoblock` returns `{blocked, ip, country, region}` for the requesting IP. Fully blocked: IR, SY, CU, KP, UA-43/14/09. Close-only on frontend and API (no new positions): US, GB, FR, DE, IT, PL, SG, TW, TH, AU, BE, BR, RU, BY, CA (BC, ON, AB, QC) and others in the docs. Close-only on frontend only: IE, JP, MT (sports), NL, KR. India is not listed.
+- Docs: orders from blocked regions are rejected; "builders should verify the location"; co-location is not available to builders. They do not say whether the server IP or the end user's location governs API orders.
+- Rules for Paras: (1) run the Executor from a permitted region (e.g. IE or an unlisted country; eu-west-1 is cited as the closest non-restricted region); (2) gate **per user**, not per server: the eligibility matrix (#16) must use the full Polymarket list including frontend-only entries, and must not let a user from a close-only country open positions through a permitted server IP (that would circumvent Polymarket's restriction); (3) US users stay at redirects; (4) re-check the geoblock endpoint from the Executor host in health checks and fail closed.
+
+### 3. Polymarket ToS on third-party operators: UNRESOLVED (HITL)
+
+- `polymarket.com/tos` renders client-side. The body text was not retrievable (WebFetch and curl returned only page chrome; the web archive is blocked), so **no clause is quoted here and none is assumed**.
+- Supporting evidence from the Builder docs (`developers/builders/builder-intro`): a builder is "a person, group, or organization that routes orders from users to Polymarket", and builders may create accounts for users and execute gasless transactions. The docs do not address custody, KYC or compliance responsibility, and no public builder agreement was found. Routing for users is clearly contemplated; per-user segregated, user-signed Intents fit it. An Executor holding a signer for many users' wallets is the part most likely to need explicit approval.
+- Action: counsel reads the Terms of Use and Builder terms; email builder@polymarket.com (also for Verified tier and session-key access) describing the Vault flow. This blocks mainnet (#24), not testnet work.
+
+### What needs live funds or Polymarket access (follow-up HITL)
+
+1. Real CCTP burn-to-mint latency Monad to Polygon and back (needs USDC and gas).
+2. Deploy a real Deposit Wallet via the relayer (needs a Builder API key) and place a real POLY_1271 order from the owner key and from a session key. This settles #77 and whether the relayer accepts session-signed non-CLOB batches.
+3. Whether the CLOB accepts a contract (ERC-1271) wallet owner (option A).
+4. Polymarket staging availability (SDK examples default to chain 80002 and `localhost:8080`; no public staging host confirmed).
+5. ToS and builder-agreement legal read; Verified builder application.
+
+### Downstream changes
+
+- **#18 (Vault):** `settle` consumes the CCTP message and credits the user mapped from the burn's `messageSender`; return-burn `destinationCaller = Vault`; outbound `destinationCaller = 0`. The dispatch invariant is unchanged (`mintRecipient == registered Deposit Wallet`). Fork tests can use Monad USDC with `deal` (verified).
+- **#19 (Deposit Wallets):** the scoped-session-key AC is reworded per 2b; provisioning via the relayer needs a Builder API key; add the negative test at the Executor policy layer, and keep a fork test documenting what a session key can do on-chain (see `spikes/17/test/DepositWalletFork.t.sol`).
+- **#20 (Executor):** add the native USDC to USDC.e swap before wrap; all wallet actions go through relayer batches (rate limited); geoblock health check.
 
 ## Deployments
 
@@ -485,3 +578,4 @@ _Contract addresses, by network. Filled by #18 and later._
 - 2026-10-09: Backend first, frontend last (after the user supplies brand assets). No Redis in V1; Postgres + pg-boss instead. REST `/v1` with OpenAPI generated from zod is the single contract for MCP and web. Only `apps/executor` holds keys. CI is required for merge by convention; GitHub branch protection is intentionally off.
 - 2026-10-09 (#2): Routes are contract-first. Each is declared once in `packages/shared` (zod); the api implements it, and the OpenAPI 3.1 doc (zod-to-openapi) and typed client derive from it, with no codegen step. Internal packages export TS source; apps bundle with tsup. Vitest everywhere. API tests clone a migrated Postgres template DB per test file (DATABASE_URL in CI, testcontainers locally). Pinned: TypeScript 5.9, Vitest 3, ESLint 9, zod 4, Fastify 5, pg-boss 11, Foundry solc 0.8.28.
 - 2026-10-09 (#10): Identity. SIWE (EIP-4361, EOA signatures via viem; EIP-1271 contract wallets deferred) on Monad chain ids 143/10143, plus passwordless email OTP (6 digits, HMAC-hashed, 10 min TTL, 5 attempts, 3 codes/email/10 min and 20/IP/hour). Sessions are opaque random tokens stored as sha256, 30 day TTL, sent as httpOnly SameSite=Lax cookie (default) or bearer token (`session: "bearer"`). Linking: signing in with a second identity while signed in attaches it; if that identity already belongs to another User the two Users merge, the older survives, all wallets/emails/sessions move, and the absorbed row stays as a tombstone (`users.merged_into_id`). Tables owned by a User must be repointed in `mergeUsers`. `returnTo` is sanitized (relative paths only) and stored server-side with the nonce/code.
+- 2026-10-09 (#17): Risk spike done (see Vault risk findings). CCTP v2 Monad to Polygon is GO (domains 15/7, zero fee). CCTP mints native USDC but Polymarket's Onramp has native wrap paused, so the Route adds a native USDC to USDC.e swap before wrapping. Vault `settle` consumes the attested CCTP message rather than trusting Executor input. Polymarket session keys are not scoped on-chain; the Polygon-side Executor trust model needs a user decision (HITL), non-negotiables unchanged until then.
