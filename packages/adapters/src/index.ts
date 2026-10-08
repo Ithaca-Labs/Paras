@@ -9,4 +9,5 @@ export {
 export { createPolymarketAdapter, type PolymarketOptions } from './polymarket/index.js';
 export { createLimitlessAdapter, type LimitlessOptions } from './limitless/index.js';
 export { createSxBetAdapter, type SxBetOptions } from './sxbet/index.js';
+export { createKalshiAdapter, type KalshiOptions } from './kalshi/index.js';
 export { toDecimalString } from './decimal.js';

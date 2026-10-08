@@ -68,6 +68,7 @@ describe('GET /v1/events', () => {
     expect(m).toMatchObject({
       venue: { id: 'fake-venue', name: 'Fake Venue', capabilities: { routable: true } },
       url: 'https://fake.example/event/big',
+      redirectUrl: 'https://fake.example/event/big',
       rules: 'Resolves YES if it happens.',
       matchConfidence: '1',
       stale: false,

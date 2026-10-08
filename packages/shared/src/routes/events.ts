@@ -46,6 +46,11 @@ export const MarketView = z.object({
   fee: FeeSchedule,
   /** Deep link to the Market on the Venue. */
   url: z.string().url(),
+  /**
+   * Where "Bet on <Venue>" sends the user: the exact Market page on the Venue's own site.
+   * Set for every Venue; for non-routable Venues (Kalshi) it is the only way to act.
+   */
+  redirectUrl: z.string().url(),
   /** Confidence that this Market belongs to the Event (1 for the Event's own seed Market). */
   matchConfidence: DecimalString,
   outcomes: z.array(OutcomeView),

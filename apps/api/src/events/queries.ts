@@ -86,6 +86,7 @@ export async function loadEventViews(
       liquidity: market.liquidity,
       fee: market.fee,
       url: market.url,
+      redirectUrl: market.url,
       matchConfidence: link.confidence,
       outcomes: rows.map(({ outcome, quote }) => ({
         id: outcome.id,
