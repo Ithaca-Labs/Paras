@@ -15,6 +15,13 @@
       "when": 1791495987184,
       "tag": "0001_short_boomerang",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791496784666,
+      "tag": "0002_redundant_cassandra_nova",
+      "breakpoints": true
     }
   ]
 }

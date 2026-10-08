@@ -8,3 +8,5 @@ export class HttpError extends Error {
     super(message);
   }
 }
+
+export const notFound = (what: string) => new HttpError(404, 'not_found', `${what} not found`);

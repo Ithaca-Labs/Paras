@@ -1,4 +1,4 @@
-import { createAdapterRegistry } from '@paras/adapters';
+import { createAdapterRegistry, createPolymarketAdapter } from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
@@ -10,7 +10,7 @@ const { db, close } = createDb(config.DATABASE_URL);
 const app = buildApp(
   {
     db,
-    adapters: createAdapterRegistry(),
+    adapters: createAdapterRegistry([createPolymarketAdapter()]),
     auth: {
       config: defaultAuthConfig({
         secret: config.AUTH_SECRET ?? 'dev-only-insecure-auth-secret-change-me',

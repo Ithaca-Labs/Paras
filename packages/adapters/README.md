@@ -1,0 +1,34 @@
+# @paras/adapters
+
+Venue adapters: pure translators from a Venue's public API to the normalized schema in `@paras/shared` (`src/venue.ts`). No ranking, matching, caching or persistence here.
+
+## Implementing a new Venue
+
+Implement `VenueAdapter` (`src/types.ts`), put it in `src/<venue>/`, export a `create<Venue>Adapter({ fetch? })` factory from `src/index.ts`, and register it in the apps (`apps/api/src/index.ts`, `apps/worker/src/index.ts`).
+
+| Member                               | Contract                                                                                                                                 |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`, `name`                         | Lowercase slug (`kalshi`), display name. `id` is the Venue's primary key everywhere.                                                     |
+| `capabilities`                       | `routable` (Executor can trade) vs read-only, `realMoney`, `regulation`, `restrictedJurisdictions` (ISO-2), `orderBook`, `priceHistory`. |
+| `listMarkets({cursor,limit,status})` | `Page<NormalizedMarket>`, highest volume first. Cursor is opaque. Skip malformed rows; throw on transport errors. Fill `url`.            |
+| `fetchQuotes(outcomeIds)`            | `Quote[]`: best bid/ask, last, USD depth per side. Batch internally. Omit unknown Outcomes.                                              |
+| `fetchOrderBooks?(outcomeIds)`       | `OrderBook[]` raw levels (any order). Optional if the Venue has no books; then use `fetchQuotes` only.                                   |
+| `fetchPriceHistory(id, {interval})`  | `PricePoint[]`, oldest first.                                                                                                            |
+| `deepLink(market)`                   | Venue site URL for a Market.                                                                                                             |
+
+Rules:
+
+- **Money and prices are decimal strings** (`DecimalString`, `PriceString` 0..1), never floats. Use `toDecimalString` to coerce Venue numbers. Arithmetic lives in `@paras/domain` (`parseDecimal`, `bookToQuote`).
+- **Quotes come from books.** Build a `Quote` with `bookToQuote(book)` from `@paras/domain` so best bid/ask and depth are computed identically for every Venue.
+- **Identifiers.** `NormalizedMarket.externalId` is the Venue's stable market id; `NormalizedOutcome.externalId` is the id used to fetch quotes/books/history (Polymarket: condition id and CLOB token id).
+- `fee` describes the Venue fee model (`none` or `curve`); extend the `FeeSchedule` union for new models. `meta` carries Venue-specific extras (tick size, neg-risk) for the Executor.
+- **Injectable `fetch`.** Never call global `fetch` at module scope; take `options.fetch`.
+
+## Testing
+
+- Fixture replay: `createFixtureFetch({ dir: new URL('./fixtures/<venue>/', import.meta.url) })` from `@paras/testkit`. Record once with `RECORD_FIXTURES=1 pnpm --filter @paras/adapters test`, review, commit. See `test/polymarket.test.ts`.
+- `createFakeAdapter` / `fakeMarket` are in-memory stand-ins with mutable order books for API and worker tests.
+
+## Polymarket
+
+Gamma `/markets` (metadata, volume order, offset cursor) and CLOB `POST /books` (batched, 100 tokens per call) and `/prices-history`. All free and unauthenticated. V1 polls; the CLOB WebSocket can later replace `fetchQuotes` without interface changes.

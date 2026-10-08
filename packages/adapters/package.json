@@ -10,7 +10,12 @@
     "typecheck": "tsc",
     "test": "vitest run --passWithNoTests"
   },
+  "dependencies": {
+    "@paras/domain": "workspace:*",
+    "@paras/shared": "workspace:*"
+  },
   "devDependencies": {
+    "@paras/testkit": "workspace:*",
     "@types/node": "22.20.5",
     "vitest": "3.2.7"
   }

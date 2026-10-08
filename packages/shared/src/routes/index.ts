@@ -6,6 +6,7 @@ import {
   logout,
   getMe,
 } from './auth.js';
+import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { getHealth } from './health.js';
 
 /**
@@ -20,8 +21,13 @@ export const apiRoutes = {
   verifyEmailCode,
   logout,
   getMe,
+  listEvents,
+  getEvent,
 } as const;
+/** Server-Sent Events routes (not callable through the JSON client). */
+export const sseRoutes = { streamEventQuotes } as const;
 export type ApiRoutes = typeof apiRoutes;
 
+export * from './events.js';
 export * from './health.js';
 export * from './auth.js';

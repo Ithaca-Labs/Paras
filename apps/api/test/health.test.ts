@@ -1,10 +1,11 @@
+import { createFakeAdapter } from '@paras/adapters';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestApp, type TestApp } from './harness.js';
 
 let t: TestApp;
 beforeAll(async () => {
-  t = await createTestApp({ adapters: [{ id: 'fake-venue' }] });
+  t = await createTestApp({ adapters: [createFakeAdapter({ id: 'fake-venue' })] });
 });
 afterAll(() => t.close());
 
