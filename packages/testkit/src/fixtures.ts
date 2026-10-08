@@ -37,8 +37,9 @@ export function fixtureName(method: string, url: string, body?: string): string 
  */
 export function createFixtureFetch(options: FixtureFetchOptions): typeof fetch {
   const dir = options.dir instanceof URL ? fileURLToPath(options.dir) : options.dir;
-  const record = options.record ?? process.env.RECORD_FIXTURES === '1';
-  if (record && process.env.CI) throw new Error('RECORD_FIXTURES is not allowed in CI');
+  const envRecord = process.env.RECORD_FIXTURES === '1';
+  if (envRecord && process.env.CI) throw new Error('RECORD_FIXTURES is not allowed in CI');
+  const record = options.record ?? envRecord;
   const realFetch = options.realFetch ?? fetch;
 
   return async (input, init) => {
