@@ -6,6 +6,8 @@ const Env = z.object({
   /** Hugging Face sentence model (384 dims), or `off` to skip embedding/tagging. */
   EMBEDDING_MODEL: z.string().default('Xenova/all-MiniLM-L6-v2'),
   EMBEDDING_CACHE_DIR: z.string().default('/tmp/paras-models'),
+  /** Polymarket CLOB WebSocket Quote streaming; `off` leaves polling only. */
+  QUOTE_STREAM: z.enum(['on', 'off']).default('on'),
   EMAIL_PROVIDER: z.enum(['console', 'resend']).default('console'),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default('Paras <login@paras.local>'),
