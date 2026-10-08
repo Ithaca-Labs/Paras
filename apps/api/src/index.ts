@@ -4,6 +4,7 @@ import {
   createLimitlessAdapter,
   createPolymarketAdapter,
   createSxBetAdapter,
+  polyRouterAdaptersFromEnv,
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { createTransformersEmbedder } from '@paras/embeddings';
