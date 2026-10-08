@@ -1,6 +1,6 @@
 import { createAdapterRegistry, type VenueAdapter } from '@paras/adapters';
 import { createDb } from '@paras/db';
-import type { Embedder } from '@paras/domain';
+import type { Embedder, FeedWeights } from '@paras/domain';
 import { createApiClient } from '@paras/shared';
 import { createTestDatabase } from '@paras/testkit';
 import type { FastifyInstance } from 'fastify';
@@ -23,6 +23,8 @@ export interface TestAppOptions {
   vault?: VaultReader;
   /** Injected clock for freshness (`stale`) assertions. */
   now?: () => Date;
+  /** Feed weight overrides. */
+  feedWeights?: Partial<FeedWeights>;
   /** SSE re-read interval; tests use a small value. */
   ssePollMs?: number;
 }
@@ -64,6 +66,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
     ...(options.embedder && { embedder: options.embedder }),
     ...(options.now && { now: options.now }),
     ...(options.vault && { vault: options.vault }),
+    ...(options.feedWeights && { feedWeights: options.feedWeights }),
     ssePollMs: options.ssePollMs ?? 50,
     magicLinks: {
       keys: { activeKid: 'k1', keys: { k1: 'test-magic-key-test-magic-key-0001' } },

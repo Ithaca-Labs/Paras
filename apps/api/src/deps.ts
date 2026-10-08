@@ -1,6 +1,6 @@
 import type { AdapterRegistry } from '@paras/adapters';
 import type { Database } from '@paras/db';
-import type { Embedder, MagicLinkKeys } from '@paras/domain';
+import type { Embedder, FeedWeights, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
 import type { GeoResolver } from './jurisdiction.js';
 import type { VaultReader } from './vault.js';
@@ -29,6 +29,8 @@ export interface AppDeps {
   vault?: VaultReader;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
+  /** Overrides for the Feed scorer weights (defaults: DEFAULT_FEED_WEIGHTS). */
+  feedWeights?: Partial<FeedWeights>;
   /** How often SSE streams re-read latest Quotes from Postgres. Default 2000 ms. */
   ssePollMs?: number;
 }

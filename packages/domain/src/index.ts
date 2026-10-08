@@ -91,3 +91,20 @@ export {
   type ExplainerSection,
   type ProfileSelection,
 } from './profile.js';
+export {
+  DEFAULT_FEED_WEIGHTS,
+  FOLLOW_KINDS,
+  SIGNAL_KINDS,
+  beginnerPicks,
+  hiddenEventIds,
+  rankFeed,
+  type FeedCandidate,
+  type FeedEntry,
+  type FeedFollows,
+  type FeedInput,
+  type FeedProfile,
+  type FeedSignal,
+  type FeedWeights,
+  type FollowKind,
+  type SignalKind,
+} from './feed.js';
