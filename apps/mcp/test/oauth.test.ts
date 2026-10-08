@@ -14,6 +14,7 @@ type Json = any;
 
 const REDIRECT = 'http://127.0.0.1:8123/callback';
 const ISSUER = 'http://api.test';
+const RESOURCE = 'http://mcp.test/mcp';
 let t: TestApp;
 let mcp: ReturnType<typeof buildApp>;
 let url: string;
@@ -111,10 +112,17 @@ const token = (body: Record<string, string>) =>
   t.app.inject({ method: 'POST', url: '/oauth/token', headers: FORM, payload: form(body) });
 
 /** Whole flow: register, consent, exchange. */
-async function connectApp(user: Awaited<ReturnType<typeof signIn>>, scope?: string) {
+async function connectApp(
+  user: Awaited<ReturnType<typeof signIn>>,
+  scope?: string,
+  resource: string | null = RESOURCE,
+) {
   const clientId = await register();
   const { verifier, challenge } = pkce();
-  const cb = await consent(user, clientId, challenge, scope ? { scope } : {});
+  const cb = await consent(user, clientId, challenge, {
+    ...(scope && { scope }),
+    ...(resource && { resource }),
+  });
   expect(cb.searchParams.get('state')).toBe('st8');
   const res = await token({
     grant_type: 'authorization_code',
@@ -122,6 +130,7 @@ async function connectApp(user: Awaited<ReturnType<typeof signIn>>, scope?: stri
     redirect_uri: REDIRECT,
     client_id: clientId,
     code_verifier: verifier,
+    ...(resource && { resource }),
   });
   expect(res.statusCode).toBe(200);
   return {
@@ -373,6 +382,63 @@ describe('mcp oauth', () => {
     });
     expect(again.json().error).toBe('invalid_grant');
     await client.close().catch(() => {});
+  });
+
+  it('binds tokens to the MCP resource (RFC 8707); wrong or missing audience is rejected', async () => {
+    const user = await signIn();
+    const good = await connectApp(user);
+    expect((await rawCall('get_my_feed', `Bearer ${good.access_token}`)).status).toBe(200);
+
+    for (const resource of ['http://other.test/mcp', null]) {
+      const bad = await connectApp(user, undefined, resource);
+      for (const tool of ['get_my_feed', 'search_events']) {
+        const r = await rawCall(tool, `Bearer ${bad.access_token}`);
+        expect(r.status).toBe(401);
+        expect(r.headers.get('www-authenticate')).toContain('error="invalid_token"');
+      }
+    }
+    // A web session token has no audience either.
+    const session = user.headers.authorization;
+    expect((await rawCall('get_my_feed', session)).status).toBe(401);
+  });
+
+  it('rejects malformed or mismatched resource at authorize and token', async () => {
+    const user = await signIn();
+    const clientId = await register();
+    const { verifier, challenge } = pkce();
+    const bad = await consent(user, clientId, challenge, { resource: 'not a uri' });
+    expect(bad.searchParams.get('error')).toBe('invalid_target');
+
+    const code = (await consent(user, clientId, challenge, { resource: RESOURCE })).searchParams;
+    const res = await token({
+      grant_type: 'authorization_code',
+      code: code.get('code')!,
+      redirect_uri: REDIRECT,
+      client_id: clientId,
+      code_verifier: verifier,
+      resource: 'http://other.test/mcp',
+    });
+    expect(res.json().error).toBe('invalid_target');
+  });
+
+  it('refresh keeps the audience and rejects a different resource', async () => {
+    const user = await signIn();
+    const app = await connectApp(user);
+    const body = { grant_type: 'refresh_token', client_id: app.clientId };
+    const wrong = await token({
+      ...body,
+      refresh_token: app.refresh_token,
+      resource: 'http://other.test/mcp',
+    });
+    expect(wrong.json().error).toBe('invalid_target');
+    // The failed attempt spent the refresh token; connect afresh.
+    const fresh = await connectApp(user);
+    const next = await token({
+      ...body,
+      client_id: fresh.clientId,
+      refresh_token: fresh.refresh_token,
+    });
+    expect((await rawCall('get_my_feed', `Bearer ${next.json().access_token}`)).status).toBe(200);
   });
 
   it('JSON consent API returns the redirect for the web consent screen', async () => {

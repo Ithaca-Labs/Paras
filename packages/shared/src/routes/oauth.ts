@@ -16,6 +16,7 @@ export const AuthorizeRequest = z.object({
   state: z.string().optional(),
   code_challenge: z.string().optional(),
   code_challenge_method: z.string().optional(),
+  resource: z.string().optional(),
 });
 
 export const getOAuthClient = defineRoute({
@@ -51,6 +52,8 @@ export const getTokenInfo = defineRoute({
   response: z.object({
     userId: z.string().uuid(),
     scopes: z.array(OAuthScope),
+    /** RFC 8707 resource the token is bound to; null for web sessions and unbound tokens. */
+    audience: z.string().nullable(),
     expiresAt: z.iso.datetime(),
   }),
 });

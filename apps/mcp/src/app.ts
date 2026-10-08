@@ -36,8 +36,9 @@ export function buildApp({
 
   // OAuth 2.1 resource server (MCP authorization spec): tokens are issued by apps/api.
   const metadataUrl = `${publicUrl.replace(/\/$/, '')}/.well-known/oauth-protected-resource`;
+  const resource = `${publicUrl.replace(/\/$/, '')}/mcp`;
   const metadata = async () => ({
-    resource: `${publicUrl.replace(/\/$/, '')}/mcp`,
+    resource,
     authorization_servers: [issuer.replace(/\/$/, '')],
     scopes_supported: SCOPES,
     bearer_methods_supported: ['header'],
@@ -81,6 +82,8 @@ export function buildApp({
       });
       try {
         const info = await me.getTokenInfo();
+        // Reject tokens minted for another resource (no token passthrough) or unbound ones.
+        if (info.audience !== resource) return deny(401, 'invalid_token');
         const missing = needed.find((s) => !info.scopes.includes(s as never));
         if (missing) return deny(403, 'insufficient_scope', missing);
       } catch (e) {

@@ -23,6 +23,8 @@ export const oauthGrants = pgTable(
       .notNull()
       .references(() => users.id),
     scopes: text('scopes').array().notNull(),
+    /** RFC 8707 resource the tokens are bound to; null = unbound (resource servers reject). */
+    audience: text('audience'),
     createdAt: tz('created_at').notNull().defaultNow(),
   },
   (t) => [index('oauth_grants_user_idx').on(t.userId)],
@@ -40,6 +42,7 @@ export const oauthCodes = pgTable('oauth_codes', {
   scopes: text('scopes').array().notNull(),
   redirectUri: text('redirect_uri').notNull(),
   codeChallenge: text('code_challenge').notNull(),
+  resource: text('resource'),
   expiresAt: tz('expires_at').notNull(),
 });
 

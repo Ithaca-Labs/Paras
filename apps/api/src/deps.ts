@@ -20,6 +20,10 @@ export interface OAuthDeps {
   issuer: string;
   /** Web consent page; when set, /oauth/authorize redirects there instead of the plain fallback. */
   consentUrl?: string;
+  /** Dynamic client registration per IP (default 20/hour). */
+  registerLimit?: { max: number; windowMs: number };
+  /** Cap on registered clients nobody has authorized yet (default 1000). */
+  maxUnusedClients?: number;
 }
 
 /** Everything routes may touch. Tests build this with a fresh DB and fake adapters. */

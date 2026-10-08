@@ -40,6 +40,7 @@ const AUTH_KEYS = [
   'state',
   'code_challenge',
   'code_challenge_method',
+  'resource',
 ] as const;
 
 const SIGN_IN_SCRIPT = `
@@ -60,7 +61,7 @@ export const oauthRoutes: RoutePlugin = (app, { db, auth: authDeps, oauth }) => 
     (_req, body, done) => done(null, Object.fromEntries(new URLSearchParams(body as string))),
   );
 
-  const fail = (reply: FastifyReply, e: OAuthError, status = 400) =>
+  const fail = (reply: FastifyReply, e: OAuthError, status = e.status) =>
     reply
       .status(status)
       .header('cache-control', 'no-store')
@@ -94,9 +95,24 @@ export const oauthRoutes: RoutePlugin = (app, { db, auth: authDeps, oauth }) => 
     scopes_supported: [...OAUTH_SCOPES],
   }));
 
+  // shortcut: per-process counters; multi-instance deploys need a shared store.
+  const hits = new Map<string, number[]>();
+  const { max, windowMs } = oauth?.registerLimit ?? { max: 20, windowMs: 3600_000 };
+
   app.post('/oauth/register', async (req, reply) => {
+    const t = now().getTime();
+    const recent = (hits.get(req.ip) ?? []).filter((h) => h > t - windowMs);
+    if (recent.length >= max) {
+      return fail(reply, new OAuthError('temporarily_unavailable', 'Too many registrations'), 429);
+    }
+    hits.set(req.ip, [...recent, t]);
     try {
-      const c = await registerClient(db, (req.body ?? {}) as { client_name?: string });
+      const c = await registerClient(
+        db,
+        (req.body ?? {}) as { client_name?: string },
+        now(),
+        oauth?.maxUnusedClients,
+      );
       return reply
         .status(201)
         .header('cache-control', 'no-store')
@@ -216,6 +232,7 @@ export const oauthRoutes: RoutePlugin = (app, { db, auth: authDeps, oauth }) => 
         userId: auth.userId,
         // A web session is not scope-limited.
         scopes: p?.scopes ?? [...OAUTH_SCOPES],
+        audience: p?.audience ?? null,
         expiresAt: (p?.expiresAt ?? auth.sessionExpiresAt).toISOString(),
       };
     },
