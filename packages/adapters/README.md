@@ -40,3 +40,7 @@ Free public REST (`api.limitless.exchange`): `/markets/active` (25 per page, `so
 ## SX Bet
 
 Free public REST (`api.sx.bet`, no key): `/markets/active` (100 per page, `paginationKey`) and V3 `/orderbook-v3/snapshot` (one call per Market). Read-only, `offshore`. Market `externalId` is the `marketHash`; Outcome ids are `<hash>:1|2`. Makers resting on an outcome are its bids; makers on the other outcome are its asks at `1 - p`. The list carries no volume or liquidity (`0`) and there is no price series (`priceHistory: false`). `url` is the league page: sx.bet has no documented per-market URL. Fees are not modeled (`none`).
+
+## Kalshi
+
+Public trade API v2 (`api.elections.kalshi.com`), unauthenticated, read-only: `/events?with_nested_markets` (metadata; the event carries the series ticker needed for the site URL), `/markets/{ticker}/orderbook` (one call per Market, both sides) and `/series/{s}/markets/{t}/candlesticks`. Outcome ids are `<ticker>:yes` / `<ticker>:no`; a NO bid at p is a YES ask at 1 - p. Kalshi has no volume sort, so `listMarkets` orders within each page only. Volume is contracts (US$1 notional), as the Kalshi site shows it. `NormalizedMarket.url` (exposed as `redirectUrl` by the Event API) is `kalshi.com/markets/<series>/<slug>/<event>`; the slug is cosmetic. `routable: false`: never place orders here.

@@ -1,5 +1,6 @@
 import {
   createAdapterRegistry,
+  createKalshiAdapter,
   createLimitlessAdapter,
   createPolymarketAdapter,
   createSxBetAdapter,
@@ -19,6 +20,7 @@ const app = buildApp(
       createPolymarketAdapter(),
       createLimitlessAdapter(),
       createSxBetAdapter(),
+      createKalshiAdapter(),
     ]),
     magicLinks: {
       keys: loadMagicLinkKeys(config),

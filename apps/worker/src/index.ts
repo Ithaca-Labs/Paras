@@ -1,5 +1,6 @@
 import {
   createAdapterRegistry,
+  createKalshiAdapter,
   createLimitlessAdapter,
   createPolymarketAdapter,
   createSxBetAdapter,
@@ -15,6 +16,7 @@ const adapters = createAdapterRegistry([
   createPolymarketAdapter(),
   createLimitlessAdapter(),
   createSxBetAdapter(),
+  createKalshiAdapter(),
 ]);
 const venues = [...adapters.keys()];
 
