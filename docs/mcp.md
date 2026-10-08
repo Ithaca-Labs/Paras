@@ -6,14 +6,14 @@ Endpoint: Streamable HTTP, stateless, `POST {MCP_URL}/mcp` (default port 3002). 
 
 ## Tools
 
-| Tool | What it does |
-|---|---|
-| `search_events` | Hybrid text + semantic search with filters (`status`, `venue`, `category`, `topic`, `entity`, `closesAfter`, `closesBefore`, `minLiquidity`, `limit`, `cursor`) |
-| `list_trending` | Trending open Events |
-| `list_closing_soon` | Open Events resolving soonest |
-| `get_event` | One Event, all Venue Markets and Outcome prices |
-| `compare_prices` | Fee-adjusted cross-Venue comparison; optional `stake` (USD) for size-aware fills |
-| `create_magic_link` | Link to an Event, optionally prefilled (`outcome`, `amount`, `maxPrice`) |
+| Tool                | What it does                                                                                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_events`     | Hybrid text + semantic search with filters (`status`, `venue`, `category`, `topic`, `entity`, `closesAfter`, `closesBefore`, `minLiquidity`, `limit`, `cursor`) |
+| `list_trending`     | Trending open Events                                                                                                                                            |
+| `list_closing_soon` | Open Events resolving soonest                                                                                                                                   |
+| `get_event`         | One Event, all Venue Markets and Outcome prices                                                                                                                 |
+| `compare_prices`    | Fee-adjusted cross-Venue comparison; optional `stake` (USD) for size-aware fills                                                                                |
+| `create_magic_link` | Link to an Event, optionally prefilled (`outcome`, `amount`, `maxPrice`)                                                                                        |
 
 Every Event result includes `magicLink` and per-Venue `availability` (`routable`, `redirect`, `blocked`) for the caller's country. `source` (`claude` or `codex`) is recorded on the link.
 
