@@ -1,4 +1,10 @@
-import { isStale, reciprocalRankFusion, taxonomyNode, venueLabel } from '@paras/domain';
+import {
+  isStale,
+  reciprocalRankFusion,
+  taxonomyNode,
+  venueAvailabilityFor,
+  venueLabel,
+} from '@paras/domain';
 import { schema, type Database } from '@paras/db';
 import type { EventView, MarketStatus, MarketView, QuoteStreamMessage } from '@paras/shared';
 import { and, asc, desc, eq, gt, gte, inArray, isNotNull, lte, sql } from 'drizzle-orm';
@@ -163,6 +169,8 @@ export async function loadEventViews(
   ids: readonly string[],
   now: Date,
   staleAfterMs: number,
+  /** Caller's known countries (IP, attested); empty = unknown, which fails closed. */
+  countries: readonly string[],
   opts: { includePlayMoney?: boolean } = {},
 ): Promise<EventView[]> {
   if (!ids.length) return [];
@@ -223,6 +231,7 @@ export async function loadEventViews(
       liquidity: market.liquidity,
       fee: market.fee,
       url: market.url,
+      availability: venueAvailabilityFor(venue.id, venue.capabilities, countries),
       redirectUrl: market.url,
       matchConfidence: link.confidence,
       outcomes: rows.map(({ outcome, quote }) => ({

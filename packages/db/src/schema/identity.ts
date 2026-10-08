@@ -2,6 +2,7 @@ import {
   index,
   integer,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uuid,
@@ -15,7 +16,23 @@ export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   createdAt: tz('created_at').notNull().defaultNow(),
   mergedIntoId: uuid('merged_into_id').references((): AnyPgColumn => users.id),
+  /** Self-attested ISO 3166-1 alpha-2 country of residence (jurisdiction gating, #16). */
+  attestedCountry: text('attested_country'),
+  attestedAt: tz('attested_at'),
 });
+
+/** Risk-disclosure acknowledgements, one per (User, disclosure version). */
+export const disclosureAcks = pgTable(
+  'disclosure_acks',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    version: text('version').notNull(),
+    ackedAt: tz('acked_at').notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.version] })],
+);
 
 export const walletLinks = pgTable(
   'wallet_links',

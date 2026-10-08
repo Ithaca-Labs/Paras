@@ -3,54 +3,69 @@ import { QUOTE_STALE_AFTER_MS } from '../deps.js';
 import { HttpError, notFound } from '../errors.js';
 import { eventExists, loadEventQuotes, loadEventViews, searchEventIds } from '../events/queries.js';
 import { implement, implementSse } from '../implement.js';
+import { headerGeo, viewerCountries } from '../jurisdiction.js';
 import type { RoutePlugin } from './index.js';
 
 const DEFAULT_SSE_POLL_MS = 2000;
 
 export const eventRoutes: RoutePlugin = (
   app,
-  { db, embedder, now = () => new Date(), ssePollMs },
+  { db, embedder, now = () => new Date(), ssePollMs, geo = headerGeo },
 ) => {
-  implement(app, apiRoutes.listEvents, async ({ query }) => {
-    const offset = Number(query.cursor ?? 0);
-    if (!Number.isInteger(offset) || offset < 0) {
-      throw new HttpError(400, 'validation_error', 'invalid cursor');
-    }
-    // Semantic search is best-effort: if embedding fails, fall back to full-text only.
-    const queryVector =
-      query.q && embedder
-        ? await embedder
-            .embed([query.q])
-            .then(([v]) => v ?? null)
-            .catch((err) => {
-              app.log.warn({ err }, 'query embedding failed; full-text only');
-              return null;
-            })
-        : null;
-    const includePlayMoney = query.includePlayMoney === 'true';
-    const ids = await searchEventIds(db, {
-      ...query,
-      includePlayMoney,
-      closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
-      closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,
-      sort: query.sort ?? (query.q ? 'relevance' : 'volume'),
-      queryVector,
-      now: now(),
-      limit: query.limit,
-      offset,
-    });
-    const page = ids.slice(0, query.limit);
-    return {
-      items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, { includePlayMoney }),
-      nextCursor: ids.length > query.limit ? String(offset + query.limit) : null,
-    };
-  });
+  implement(
+    app,
+    apiRoutes.listEvents,
+    async ({ query }, ctx) => {
+      const offset = Number(query.cursor ?? 0);
+      if (!Number.isInteger(offset) || offset < 0) {
+        throw new HttpError(400, 'validation_error', 'invalid cursor');
+      }
+      // Semantic search is best-effort: if embedding fails, fall back to full-text only.
+      const queryVector =
+        query.q && embedder
+          ? await embedder
+              .embed([query.q])
+              .then(([v]) => v ?? null)
+              .catch((err) => {
+                app.log.warn({ err }, 'query embedding failed; full-text only');
+                return null;
+              })
+          : null;
+      const includePlayMoney = query.includePlayMoney === 'true';
+      const ids = await searchEventIds(db, {
+        ...query,
+        includePlayMoney,
+        closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
+        closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,
+        sort: query.sort ?? (query.q ? 'relevance' : 'volume'),
+        queryVector,
+        now: now(),
+        limit: query.limit,
+        offset,
+      });
+      const page = ids.slice(0, query.limit);
+      const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
+      return {
+        items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, countries, {
+          includePlayMoney,
+        }),
+        nextCursor: ids.length > query.limit ? String(offset + query.limit) : null,
+      };
+    },
+    { auth: 'optional' },
+  );
 
-  implement(app, apiRoutes.getEvent, async ({ params }) => {
-    const [event] = await loadEventViews(db, [params.id], now(), QUOTE_STALE_AFTER_MS);
-    if (!event) throw notFound('Event');
-    return event;
-  });
+  implement(
+    app,
+    apiRoutes.getEvent,
+    async ({ params }, ctx) => {
+      const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
+      const [event] = await loadEventViews(db, [params.id], now(), QUOTE_STALE_AFTER_MS, countries);
+      if (!event) throw notFound('Event');
+      return event;
+    },
+    { auth: 'optional' },
+  );
 
   // Live Quotes: the worker writes latest_quotes; each stream re-reads the Event's rows every
   // `ssePollMs` and pushes the ones whose observedAt moved. No cross-process pub/sub needed in V1.

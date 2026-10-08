@@ -8,6 +8,12 @@ import {
 } from './auth.js';
 import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { getHealth } from './health.js';
+import {
+  acknowledgeDisclosures,
+  attestJurisdiction,
+  getDisclosures,
+  getVaultEligibility,
+} from './jurisdiction.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
 import { getCategory, listCategories } from './taxonomy.js';
 import { listVenues } from './venues.js';
@@ -31,6 +37,10 @@ export const apiRoutes = {
   listCategories,
   getCategory,
   listVenues,
+  getDisclosures,
+  acknowledgeDisclosures,
+  attestJurisdiction,
+  getVaultEligibility,
 } as const;
 /** Server-Sent Events routes (not callable through the JSON client). */
 export const sseRoutes = { streamEventQuotes } as const;
@@ -42,3 +52,4 @@ export * from './magic-links.js';
 export * from './taxonomy.js';
 export * from './auth.js';
 export * from './venues.js';
+export * from './jurisdiction.js';

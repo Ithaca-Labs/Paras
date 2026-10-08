@@ -2,6 +2,7 @@ import type { AdapterRegistry } from '@paras/adapters';
 import type { Database } from '@paras/db';
 import type { Embedder, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
+import type { GeoResolver } from './jurisdiction.js';
 
 export interface MagicLinkDeps {
   /** Signing keys by kid (rotation: add a key, switch `activeKid`, drop old keys after their TTL). */
@@ -21,6 +22,8 @@ export interface AppDeps {
   magicLinks: MagicLinkDeps;
   /** Embeds search queries for semantic search. Omit for full-text only. */
   embedder?: Embedder;
+  /** Country resolver; default trusts the CDN country header. */
+  geo?: GeoResolver;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** How often SSE streams re-read latest Quotes from Postgres. Default 2000 ms. */

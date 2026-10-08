@@ -1,5 +1,6 @@
 import { defineRoute, defineSseRoute } from '../route.js';
 import {
+  Availability,
   DecimalString,
   FeeSchedule,
   MarketStatus,
@@ -50,6 +51,8 @@ export const MarketView = z.object({
   volume: DecimalString,
   liquidity: DecimalString,
   fee: FeeSchedule,
+  /** For the caller's jurisdiction: `routable` (Vault), `redirect` (use `redirectUrl`), `blocked`. */
+  availability: Availability,
   /** Deep link to the Market on the Venue. */
   url: z.string().url(),
   /**
