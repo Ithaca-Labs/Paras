@@ -246,7 +246,7 @@ describe('browse: defaults, filters, sorts', () => {
 
 describe('taxonomy browse', () => {
   it('lists categories with topics, entities and open Event counts', async () => {
-    const { items } = await t.client.listCategories({});
+    const { items } = await t.client.listCategories();
     expect(items.map((c) => c.id)).toContain('politics');
     const sports = items.find((c) => c.id === 'sports')!;
     expect(sports.eventCount).toBe(1);
