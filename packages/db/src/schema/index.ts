@@ -9,3 +9,4 @@ export * from './feed.js';
 export * from './notifications.js';
 export * from './oauth.js';
 export * from './intents.js';
+export * from './ops.js';

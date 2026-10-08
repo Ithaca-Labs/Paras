@@ -1,4 +1,4 @@
-import { notify, schema, type Database, type NotifyMailer } from '@paras/db';
+import { isDispatchPaused, notify, schema, type Database, type NotifyMailer } from '@paras/db';
 import { fillWithinMaxPrice, TERMINAL_INTENT_STATUSES, type IntentStatus } from '@paras/domain';
 import { and, eq, sql } from 'drizzle-orm';
 import { formatUnits, getAddress, parseUnits, type Address, type Hex } from 'viem';
@@ -135,6 +135,8 @@ export class IntentEngine {
     if (!wallet) return this.finish(row, 'failed', { reason: 'no registered Deposit Wallet' });
     let dispatchTx: Hex | null = null;
     if (vs === VAULT_STATUS.Reserved) {
+      // Ops pause (#23): hold new dispatches; funds stay reserved and the expiry refund above still applies.
+      if (await isDispatchPaused(this.d.db, row.details.venueId)) return 'wait';
       if (!(await this.d.geoblock.allowed())) return 'wait'; // fail closed
       await this.d.wallets.openIntent({
         intentId: row.id,
