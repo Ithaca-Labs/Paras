@@ -1,10 +1,11 @@
 import type { AdapterRegistry } from '@paras/adapters';
-import { buildTaxonomyIndex, type Embedder } from '@paras/domain';
+import { buildTaxonomyIndex, type Embedder, type MatchVerifier } from '@paras/domain';
 import {
   enrichEvents,
   listPollTargets,
   refreshEventSignals,
   recordQuotes,
+  runMatching,
   upsertMarkets,
   upsertVenue,
   withVenueRun,
@@ -18,6 +19,10 @@ export interface VenueJobContext {
   adapters: AdapterRegistry;
   /** Embeds + tags Events at ingestion. Omit to skip enrichment (Events stay untagged and unsearchable semantically). */
   embedder?: Embedder;
+  /** Optional LLM-style second opinion for review-tier matches; off unless injected. */
+  verifier?: MatchVerifier;
+  /** Verifier calls allowed per matching run. */
+  llmBudget?: number;
   log?: (msg: string, data?: Record<string, unknown>) => void;
 }
 
@@ -36,8 +41,13 @@ export const QuotePollPayload = z.object({
   topMarkets: z.number().int().positive().default(200),
 });
 
+/** Cross-Venue matching over everything synced so far (Venue-agnostic). */
+export const matchAfterSync = ({ db, verifier, llmBudget }: VenueJobContext) =>
+  runMatching(db, { ...(verifier && { verifier }), ...(llmBudget !== undefined && { llmBudget }) });
+
 /** Metadata sync: page through a Venue's open Markets and upsert Markets, Outcomes and seed Events. */
-export function createSyncMarketsJob({ db, adapters, embedder, log }: VenueJobContext) {
+export function createSyncMarketsJob(ctx: VenueJobContext) {
+  const { db, adapters, embedder, log } = ctx;
   const taxonomy = embedder && buildTaxonomyIndex(embedder);
   return defineJob({
     name: 'venue.sync-markets',
@@ -62,6 +72,7 @@ export function createSyncMarketsJob({ db, adapters, embedder, log }: VenueJobCo
           const enriched = await enrichEvents(db, embedder, await taxonomy);
           await refreshEventSignals(db);
           log?.('events enriched', { enriched });
+          log?.('events matched', { ...(await matchAfterSync(ctx)) });
         }
       }),
   });

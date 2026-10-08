@@ -1,7 +1,13 @@
-import type { JobDefinition } from './define.js';
+import { z } from '@paras/shared';
+import { defineJob, type JobDefinition } from './define.js';
 import { createAlertScanJob, createDigestJob, type NotifyJobContext } from './notifications.js';
 import { systemPing } from './system-ping.js';
-import { createPollQuotesJob, createSyncMarketsJob, type VenueJobContext } from './venue-sync.js';
+import {
+  createPollQuotesJob,
+  createSyncMarketsJob,
+  matchAfterSync,
+  type VenueJobContext,
+} from './venue-sync.js';
 
 /** Register new jobs here (one file per job; Venue sync, matching, alerts, ...). */
 export function buildJobs(
@@ -13,6 +19,12 @@ export function buildJobs(
     createPollQuotesJob(ctx) as JobDefinition,
     createAlertScanJob(ctx) as JobDefinition,
     createDigestJob(ctx) as JobDefinition,
+    // Also runs after every sync; this queue is for manual re-runs (e.g. after an operator fix).
+    defineJob({
+      name: 'events.match',
+      payload: z.object({}),
+      handler: async () => void (await matchAfterSync(ctx)),
+    }) as JobDefinition,
   ];
 }
 

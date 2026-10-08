@@ -91,6 +91,20 @@ export {
   type IntentStatus,
 } from './intent.js';
 export {
+  MATCH,
+  applyVerification,
+  evaluatePair,
+  findCandidate,
+  isLowConfidence,
+  pairDirection,
+  tierOf,
+  type GateFailure,
+  type MatchMarket,
+  type MatchTier,
+  type MatchVerdict,
+  type MatchVerifier,
+} from './matching.js';
+export {
   DECIMAL_SCALE,
   divDecimal,
   formatDecimal,

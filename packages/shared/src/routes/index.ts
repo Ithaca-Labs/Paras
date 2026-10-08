@@ -6,6 +6,13 @@ import {
   logout,
   getMe,
 } from './auth.js';
+import {
+  approveMatchReview,
+  listMatchReviews,
+  mergeEvents,
+  rejectMatchReview,
+  splitEvent,
+} from './admin.js';
 import { compareEvent, getEventHistory } from './compare.js';
 import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { addFollow, getFeed, listFollows, recordFeedSignal, removeFollow } from './feed.js';
@@ -71,6 +78,11 @@ export const apiRoutes = {
   listCategories,
   getCategory,
   listVenues,
+  listMatchReviews,
+  approveMatchReview,
+  rejectMatchReview,
+  mergeEvents,
+  splitEvent,
   getDisclosures,
   acknowledgeDisclosures,
   attestJurisdiction,
@@ -110,6 +122,7 @@ export const apiRoutes = {
 export const sseRoutes = { streamEventQuotes } as const;
 export type ApiRoutes = typeof apiRoutes;
 
+export * from './admin.js';
 export * from './events.js';
 export * from './compare.js';
 export * from './health.js';

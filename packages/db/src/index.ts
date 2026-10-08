@@ -11,3 +11,13 @@ export {
 export { enrichEvents, refreshEventSignals, type EnrichOptions } from './enrich.js';
 export { notify, type NotifyInput, type NotifyMailer } from './notify.js';
 export { isDispatchPaused, withVenueRun } from './ops.js';
+export {
+  MatchError,
+  approveReview,
+  mergeEvents,
+  rejectReview,
+  runMatching,
+  splitMarket,
+  type MatchOptions,
+  type MatchResult,
+} from './match.js';
