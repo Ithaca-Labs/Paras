@@ -122,6 +122,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@paras/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
       '@paras/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -141,6 +144,9 @@ importers:
       '@types/node':
         specifier: 22.20.5
         version: 22.20.5
+      drizzle-orm:
+        specifier: 0.45.4
+        version: 0.45.4(@types/pg@8.23.1)(pg@8.23.1)
       tsup:
         specifier: 8.5.1
         version: 8.5.1(postcss@8.5.29)(tsx@4.23.15)(typescript@5.9.3)(yaml@2.9.1)
@@ -152,7 +158,17 @@ importers:
         version: 3.2.7(@types/node@22.20.5)(tsx@4.23.15)(yaml@2.9.1)
 
   packages/adapters:
+    dependencies:
+      '@paras/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@paras/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
+      '@paras/testkit':
+        specifier: workspace:*
+        version: link:../testkit
       '@types/node':
         specifier: 22.20.5
         version: 22.20.5
@@ -162,6 +178,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@paras/shared':
+        specifier: workspace:*
+        version: link:../shared
       drizzle-orm:
         specifier: 0.45.4
         version: 0.45.4(@types/pg@8.23.1)(pg@8.23.1)

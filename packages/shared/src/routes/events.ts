@@ -1,0 +1,126 @@
+import { defineRoute, defineSseRoute } from '../route.js';
+import {
+  DecimalString,
+  FeeSchedule,
+  MarketStatus,
+  PriceString,
+  VenueCapabilities,
+  VenueId,
+} from '../venue.js';
+import { z } from '../zod.js';
+
+/** Latest Quote for an Outcome, as stored by the worker. */
+export const QuoteView = z.object({
+  bid: PriceString.nullable(),
+  ask: PriceString.nullable(),
+  last: PriceString.nullable(),
+  /** USD notional resting on each side of the book. */
+  bidDepth: DecimalString,
+  askDepth: DecimalString,
+  /** When Paras last observed this book. */
+  observedAt: z.iso.datetime(),
+});
+export type QuoteView = z.infer<typeof QuoteView>;
+
+export const OutcomeView = z.object({
+  id: z.string().uuid(),
+  label: z.string(),
+  index: z.number().int(),
+  /** Null until the first Quote has been polled. */
+  quote: QuoteView.nullable(),
+});
+export type OutcomeView = z.infer<typeof OutcomeView>;
+
+/** One Venue's Market within an Event. */
+export const MarketView = z.object({
+  id: z.string().uuid(),
+  venue: z.object({ id: VenueId, name: z.string(), capabilities: VenueCapabilities }),
+  externalId: z.string(),
+  question: z.string(),
+  /** Resolution rules as published by the Venue. */
+  rules: z.string(),
+  resolutionSource: z.string().nullable(),
+  status: MarketStatus,
+  volume: DecimalString,
+  liquidity: DecimalString,
+  fee: FeeSchedule,
+  /** Deep link to the Market on the Venue. */
+  url: z.string().url(),
+  /** Confidence that this Market belongs to the Event (1 for the Event's own seed Market). */
+  matchConfidence: DecimalString,
+  outcomes: z.array(OutcomeView),
+  /** Newest Quote observation across this Market's Outcomes. */
+  quotesUpdatedAt: z.iso.datetime().nullable(),
+  /** True when there is no Quote or the newest one is older than the staleness window. */
+  stale: z.boolean(),
+});
+export type MarketView = z.infer<typeof MarketView>;
+
+export const EventView = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string(),
+  category: z.string().nullable(),
+  status: MarketStatus,
+  endDate: z.iso.datetime().nullable(),
+  imageUrl: z.string().nullable(),
+  volume: DecimalString,
+  /** Newest Quote observation across all Venues. */
+  quotesUpdatedAt: z.iso.datetime().nullable(),
+  markets: z.array(MarketView),
+});
+export type EventView = z.infer<typeof EventView>;
+
+export const EventList = z.object({
+  items: z.array(EventView),
+  /** Pass as `cursor` for the next page; null on the last page. */
+  nextCursor: z.string().nullable(),
+});
+export type EventList = z.infer<typeof EventList>;
+
+export const listEvents = defineRoute({
+  method: 'get',
+  path: '/v1/events',
+  operationId: 'listEvents',
+  summary: 'List Events by volume, with latest Quotes per Venue',
+  tags: ['events'],
+  request: {
+    query: z.object({
+      limit: z.coerce.number().int().min(1).max(100).default(20),
+      cursor: z.string().optional(),
+      status: z.enum(['open', 'closed', 'resolved', 'all']).default('open'),
+      venue: VenueId.optional(),
+    }),
+  },
+  response: EventList,
+});
+
+export const getEvent = defineRoute({
+  method: 'get',
+  path: '/v1/events/{id}',
+  operationId: 'getEvent',
+  summary: 'Get one Event: prices, depth, freshness and Venue deep links',
+  tags: ['events'],
+  request: { params: z.object({ id: z.string().uuid() }) },
+  response: EventView,
+});
+
+/** One `quote` SSE message: a fresh Quote for one Outcome of the Event. */
+export const QuoteStreamMessage = z.object({
+  eventId: z.string().uuid(),
+  marketId: z.string().uuid(),
+  venueId: VenueId,
+  outcomeId: z.string().uuid(),
+  quote: QuoteView,
+});
+export type QuoteStreamMessage = z.infer<typeof QuoteStreamMessage>;
+
+export const streamEventQuotes = defineSseRoute({
+  path: '/v1/events/{id}/stream',
+  operationId: 'streamEventQuotes',
+  summary:
+    'Server-Sent Events: current Quotes on connect, then each new Quote for the Event (event: quote)',
+  tags: ['events'],
+  request: { params: z.object({ id: z.string().uuid() }) },
+  event: QuoteStreamMessage,
+});

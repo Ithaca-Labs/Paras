@@ -1,11 +1,4 @@
-/**
- * Placeholder. The real Venue adapter interface (markets, quotes, order book, history,
- * deep links, capabilities) is defined in issue #3 and replaces this shape.
- * Adapters take an injectable `fetch` so tests can replay fixtures (see @paras/testkit).
- */
-export interface VenueAdapter {
-  readonly id: string;
-}
+import type { VenueAdapter } from './types.js';
 
 export type AdapterRegistry = ReadonlyMap<string, VenueAdapter>;
 

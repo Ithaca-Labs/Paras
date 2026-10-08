@@ -31,6 +31,27 @@ export function defineRoute<Req extends RequestSchemas, Res extends z.ZodType>(
   return route;
 }
 
+export interface SseRoute<Req extends RequestSchemas = RequestSchemas> {
+  method: 'get';
+  path: string;
+  operationId: string;
+  summary?: string;
+  tags?: string[];
+  request: Req;
+  /** Schema of the JSON in each `data:` line. */
+  event: z.ZodType;
+}
+
+/**
+ * Declares a Server-Sent Events route. Kept apart from `apiRoutes` because the JSON
+ * client cannot call it; it still appears in the OpenAPI document as `text/event-stream`.
+ */
+export function defineSseRoute<Req extends RequestSchemas>(
+  route: Omit<SseRoute<Req>, 'method'>,
+): SseRoute<Req> {
+  return { method: 'get', ...route };
+}
+
 type Present<Req extends RequestSchemas, F extends 'input' | 'output'> = {
   [K in keyof Req as Req[K] extends z.ZodType ? K : never]: Req[K] extends z.ZodType
     ? F extends 'input'
