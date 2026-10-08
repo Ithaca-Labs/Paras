@@ -61,6 +61,13 @@ export const MarketView = z.object({
 });
 export type MarketView = z.infer<typeof MarketView>;
 
+export const TagView = z.object({
+  id: z.string(),
+  label: z.string(),
+  kind: z.enum(['category', 'topic', 'entity']),
+});
+export type TagView = z.infer<typeof TagView>;
+
 export const EventView = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -70,6 +77,11 @@ export const EventView = z.object({
   endDate: z.iso.datetime().nullable(),
   imageUrl: z.string().nullable(),
   volume: DecimalString,
+  liquidity: DecimalString,
+  /** Largest absolute price change of any Outcome over ~24h, 0..1. */
+  move24h: DecimalString,
+  /** Taxonomy tags (category, topics, entities), best match first. */
+  tags: z.array(TagView),
   /** Newest Quote observation across all Venues. */
   quotesUpdatedAt: z.iso.datetime().nullable(),
   markets: z.array(MarketView),
@@ -87,14 +99,33 @@ export const listEvents = defineRoute({
   method: 'get',
   path: '/v1/events',
   operationId: 'listEvents',
-  summary: 'List Events by volume, with latest Quotes per Venue',
+  summary:
+    'Search and browse Events: hybrid full-text + semantic search (`q`), filters and sorts. Resolved/closed Events are hidden unless `status` says otherwise.',
   tags: ['events'],
   request: {
     query: z.object({
       limit: z.coerce.number().int().min(1).max(100).default(20),
       cursor: z.string().optional(),
+      /** Free text, e.g. "will the Fed cut in December". Matches by words and by meaning. */
+      q: z.string().trim().min(1).max(300).optional(),
       status: z.enum(['open', 'closed', 'resolved', 'all']).default('open'),
       venue: VenueId.optional(),
+      /** Taxonomy ids from `GET /v1/categories`. */
+      category: z.string().optional(),
+      topic: z.string().optional(),
+      entity: z.string().optional(),
+      /** Resolution date window. */
+      closesAfter: z.iso.datetime().optional(),
+      closesBefore: z.iso.datetime().optional(),
+      /** Minimum total liquidity across Venues, USD. */
+      minLiquidity: z.coerce.number().min(0).optional(),
+      /** Keep Events with at least one Outcome priced within [minPrice, maxPrice] (0..1). */
+      minPrice: z.coerce.number().min(0).max(1).optional(),
+      maxPrice: z.coerce.number().min(0).max(1).optional(),
+      /** Default: `relevance` when `q` is given, else `volume`. */
+      sort: z
+        .enum(['relevance', 'trending', 'volume', 'closing_soon', 'newest', 'biggest_move'])
+        .optional(),
     }),
   },
   response: EventList,

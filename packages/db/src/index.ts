@@ -8,3 +8,4 @@ export {
   upsertVenue,
   type RecordQuotesOptions,
 } from './ingest.js';
+export { enrichEvents, refreshEventSignals, type EnrichOptions } from './enrich.js';

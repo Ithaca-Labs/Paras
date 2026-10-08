@@ -129,7 +129,7 @@ export async function upsertMarkets(
         update ${events} e set
           title = m.question,
           description = m.description,
-          category = m.category,
+          liquidity = m.liquidity,
           status = m.status,
           end_date = m.end_date,
           image_url = m.image_url,

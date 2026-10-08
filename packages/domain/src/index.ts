@@ -16,3 +16,35 @@ export {
   type MagicLinkVerdict,
 } from './magic-link.js';
 export { DECIMAL_SCALE, formatDecimal, mulDecimal, parseDecimal, type Scaled } from './decimal.js';
+export {
+  EMBEDDING_DIMENSIONS,
+  cosine,
+  dot,
+  eventEmbeddingText,
+  meanVector,
+  normalize,
+  type Embedder,
+} from './embedding.js';
+export {
+  TAXONOMY,
+  buildTaxonomyIndex,
+  keywordMatcher,
+  nearestNodes,
+  nodeEmbeddingText,
+  taxonomyCategories,
+  taxonomyChildren,
+  taxonomyNode,
+  type TagKind,
+  type TaxonomyIndex,
+  type TaxonomyNode,
+} from './taxonomy.js';
+export {
+  DEFAULT_TAGGING,
+  tagEvent,
+  type EventTag,
+  type TagSource,
+  type TaggingInput,
+  type TaggingOptions,
+  type TaggingResult,
+} from './tagging.js';
+export { reciprocalRankFusion, trendingScore, type TrendingInput } from './ranking.js';
