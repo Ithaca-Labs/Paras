@@ -73,6 +73,24 @@ export {
   type QuoteInput,
 } from './compare.js';
 export {
+  POLYMARKET_ROUTE_OVERHEAD_BPS,
+  computeRoute,
+  fillWithinMaxPrice,
+  type RedirectHint,
+  type RoutedFill,
+  type RouteResult,
+  type RouteVenue,
+} from './route.js';
+export {
+  INTENT_STATUSES,
+  TERMINAL_INTENT_STATUSES,
+  intentDetailsHash,
+  intentTypedData,
+  registerTypedData,
+  type IntentDetails,
+  type IntentStatus,
+} from './intent.js';
+export {
   DECIMAL_SCALE,
   divDecimal,
   formatDecimal,

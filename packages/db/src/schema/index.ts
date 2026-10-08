@@ -8,3 +8,4 @@ export * from './interest-profiles.js';
 export * from './feed.js';
 export * from './notifications.js';
 export * from './oauth.js';
+export * from './intents.js';
