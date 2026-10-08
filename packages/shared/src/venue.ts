@@ -40,6 +40,9 @@ export const VenueLabel = z.object({
   text: z.string(),
 });
 export type VenueLabel = z.infer<typeof VenueLabel>;
+/** Per-caller Venue availability: Vault can route / use the Venue's own site / not available. */
+export const Availability = z.enum(['routable', 'redirect', 'blocked']);
+export type Availability = z.infer<typeof Availability>;
 
 export const MarketStatus = z.enum(['open', 'closed', 'resolved']);
 export type MarketStatus = z.infer<typeof MarketStatus>;

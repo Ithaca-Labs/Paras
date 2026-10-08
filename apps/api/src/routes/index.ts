@@ -3,6 +3,7 @@ import type { AppDeps } from '../deps.js';
 import { authRoutes } from './auth.js';
 import { eventRoutes } from './events.js';
 import { healthRoutes } from './health.js';
+import { jurisdictionRoutes } from './jurisdiction.js';
 import { magicLinkRoutes } from './magic-links.js';
 import { openapiRoutes } from './openapi.js';
 import { taxonomyRoutes } from './taxonomy.js';
@@ -22,5 +23,6 @@ export const routePlugins: RoutePlugin[] = [
   magicLinkRoutes,
   taxonomyRoutes,
   venueRoutes,
+  jurisdictionRoutes,
   openapiRoutes,
 ];

@@ -3,15 +3,19 @@ import { QUOTE_STALE_AFTER_MS } from '../deps.js';
 import { HttpError, notFound } from '../errors.js';
 import { eventExists, loadEventQuotes, loadEventViews, searchEventIds } from '../events/queries.js';
 import { implement, implementSse } from '../implement.js';
+import { headerGeo, viewerCountries } from '../jurisdiction.js';
 import type { RoutePlugin } from './index.js';
 
 const DEFAULT_SSE_POLL_MS = 2000;
 
 export const eventRoutes: RoutePlugin = (
   app,
-  { db, embedder, now = () => new Date(), ssePollMs },
+  { db, embedder, now = () => new Date(), ssePollMs, geo = headerGeo },
 ) => {
-  implement(app, apiRoutes.listEvents, async ({ query }) => {
+  implement(
+    app,
+    apiRoutes.listEvents,
+    async ({ query }, ctx) => {
     const offset = Number(query.cursor ?? 0);
     if (!Number.isInteger(offset) || offset < 0) {
       throw new HttpError(400, 'validation_error', 'invalid cursor');
@@ -40,17 +44,28 @@ export const eventRoutes: RoutePlugin = (
       offset,
     });
     const page = ids.slice(0, query.limit);
+    const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
     return {
-      items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, { includePlayMoney }),
+      items: await loadEventViews(db, page, now(), QUOTE_STALE_AFTER_MS, countries, {
+        includePlayMoney,
+      }),
       nextCursor: ids.length > query.limit ? String(offset + query.limit) : null,
     };
-  });
+    },
+    { auth: 'optional' },
+  );
 
-  implement(app, apiRoutes.getEvent, async ({ params }) => {
-    const [event] = await loadEventViews(db, [params.id], now(), QUOTE_STALE_AFTER_MS);
-    if (!event) throw notFound('Event');
-    return event;
-  });
+  implement(
+    app,
+    apiRoutes.getEvent,
+    async ({ params }, ctx) => {
+      const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
+      const [event] = await loadEventViews(db, [params.id], now(), QUOTE_STALE_AFTER_MS, countries);
+      if (!event) throw notFound('Event');
+      return event;
+    },
+    { auth: 'optional' },
+  );
 
   // Live Quotes: the worker writes latest_quotes; each stream re-reads the Event's rows every
   // `ssePollMs` and pushes the ones whose observedAt moved. No cross-process pub/sub needed in V1.

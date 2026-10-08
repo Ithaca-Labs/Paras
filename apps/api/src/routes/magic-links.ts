@@ -7,6 +7,7 @@ import { QUOTE_STALE_AFTER_MS } from '../deps.js';
 import { HttpError, notFound } from '../errors.js';
 import { loadEventViews } from '../events/queries.js';
 import { implement } from '../implement.js';
+import { headerGeo, viewerCountries } from '../jurisdiction.js';
 import type { RoutePlugin } from './index.js';
 
 const { magicLinks } = schema;
@@ -16,7 +17,7 @@ export const magicLinkPath = (token: string) => `/magic/${token}`;
 
 export const magicLinkRoutes: RoutePlugin = (
   app,
-  { db, now: viewNow = () => new Date(), magicLinks: ml },
+  { db, now: viewNow = () => new Date(), magicLinks: ml, geo = headerGeo },
 ) => {
   const clock = () => ml.now();
 
@@ -27,7 +28,7 @@ export const magicLinkRoutes: RoutePlugin = (
       if (body.bindToUser && !ctx.auth) {
         throw new HttpError(401, 'unauthorized', 'Sign in to create a user-bound Magic Link');
       }
-      const [event] = await loadEventViews(db, [body.eventId], viewNow(), QUOTE_STALE_AFTER_MS);
+      const [event] = await loadEventViews(db, [body.eventId], viewNow(), QUOTE_STALE_AFTER_MS, []);
       if (!event) throw notFound('Event');
 
       let outcome: string | undefined;
@@ -94,7 +95,14 @@ export const magicLinkRoutes: RoutePlugin = (
           throw new HttpError(403, 'magic_link_wrong_user', 'This Magic Link is for another user');
         }
       }
-      const [event] = await loadEventViews(db, [c.eventId], viewNow(), QUOTE_STALE_AFTER_MS);
+      const { countries } = await viewerCountries(db, geo, ctx.request, ctx.auth);
+      const [event] = await loadEventViews(
+        db,
+        [c.eventId],
+        viewNow(),
+        QUOTE_STALE_AFTER_MS,
+        countries,
+      );
       if (!event) throw notFound('Event');
 
       await db

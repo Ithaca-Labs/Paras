@@ -49,3 +49,14 @@ export {
   type TaggingResult,
 } from './tagging.js';
 export { reciprocalRankFusion, trendingScore, type TrendingInput } from './ranking.js';
+export {
+  POLYMARKET_RESTRICTED,
+  vaultIneligibleReasons,
+  venueAvailability,
+  venueAvailabilityFor,
+  type Availability,
+  type IneligibleReason,
+  type VaultEligibilityInput,
+  type VenueRestrictions,
+} from './eligibility.js';
+export { RISK_DISCLOSURES } from './disclosures.js';
