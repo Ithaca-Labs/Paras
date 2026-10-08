@@ -1,4 +1,9 @@
-import { createAdapterRegistry, createPolymarketAdapter } from '@paras/adapters';
+import {
+  createAdapterRegistry,
+  createLimitlessAdapter,
+  createPolymarketAdapter,
+  createSxBetAdapter,
+} from '@paras/adapters';
 import { createDb } from '@paras/db';
 import { loadConfig } from './config.js';
 import { buildJobs, buildSchedules } from './jobs/index.js';
@@ -6,7 +11,11 @@ import { buildWorker } from './worker.js';
 
 const config = loadConfig();
 const { db, close } = createDb(config.DATABASE_URL);
-const adapters = createAdapterRegistry([createPolymarketAdapter()]);
+const adapters = createAdapterRegistry([
+  createPolymarketAdapter(),
+  createLimitlessAdapter(),
+  createSxBetAdapter(),
+]);
 const venues = [...adapters.keys()];
 
 const worker = buildWorker({

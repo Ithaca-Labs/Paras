@@ -1,0 +1,43 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.sx.bet/orderbook-v3/snapshot?marketHash=0xb867d13f1cefb66d684ec0baabde1d645c589f4658976a9cad24afaa62d8dcc4"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "status": "success",
+      "data": {
+        "marketHash": "0xb867d13f1cefb66d684ec0baabde1d645c589f4658976a9cad24afaa62d8dcc4",
+        "outcomeOne": [
+          {
+            "percentageOdds": "78250000000000000000",
+            "size": "493980000"
+          },
+          {
+            "percentageOdds": "76250000000000000000",
+            "size": "127337500"
+          },
+          {
+            "percentageOdds": "75750000000000000000",
+            "size": "66089700"
+          }
+        ],
+        "outcomeTwo": [
+          {
+            "percentageOdds": "17875000000000000000",
+            "size": "120050000"
+          },
+          {
+            "percentageOdds": "17250000000000000000",
+            "size": "41745000"
+          }
+        ],
+        "version": "000000800003513281"
+      }
+    }
+  }
+}

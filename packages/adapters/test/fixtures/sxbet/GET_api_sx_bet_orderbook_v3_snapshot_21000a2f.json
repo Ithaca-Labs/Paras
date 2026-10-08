@@ -1,0 +1,87 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.sx.bet/orderbook-v3/snapshot?marketHash=0xf3050332f79e7b1a7a2a1e95e8e210b47088a0203f0caa92efbf8dc71a24ea8e"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "status": "success",
+      "data": {
+        "marketHash": "0xf3050332f79e7b1a7a2a1e95e8e210b47088a0203f0caa92efbf8dc71a24ea8e",
+        "outcomeOne": [
+          {
+            "percentageOdds": "76375000000000000000",
+            "size": "5400100000"
+          },
+          {
+            "percentageOdds": "76250000000000000000",
+            "size": "507890000"
+          },
+          {
+            "percentageOdds": "76125000000000000000",
+            "size": "110595863"
+          },
+          {
+            "percentageOdds": "76000000000000000000",
+            "size": "6472000000"
+          },
+          {
+            "percentageOdds": "75750000000000000000",
+            "size": "916080000"
+          },
+          {
+            "percentageOdds": "75125000000000000000",
+            "size": "4110936250"
+          },
+          {
+            "percentageOdds": "71875000000000000000",
+            "size": "896760000"
+          }
+        ],
+        "outcomeTwo": [
+          {
+            "percentageOdds": "23125000000000000000",
+            "size": "14106250"
+          },
+          {
+            "percentageOdds": "23000000000000000000",
+            "size": "51340000"
+          },
+          {
+            "percentageOdds": "22875000000000000000",
+            "size": "1482982"
+          },
+          {
+            "percentageOdds": "22625000000000000000",
+            "size": "55872500"
+          },
+          {
+            "percentageOdds": "22500000000000000000",
+            "size": "483500000"
+          },
+          {
+            "percentageOdds": "22375000000000000000",
+            "size": "149770000"
+          },
+          {
+            "percentageOdds": "22125000000000000000",
+            "size": "528000000"
+          },
+          {
+            "percentageOdds": "22000000000000000000",
+            "size": "1895000000"
+          },
+          {
+            "percentageOdds": "21875000000000000000",
+            "size": "248510000"
+          }
+        ],
+        "version": "000000800003551579"
+      }
+    }
+  }
+}

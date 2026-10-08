@@ -1,0 +1,67 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.sx.bet/orderbook-v3/snapshot?marketHash=0xa302218de5de2dbf037f9864a437164af859e1afe4852604d12fdf8ca103b88d"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "status": "success",
+      "data": {
+        "marketHash": "0xa302218de5de2dbf037f9864a437164af859e1afe4852604d12fdf8ca103b88d",
+        "outcomeOne": [
+          {
+            "percentageOdds": "40500000000000000000",
+            "size": "29340000"
+          },
+          {
+            "percentageOdds": "40250000000000000000",
+            "size": "1898000000"
+          },
+          {
+            "percentageOdds": "40000000000000000000",
+            "size": "3495000000"
+          },
+          {
+            "percentageOdds": "39500000000000000000",
+            "size": "3240000000"
+          },
+          {
+            "percentageOdds": "38750000000000000000",
+            "size": "90840000"
+          },
+          {
+            "percentageOdds": "38375000000000000000",
+            "size": "64014483"
+          }
+        ],
+        "outcomeTwo": [
+          {
+            "percentageOdds": "58500000000000000000",
+            "size": "248020000"
+          },
+          {
+            "percentageOdds": "58375000000000000000",
+            "size": "23360000"
+          },
+          {
+            "percentageOdds": "58250000000000000000",
+            "size": "2568000000"
+          },
+          {
+            "percentageOdds": "58000000000000000000",
+            "size": "4992000000"
+          },
+          {
+            "percentageOdds": "56375000000000000000",
+            "size": "66089700"
+          }
+        ],
+        "version": "000000800003385096"
+      }
+    }
+  }
+}

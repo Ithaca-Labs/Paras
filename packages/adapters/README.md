@@ -32,3 +32,11 @@ Rules:
 ## Polymarket
 
 Gamma `/markets` (metadata, volume order, offset cursor) and CLOB `POST /books` (batched, 100 tokens per call) and `/prices-history`. All free and unauthenticated. V1 polls; the CLOB WebSocket can later replace `fetchQuotes` without interface changes.
+
+## Limitless
+
+Free public REST (`api.limitless.exchange`): `/markets/active` (25 per page, `sortBy=high_value`, group Markets are flattened into their child Markets), `/markets/{slug}/orderbook` (YES token only; NO is derived as the mirror) and `/historical-price`. Read-only (`routable: false`), `offshore`. Market `externalId` is the slug; Outcome ids are `<slug>:yes|no`. Fees are not modeled (`none`).
+
+## SX Bet
+
+Free public REST (`api.sx.bet`, no key): `/markets/active` (100 per page, `paginationKey`) and V3 `/orderbook-v3/snapshot` (one call per Market). Read-only, `offshore`. Market `externalId` is the `marketHash`; Outcome ids are `<hash>:1|2`. Makers resting on an outcome are its bids; makers on the other outcome are its asks at `1 - p`. The list carries no volume or liquidity (`0`) and there is no price series (`priceHistory: false`). `url` is the league page: sx.bet has no documented per-market URL. Fees are not modeled (`none`).

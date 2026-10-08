@@ -1,0 +1,118 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.limitless.exchange/markets/btc-up-or-down-daily-p-1791464715953/historical-price?interval=1d"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body": {
+      "title": "BTC Up or Down Daily",
+      "prices": [
+        {
+          "timestamp": "1791497381000",
+          "price": 0.735
+        },
+        {
+          "timestamp": "1791496800000",
+          "price": 0.735
+        },
+        {
+          "timestamp": "1791495900000",
+          "price": 0.6945
+        },
+        {
+          "timestamp": "1791495000000",
+          "price": 0.715
+        },
+        {
+          "timestamp": "1791494100000",
+          "price": 0.6895
+        },
+        {
+          "timestamp": "1791493200000",
+          "price": 0.715
+        },
+        {
+          "timestamp": "1791492300000",
+          "price": 0.7245
+        },
+        {
+          "timestamp": "1791491400000",
+          "price": 0.725
+        },
+        {
+          "timestamp": "1791490500000",
+          "price": 0.729
+        },
+        {
+          "timestamp": "1791489600000",
+          "price": 0.735
+        },
+        {
+          "timestamp": "1791488700000",
+          "price": 0.695
+        },
+        {
+          "timestamp": "1791487800000",
+          "price": 0.69
+        },
+        {
+          "timestamp": "1791486900000",
+          "price": 0.665
+        },
+        {
+          "timestamp": "1791486000000",
+          "price": 0.62
+        },
+        {
+          "timestamp": "1791485100000",
+          "price": 0.605
+        },
+        {
+          "timestamp": "1791484200000",
+          "price": 0.605
+        },
+        {
+          "timestamp": "1791483300000",
+          "price": 0.5845
+        },
+        {
+          "timestamp": "1791482400000",
+          "price": 0.405
+        },
+        {
+          "timestamp": "1791481500000",
+          "price": 0.416
+        },
+        {
+          "timestamp": "1791480600000",
+          "price": 0.4445
+        },
+        {
+          "timestamp": "1791479700000",
+          "price": 0.4245
+        },
+        {
+          "timestamp": "1791478800000",
+          "price": 0.4555
+        },
+        {
+          "timestamp": "1791477900000",
+          "price": 0.4755
+        },
+        {
+          "timestamp": "1791477000000",
+          "price": 0.5605
+        },
+        {
+          "timestamp": "1791476100000",
+          "price": 0.5605
+        }
+      ],
+      "marketStatus": "FUNDED"
+    }
+  }
+}
