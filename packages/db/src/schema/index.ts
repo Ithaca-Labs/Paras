@@ -4,3 +4,4 @@ export * from './identity.js';
 export * from './markets.js';
 export * from './magic-links.js';
 export * from './deposit-wallets.js';
+export * from './interest-profiles.js';

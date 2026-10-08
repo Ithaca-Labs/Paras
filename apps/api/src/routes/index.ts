@@ -7,6 +7,7 @@ import { healthRoutes } from './health.js';
 import { jurisdictionRoutes } from './jurisdiction.js';
 import { magicLinkRoutes } from './magic-links.js';
 import { openapiRoutes } from './openapi.js';
+import { profileRoutes } from './profile.js';
 import { taxonomyRoutes } from './taxonomy.js';
 import { venueRoutes } from './venues.js';
 
@@ -26,5 +27,6 @@ export const routePlugins: RoutePlugin[] = [
   taxonomyRoutes,
   venueRoutes,
   jurisdictionRoutes,
+  profileRoutes,
   openapiRoutes,
 ];

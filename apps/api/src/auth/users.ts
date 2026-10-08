@@ -2,6 +2,7 @@ import { pickMergeSurvivor } from '@paras/domain';
 import { schema, type Database } from '@paras/db';
 import type { Me } from '@paras/shared';
 import { eq } from 'drizzle-orm';
+import { mergeProfiles } from '../profile/store.js';
 
 type Tx = Parameters<Parameters<Database['transaction']>[0]>[0];
 
@@ -65,6 +66,7 @@ export async function mergeUsers(tx: Tx, aId: string, bId: string): Promise<stri
   ]) {
     await tx.update(t).set({ userId: survivor.id }).where(eq(t.userId, absorbed.id));
   }
+  await mergeProfiles(tx, survivor.id, absorbed.id);
   await tx
     .update(schema.users)
     .set({ mergedIntoId: survivor.id })
