@@ -68,6 +68,8 @@ export const positions = pgTable(
 export interface ExitCtx {
   approvalTx?: string;
   orderKey?: string;
+  /** See IntentCtx.orderTs. */
+  orderTs?: number;
   orderId?: string;
   /** Shares the sell order asked for. */
   sellShares?: string;

@@ -14,6 +14,8 @@ type ExitRow = typeof exits.$inferSelect;
 type PositionRow = typeof positions.$inferSelect;
 type Ctx = ExitRow['ctx'];
 type Tx = Parameters<Parameters<Database['transaction']>[0]>[0];
+/** Below 0.01 shares nothing can be sold (CLOB size precision): the position counts as closed. */
+const DUST_SHARES = 10_000n;
 export type ExitStepResult = 'progress' | 'wait' | 'done';
 
 export interface ExitDeps {
@@ -115,11 +117,13 @@ export class ExitEngine {
 
     if (!ctx.orderId) {
       if (!(await this.d.geoblock.allowed())) return 'wait';
+      if (!ctx.orderTs) return this.patch(row, { orderTs: this.now().getTime() });
       const sellable = BigInt(ctx.sellShares!);
       await this.d.wallets.checkClob(wallet.id, { kind: 'order', maker: addr, signer: addr });
       const shares = formatUnits(sellable, 6);
       const { orderId } = await this.d.clob.placeOrder({
         key: ctx.orderKey!,
+        timestamp: ctx.orderTs,
         wallet: addr,
         tokenId: pos.tokenId,
         side: 'SELL',
@@ -195,7 +199,7 @@ export class ExitEngine {
         .update(positions)
         .set({
           shares: sql`(${positions.shares}::numeric - ${sharesGone.toString()}::numeric)::text`,
-          status: sql`case when ${positions.shares}::numeric - ${sharesGone.toString()}::numeric <= 0 then 'closed' else ${positions.status} end`,
+          status: sql`case when ${positions.shares}::numeric - ${sharesGone.toString()}::numeric < ${DUST_SHARES.toString()}::numeric then 'closed' else ${positions.status} end`,
           updatedAt: this.now(),
         })
         .where(eq(positions.id, pos.id));

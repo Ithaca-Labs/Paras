@@ -78,6 +78,11 @@ export interface Iris {
 export interface ClobOrderRequest {
   /** Idempotency key: the same key must never produce a second live order. */
   key: string;
+  /**
+   * ms timestamp signed into the order. Callers persist it BEFORE the first attempt: key + timestamp fix the order
+   * hash, so a retry after a crash re-sends the identical order (the CLOB rejects duplicates) instead of a new one.
+   */
+  timestamp?: number;
   wallet: Address;
   tokenId: string;
   /** BUY (default) spends `amountUsd`; SELL sells `shares` for at least `price` each. */

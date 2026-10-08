@@ -215,6 +215,7 @@ export class IntentEngine {
 
     if (!ctx.orderId) {
       if (!(await this.d.geoblock.allowed())) return 'wait';
+      if (!ctx.orderTs) return this.patch(row, { orderTs: this.now().getTime() }); // fixes the order hash for retries
       // No balance pre-check: `ordering` follows a confirmed convert, and after a crash the order may already
       // have spent the pUSD. `placeOrder` is idempotent per key, so re-calling it recovers the order id.
       const { asks, fee } = await this.d.books.asks(details);
@@ -229,6 +230,7 @@ export class IntentEngine {
       });
       const { orderId } = await this.d.clob.placeOrder({
         key: ctx.orderKey!,
+        timestamp: ctx.orderTs,
         wallet,
         tokenId: details.tokenId,
         price: details.maxPrice,

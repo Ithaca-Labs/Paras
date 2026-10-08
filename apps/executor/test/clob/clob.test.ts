@@ -2,7 +2,12 @@ import { recoverTypedDataAddress, type Address, type Hex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { describe, expect, it } from 'vitest';
 import { HttpClob, l2Signature } from '../../src/clob/client.js';
-import { buyAmounts, signPoly1271Order, type V2Order } from '../../src/clob/order.js';
+import {
+  buyAmounts,
+  sellAmounts,
+  signPoly1271Order,
+  type V2Order,
+} from '../../src/clob/order.js';
 import { POLYGON } from '../../src/wallet/constants.js';
 
 const session = privateKeyToAccount(
@@ -125,7 +130,13 @@ describe('HttpClob over recorded HTTP', () => {
   const creds = { apiKey: 'k-1', secret, passphrase: 'pp' };
 
   function world(
-    o: { version?: number; negRisk?: boolean; existing?: unknown[]; reject?: boolean } = {},
+    o: {
+      version?: number;
+      negRisk?: boolean;
+      existing?: unknown[];
+      reject?: boolean;
+      rejectMsg?: string;
+    } = {},
   ) {
     const calls: { method: string; path: string; headers: Headers; body?: string }[] = [];
     const f = (async (url: string, init: RequestInit = {}) => {
@@ -145,7 +156,7 @@ describe('HttpClob over recorded HTTP', () => {
       if (k === 'GET /neg-risk') return json({ neg_risk: o.negRisk ?? false });
       if (k === 'GET /data/orders') return json({ data: o.existing ?? [] });
       if (k === 'POST /order' && o.reject)
-        return json({ success: false, errorMsg: 'not enough balance' });
+        return json({ success: false, errorMsg: o.rejectMsg ?? 'not enough balance' });
       if (k === 'POST /order') return json({ success: true, orderID: '0xhash', status: 'live' });
       if (k === 'DELETE /order') return json({ canceled: ['0xhash'] });
       if (k === 'GET /data/order/0xhash')
@@ -279,5 +290,53 @@ describe('HttpClob over recorded HTTP', () => {
   it('surfaces CLOB rejections', async () => {
     const { clob } = world({ reject: true });
     await expect(clob.placeOrder(req)).rejects.toThrow(/not enough balance/);
+  });
+
+  it('SELL: maker gives shares, taker gives USDC, side SELL, price rounded up to the tick', async () => {
+    const { clob, calls } = world();
+    await clob.placeOrder({
+      key: 'paras:exit:1',
+      wallet: WALLET,
+      tokenId: TOKEN,
+      side: 'SELL',
+      shares: '18.090909',
+      price: '0.604',
+      amountUsd: '10.9',
+      type: 'FAK',
+    });
+    const body = JSON.parse(calls.find((c) => c.path === '/order')!.body!);
+    expect(body.order).toMatchObject({
+      side: 'SELL',
+      makerAmount: '18090000', // 18.09 shares, rounded down to cents
+      takerAmount: '11034900', // at 0.61 (0.604 rounded up to the tick)
+    });
+  });
+
+  it('the persisted timestamp fixes the order hash across restarts (no second order)', async () => {
+    const a = world();
+    const b = world();
+    await a.clob.placeOrder({ ...req, timestamp: NOW });
+    await b.clob.placeOrder({ ...req, timestamp: NOW });
+    const post = (w: ReturnType<typeof world>) =>
+      JSON.parse(w.calls.find((c) => c.path === '/order')!.body!).order;
+    expect(post(a)).toEqual(post(b)); // identical salt, timestamp and signature
+  });
+
+  it('a duplicate-order rejection on retry returns the order id instead of failing or re-spending', async () => {
+    const { clob } = world({ reject: true, rejectMsg: 'order already exists' });
+    const { orderId } = await clob.placeOrder({ ...req, timestamp: NOW });
+    expect(orderId).toMatch(new RegExp(`^${WALLET}:0x[0-9a-f]{64}$`));
+  });
+});
+
+describe('sellAmounts', () => {
+  it('rounds shares down to cents and the price up to the tick', () => {
+    expect(sellAmounts('10', '0.5', '0.01')).toEqual({
+      makerAmount: 10_000_000n,
+      takerAmount: 5_000_000n,
+      price: '0.5',
+    });
+    expect(sellAmounts('1.239', '0.501', '0.01').price).toBe('0.51');
+    expect(() => sellAmounts('0.001', '0.5', '0.01')).toThrow();
   });
 });

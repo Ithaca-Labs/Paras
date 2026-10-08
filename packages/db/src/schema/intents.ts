@@ -24,6 +24,8 @@ export interface IntentCtx {
   convertTx?: string;
   pusd?: string;
   orderKey?: string;
+  /** ms timestamp signed into the order; persisted before the first attempt so retries keep the same hash. */
+  orderTs?: number;
   orderId?: string;
   filledShares?: string;
   spentUsdc?: string;

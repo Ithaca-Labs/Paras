@@ -1,12 +1,23 @@
 import { createHmac } from 'node:crypto';
-import { getAddress, keccak256, toHex, type Address, type Hex, type LocalAccount } from 'viem';
+import {
+  getAddress,
+  hashTypedData,
+  keccak256,
+  toHex,
+  type Address,
+  type Hex,
+  type LocalAccount,
+} from 'viem';
 import { POLYGON, POLYGON_CHAIN_ID } from '../wallet/constants.js';
 import type { Clob, ClobOrderRequest } from '../intents/ports.js';
 import {
   buyAmounts,
   fromUnits,
+  sellAmounts,
+  ORDER_FIELDS,
   signPoly1271Order,
   toUnits,
+  EXCHANGE_DOMAIN_NAME,
   ZERO32,
   type V2Order,
 } from './order.js';
@@ -157,6 +168,7 @@ export class HttpClob implements Clob {
   async placeOrder(r: ClobOrderRequest): Promise<{ orderId: string }> {
     const wallet = getAddress(r.wallet);
     const { acct } = await this.session(wallet);
+    const sell = r.side === 'SELL';
     const existing = r.type === 'GTC' ? await this.findRestingOrder(wallet, r) : undefined;
     if (existing) return { orderId: encodeId(wallet, existing) };
 
@@ -165,10 +177,17 @@ export class HttpClob implements Clob {
       '/tick-size',
       { query: { token_id: r.tokenId } },
     );
-    const amounts = buyAmounts(r.amountUsd, r.price, String(minimum_tick_size));
-    // Same key -> same salt and timestamp -> same order hash, so a retry in this process cannot double-post.
+    const tick = String(minimum_tick_size);
+    const amounts = sell
+      ? sellAmounts(r.shares!, r.price, tick)
+      : buyAmounts(r.amountUsd, r.price, tick);
+    // Same key -> same salt and timestamp -> same order hash, so a retry cannot double-post: the caller persists
+    // `r.timestamp` before the first attempt, which makes this hold across restarts too.
     const salt = BigInt(keccak256(toHex(r.key)).slice(0, 14)); // 48 bits: survives JSON numbers
-    const timestamp = this.stamps.get(r.key) ?? BigInt(this.now());
+    const timestamp =
+      r.timestamp !== undefined
+        ? BigInt(r.timestamp)
+        : (this.stamps.get(r.key) ?? BigInt(this.now()));
     this.stamps.set(r.key, timestamp);
     const order: V2Order = {
       salt,
@@ -177,7 +196,7 @@ export class HttpClob implements Clob {
       tokenId: BigInt(r.tokenId),
       makerAmount: amounts.makerAmount,
       takerAmount: amounts.takerAmount,
-      side: 0,
+      side: sell ? 1 : 0,
       signatureType: 3,
       timestamp,
       metadata: ZERO32,
@@ -189,6 +208,17 @@ export class HttpClob implements Clob {
       ...domain,
     });
     const { creds } = await this.session(wallet);
+    const hash = hashTypedData({
+      domain: {
+        name: EXCHANGE_DOMAIN_NAME,
+        version: domain.version,
+        chainId: POLYGON_CHAIN_ID,
+        verifyingContract: domain.verifyingContract,
+      },
+      types: { Order: ORDER_FIELDS },
+      primaryType: 'Order',
+      message: order,
+    });
     const res = await this.l2<{ success: boolean; errorMsg?: string; orderID?: string }>(
       wallet,
       'POST',
@@ -204,7 +234,7 @@ export class HttpClob implements Clob {
             tokenId: r.tokenId,
             makerAmount: order.makerAmount.toString(),
             takerAmount: order.takerAmount.toString(),
-            side: 'BUY',
+            side: sell ? 'SELL' : 'BUY',
             signatureType: 3,
             timestamp: order.timestamp.toString(),
             expiration: '0',
@@ -217,7 +247,11 @@ export class HttpClob implements Clob {
         },
       },
     );
-    if (!res.success || !res.orderID) throw new Error(`clob order rejected: ${res.errorMsg}`);
+    if (!res.success || !res.orderID) {
+      // The identical order (same hash) already exists: a retry after a crash. Recover its id, never re-spend.
+      if (/duplicate|already/i.test(res.errorMsg ?? '')) return { orderId: encodeId(wallet, hash) };
+      throw new Error(`clob order rejected: ${res.errorMsg}`);
+    }
     return { orderId: encodeId(wallet, res.orderID) };
   }
 
@@ -229,7 +263,7 @@ export class HttpClob implements Clob {
     const orders = Array.isArray(res) ? res : res.data;
     const hit = orders.find(
       (o) =>
-        o.side === 'BUY' &&
+        o.side === (r.side ?? 'BUY') &&
         o.status.toUpperCase() === 'LIVE' &&
         getAddress(o.maker_address) === wallet &&
         toUnits(o.price) <= toUnits(r.price), // shortcut: any live BUY under our cap counts, fine for one open Intent per token
