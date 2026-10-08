@@ -1,4 +1,7 @@
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import { migrate } from '@paras/db';
+import type * as Testcontainers from '@testcontainers/postgresql';
 import type { TestProject } from 'vitest/node';
 import './context.js';
 import { adminExec, randomName, withDatabase } from './pg-admin.js';
@@ -13,7 +16,12 @@ export default async function setup(project: TestProject) {
   let stopContainer: (() => Promise<void>) | undefined;
 
   if (!adminUrl) {
-    const { PostgreSqlContainer } = await import('@testcontainers/postgresql');
+    // Resolved by path so vite-node loads the real package natively (bare-specifier resolution fails
+    // from a workspace source file inside globalSetup).
+    const entry = createRequire(import.meta.url).resolve('@testcontainers/postgresql');
+    const { PostgreSqlContainer } = (await import(
+      /* @vite-ignore */ pathToFileURL(entry).href
+    )) as typeof Testcontainers;
     const container = await new PostgreSqlContainer('pgvector/pgvector:pg16').start();
     adminUrl = container.getConnectionUri();
     stopContainer = async () => void (await container.stop());

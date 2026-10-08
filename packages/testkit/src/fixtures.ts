@@ -23,7 +23,10 @@ const isJson = (contentType: string) => /json/i.test(contentType);
 export function fixtureName(method: string, url: string, body?: string): string {
   const u = new URL(url);
   const slug = `${u.host}${u.pathname}`.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
-  const hash = createHash('sha1').update(`${method} ${url}\n${body ?? ''}`).digest('hex').slice(0, 8);
+  const hash = createHash('sha1')
+    .update(`${method} ${url}\n${body ?? ''}`)
+    .digest('hex')
+    .slice(0, 8);
   return `${method.toUpperCase()}_${slug}_${hash}.json`;
 }
 

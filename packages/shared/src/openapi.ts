@@ -2,7 +2,9 @@ import { OpenApiGeneratorV31, OpenAPIRegistry } from '@asteasolutions/zod-to-ope
 import { ErrorResponse } from './errors.js';
 import type { Route } from './route.js';
 
-const json = <T extends Route['response']>(schema: T) => ({ content: { 'application/json': { schema } } });
+const json = <T extends Route['response']>(schema: T) => ({
+  content: { 'application/json': { schema } },
+});
 
 export function buildOpenApiDocument(routes: Record<string, Route>, version = '0.0.0') {
   const registry = new OpenAPIRegistry();

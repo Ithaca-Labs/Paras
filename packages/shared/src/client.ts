@@ -23,7 +23,11 @@ type Call<R extends Route> = keyof RouteInput<R> extends never
 
 export type ApiClient = { [K in keyof ApiRoutes]: Call<ApiRoutes[K]> };
 
-type AnyInput = { params?: Record<string, unknown>; query?: Record<string, unknown>; body?: unknown };
+type AnyInput = {
+  params?: Record<string, unknown>;
+  query?: Record<string, unknown>;
+  body?: unknown;
+};
 
 /** Typed client generated from the same route definitions the api implements. */
 export function createApiClient(options: ClientOptions): ApiClient {
