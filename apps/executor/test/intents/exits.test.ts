@@ -18,11 +18,15 @@ describe('Exits, redemption and the return bridge (Seam 4)', () => {
   afterEach(() => t.close());
 
   const position = async () =>
-    (await t.db.select().from(schema.positions).where(eq(schema.positions.intentRowId, intentRow)))[0]!;
+    (
+      await t.db.select().from(schema.positions).where(eq(schema.positions.intentRowId, intentRow))
+    )[0]!;
   const exit = async (id: string) =>
     (await t.db.select().from(schema.exits).where(eq(schema.exits.id, id)))[0]!;
   const notes = async () => t.db.select().from(schema.notifications);
-  const sell = async (o: { returnTo?: 'vault' | 'polygon'; shares?: bigint; minPrice?: string } = {}) => {
+  const sell = async (
+    o: { returnTo?: 'vault' | 'polygon'; shares?: bigint; minPrice?: string } = {},
+  ) => {
     const p = await position();
     const [e] = await t.db
       .insert(schema.exits)
@@ -41,7 +45,10 @@ describe('Exits, redemption and the return bridge (Seam 4)', () => {
     (await t.db.select().from(schema.intents).where(eq(schema.intents.id, intentRow)))[0]!.intentId;
   const resolve = async (numerators: bigint[]) => {
     t.world.resolutions.set(t.market.conditionId, { denominator: 1n, numerators });
-    await t.db.update(schema.markets).set({ status: 'resolved' }).where(eq(schema.markets.id, t.market.id));
+    await t.db
+      .update(schema.markets)
+      .set({ status: 'resolved' })
+      .where(eq(schema.markets.id, t.market.id));
   };
 
   it('buy creates a position with the fill', async () => {
@@ -111,7 +118,10 @@ describe('Exits, redemption and the return bridge (Seam 4)', () => {
 
   describe('redemption on resolution', () => {
     it('does nothing until the condition is resolved on-chain', async () => {
-      await t.db.update(schema.markets).set({ status: 'closed' }).where(eq(schema.markets.id, t.market.id));
+      await t.db
+        .update(schema.markets)
+        .set({ status: 'closed' })
+        .where(eq(schema.markets.id, t.market.id));
       expect(await scanResolved(t.db, t.world.polygonChain)).toBe(0);
     });
 

@@ -219,6 +219,9 @@ describe('mcp oauth', () => {
       vault: null,
       total: { idle: '0', reserved: '0', inFlight: '0' },
       accounts: [],
+      positions: [],
+      totals: { value: '0', pnl: '0' },
+      collateral: { wallet: null, pusd: '0' },
     });
     await client.close();
   });

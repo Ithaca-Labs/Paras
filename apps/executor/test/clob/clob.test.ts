@@ -2,12 +2,7 @@ import { recoverTypedDataAddress, type Address, type Hex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { describe, expect, it } from 'vitest';
 import { HttpClob, l2Signature } from '../../src/clob/client.js';
-import {
-  buyAmounts,
-  sellAmounts,
-  signPoly1271Order,
-  type V2Order,
-} from '../../src/clob/order.js';
+import { buyAmounts, sellAmounts, signPoly1271Order, type V2Order } from '../../src/clob/order.js';
 import { POLYGON } from '../../src/wallet/constants.js';
 
 const session = privateKeyToAccount(

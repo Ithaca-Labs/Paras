@@ -423,7 +423,10 @@ export class IntentEngine {
         note: ctx.reason ? { reason: ctx.reason } : {},
         at: this.now(),
       });
-      if ((to === 'filled' || to === 'partially_filled') && toBase6(merged.filledShares ?? '0') > 0n)
+      if (
+        (to === 'filled' || to === 'partially_filled') &&
+        toBase6(merged.filledShares ?? '0') > 0n
+      )
         await this.openPosition(tx, row, merged);
       return true;
     });

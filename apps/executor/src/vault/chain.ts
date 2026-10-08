@@ -71,7 +71,10 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
         const block = l.blockNumber;
         if (l.eventName === 'Deposited' || l.eventName === 'Withdrawn') {
           if (!times.has(block))
-            times.set(block, new Date(Number((await pub.getBlock({ blockNumber: block })).timestamp) * 1000));
+            times.set(
+              block,
+              new Date(Number((await pub.getBlock({ blockNumber: block })).timestamp) * 1000),
+            );
           events.push({
             kind: l.eventName === 'Deposited' ? 'deposited' : 'withdrawn',
             user: l.args.user,

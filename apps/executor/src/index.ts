@@ -8,12 +8,7 @@ import { loadConfig } from './config.js';
 import { createBookSource } from './intents/books.js';
 import { ExitEngine, scanResolved } from './exits/engine.js';
 import { indexPolygon } from './indexer/polygon.js';
-import {
-  createGeoblock,
-  createIris,
-  createPolygon,
-  createPolygonLogs,
-} from './intents/clients.js';
+import { createGeoblock, createIris, createPolygon, createPolygonLogs } from './intents/clients.js';
 import { IntentEngine } from './intents/engine.js';
 import { createRunner } from './intents/runner.js';
 import { createMonad } from './vault/chain.js';
@@ -91,7 +86,9 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     clob,
     geoblock,
   });
-  const logs = createPolygonLogs({ transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')) });
+  const logs = createPolygonLogs({
+    transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')),
+  });
   const log = (msg: string, data?: object) => app.log.info(data, msg);
   const runner = createRunner({
     db,

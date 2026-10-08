@@ -67,7 +67,9 @@ export function createPolygon(o: {
       // Binary Markets: outcomes 0 and 1.
       return {
         denominator,
-        numerators: await Promise.all([0n, 1n].map((i) => read('payoutNumerators', [conditionId, i]))),
+        numerators: await Promise.all(
+          [0n, 1n].map((i) => read('payoutNumerators', [conditionId, i])),
+        ),
       };
     },
     async messageUsed(message) {
@@ -139,7 +141,10 @@ export function createGeoblock(o: { url?: string; fetch?: typeof fetch } = {}): 
 }
 
 /** Polygon transfer logs of pUSD (ERC20) and CTF shares (ERC1155) in or out of the given wallets. */
-export function createPolygonLogs(o: { transport: Transport; confirmations?: bigint }): PolygonLogs {
+export function createPolygonLogs(o: {
+  transport: Transport;
+  confirmations?: bigint;
+}): PolygonLogs {
   const pub = createPublicClient({ chain: polygon, transport: o.transport });
   return {
     async head() {
@@ -148,7 +153,12 @@ export function createPolygonLogs(o: { transport: Transport; confirmations?: big
     async transfers(fromBlock, toBlock, wallets) {
       const out: WalletTransfer[] = [];
       const mine = new Set(wallets.map((w) => w.toLowerCase()));
-      const push = (w: string, asset: string, delta: bigint, l: { blockNumber: bigint; transactionHash: Hex; logIndex: number }) => {
+      const push = (
+        w: string,
+        asset: string,
+        delta: bigint,
+        l: { blockNumber: bigint; transactionHash: Hex; logIndex: number },
+      ) => {
         if (mine.has(w.toLowerCase()))
           out.push({
             wallet: getAddress(w),
@@ -164,14 +174,34 @@ export function createPolygonLogs(o: { transport: Transport; confirmations?: big
         const args = { [side]: wallets };
         const sign = side === 'to' ? 1n : -1n;
         const [erc20, single, batch] = await Promise.all([
-          pub.getLogs({ address: POLYGON.pUSD, event: erc20TransferEvent[0], args, fromBlock, toBlock }),
-          pub.getLogs({ address: POLYGON.ctf, event: ctfTransferEvents[0], args, fromBlock, toBlock }),
-          pub.getLogs({ address: POLYGON.ctf, event: ctfTransferEvents[1], args, fromBlock, toBlock }),
+          pub.getLogs({
+            address: POLYGON.pUSD,
+            event: erc20TransferEvent[0],
+            args,
+            fromBlock,
+            toBlock,
+          }),
+          pub.getLogs({
+            address: POLYGON.ctf,
+            event: ctfTransferEvents[0],
+            args,
+            fromBlock,
+            toBlock,
+          }),
+          pub.getLogs({
+            address: POLYGON.ctf,
+            event: ctfTransferEvents[1],
+            args,
+            fromBlock,
+            toBlock,
+          }),
         ]);
         for (const l of erc20) push(l.args[side]!, 'pusd', sign * l.args.value!, l);
         for (const l of single) push(l.args[side]!, l.args.id!.toString(), sign * l.args.value!, l);
         for (const l of batch)
-          l.args.ids!.forEach((id, i) => push(l.args[side]!, id.toString(), sign * l.args.values![i]!, l));
+          l.args.ids!.forEach((id, i) =>
+            push(l.args[side]!, id.toString(), sign * l.args.values![i]!, l),
+          );
       }
       return out;
     },

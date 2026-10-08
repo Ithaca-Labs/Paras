@@ -29,6 +29,7 @@ import {
   getDisclosures,
   getVaultEligibility,
 } from './jurisdiction.js';
+import { exitPosition, getPortfolio, listHistory, setPositionReturn } from './portfolio.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
 import {
   authorizeOAuth,
@@ -99,6 +100,10 @@ export const apiRoutes = {
   getIntent,
   getDepositWallet,
   requestDepositWallet,
+  getPortfolio,
+  listHistory,
+  exitPosition,
+  setPositionReturn,
   getFeed,
   recordFeedSignal,
   listFollows,
@@ -135,5 +140,6 @@ export * from './auth.js';
 export * from './venues.js';
 export * from './jurisdiction.js';
 export * from './vault.js';
+export * from './portfolio.js';
 export * from './oauth.js';
 export * from './ops.js';

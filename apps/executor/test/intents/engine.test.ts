@@ -1,7 +1,7 @@
 import { schema } from '@paras/db';
 import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createHarness, USDC, type Harness } from './world.js';
+import { createHarness, type Harness } from './world.js';
 
 describe('Intent engine (Seam 4: Intent -> route -> bridge -> order -> fill)', () => {
   let t: Harness;

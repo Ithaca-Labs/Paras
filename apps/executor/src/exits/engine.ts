@@ -194,16 +194,21 @@ export class ExitEngine {
     proceeds: bigint,
     ctx: Partial<Ctx>,
   ): Promise<ExitStepResult> {
-    await this.transition(row, 'returning', { ...ctx, returnPusd: proceeds.toString() }, async (tx) => {
-      await tx
-        .update(positions)
-        .set({
-          shares: sql`(${positions.shares}::numeric - ${sharesGone.toString()}::numeric)::text`,
-          status: sql`case when ${positions.shares}::numeric - ${sharesGone.toString()}::numeric < ${DUST_SHARES.toString()}::numeric then 'closed' else ${positions.status} end`,
-          updatedAt: this.now(),
-        })
-        .where(eq(positions.id, pos.id));
-    });
+    await this.transition(
+      row,
+      'returning',
+      { ...ctx, returnPusd: proceeds.toString() },
+      async (tx) => {
+        await tx
+          .update(positions)
+          .set({
+            shares: sql`(${positions.shares}::numeric - ${sharesGone.toString()}::numeric)::text`,
+            status: sql`case when ${positions.shares}::numeric - ${sharesGone.toString()}::numeric < ${DUST_SHARES.toString()}::numeric then 'closed' else ${positions.status} end`,
+            updatedAt: this.now(),
+          })
+          .where(eq(positions.id, pos.id));
+      },
+    );
     return 'progress';
   }
 
