@@ -1,0 +1,7 @@
+node_modules
+dist
+pnpm-lock.yaml
+.turbo
+contracts
+packages/db/drizzle/meta
+**/fixtures/**

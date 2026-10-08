@@ -1,0 +1,16 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "DATABASE_URL",
+    "RECORD_FIXTURES",
+    "CI",
+    "DOCKER_HOST",
+    "TESTCONTAINERS_RYUK_DISABLED",
+    "TESTCONTAINERS_HOST_OVERRIDE"
+  ],
+  "tasks": {
+    "build": { "outputs": ["dist/**"] },
+    "typecheck": {},
+    "test": { "cache": false }
+  }
+}

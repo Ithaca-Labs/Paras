@@ -1,0 +1,8 @@
+{
+  "request": { "method": "GET", "url": "https://api.example.test/markets?limit=1" },
+  "response": {
+    "status": 200,
+    "headers": { "content-type": "application/json" },
+    "body": [{ "id": "m1", "question": "Will it rain tomorrow?", "yes": 0.42 }]
+  }
+}

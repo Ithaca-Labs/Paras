@@ -1,0 +1,25 @@
+{
+  "name": "@paras/testkit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./global-setup": "./src/global-setup.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paras/db": "workspace:*",
+    "@testcontainers/postgresql": "11.14.0",
+    "pg": "8.23.1",
+    "testcontainers": "11.14.0",
+    "vitest": "3.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/pg": "8.23.1"
+  }
+}
