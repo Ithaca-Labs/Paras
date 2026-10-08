@@ -9,6 +9,7 @@ import {
   verifyTypedData,
   type Address,
   type Hex,
+  type LocalAccount,
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { batchTypedData, signBatchAsSession, type Batch, type Call } from './batch.js';
@@ -320,6 +321,17 @@ export class WalletService {
       now: this.now(),
       keyValidUntil: key.validUntil,
     });
+  }
+
+  /** The active session key of a Deposit Wallet, for CLOB order/auth signing. Callers run `checkClob` first. */
+  async sessionAccount(wallet: Address): Promise<LocalAccount> {
+    const [w] = await this.d.db
+      .select()
+      .from(depositWallets)
+      .where(eq(depositWallets.walletAddress, lc(wallet)));
+    const key = w && (await this.activeKey(w.id));
+    if (!key) throw new Error('no active session key');
+    return privateKeyToAccount((await this.d.cipher.decrypt(key.ciphertext, key.address)) as Hex);
   }
 
   /** Cap on funding (USDC base units) an Intent may bring into its wallet on Polygon. */
