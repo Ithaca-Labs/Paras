@@ -5,7 +5,10 @@ const ONE = parseDecimal('1');
 
 /** Structural twin of the shared FeeSchedule, so domain stays free of app deps. */
 export type FeeModel =
-  { kind: 'none' } | { kind: 'curve'; rate: string; exponent: number; takerOnly: boolean };
+  | { kind: 'none' }
+  | { kind: 'curve'; rate: string; exponent: number; takerOnly: boolean }
+  | { kind: 'profit'; rate: string }
+  | { kind: 'tiered'; points: readonly { price: string; rate: string }[] };
 
 /**
  * Fee per share (USD) a taker pays at `price`. Curve: rate * (p * (1 - p)) ^ exponent
@@ -14,6 +17,9 @@ export type FeeModel =
  */
 export function feePerShare(fee: FeeModel, price: Scaled): Scaled {
   if (fee.kind === 'none' || price >= ONE) return 0n;
+  // Charged on profit if the share wins (1 - p); priced as if it wins, the conservative case.
+  if (fee.kind === 'profit') return mulDecimal(parseDecimal(fee.rate), ONE - price);
+  if (fee.kind === 'tiered') return mulDecimal(price, tieredRate(fee.points, price));
   const base = mulDecimal(price, ONE - price);
   let pow: Scaled;
   if (Number.isInteger(fee.exponent) && fee.exponent >= 1) {
@@ -24,6 +30,19 @@ export function feePerShare(fee: FeeModel, price: Scaled): Scaled {
     pow = BigInt(Math.round(Math.pow(Number(base) / 1e9, fee.exponent) * 1e9));
   }
   return mulDecimal(parseDecimal(fee.rate), pow);
+}
+
+/** Rate at `price`: linear between points (ascending by price), clamped to the end rates. */
+function tieredRate(points: readonly { price: string; rate: string }[], price: Scaled): Scaled {
+  const pts = points.map((q) => ({ p: parseDecimal(q.price), r: parseDecimal(q.rate) }));
+  const first = pts[0]!;
+  if (price <= first.p) return first.r;
+  for (let i = 1; i < pts.length; i++) {
+    const lo = pts[i - 1]!;
+    const hi = pts[i]!;
+    if (price <= hi.p) return lo.r + mulDecimal(divDecimal(price - lo.p, hi.p - lo.p), hi.r - lo.r);
+  }
+  return pts[pts.length - 1]!.r;
 }
 
 export interface Fill {

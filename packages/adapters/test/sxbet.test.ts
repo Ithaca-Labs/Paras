@@ -19,6 +19,7 @@ describe('sxbet adapter (fixture replay)', () => {
     for (const m of page.items) {
       expect(NormalizedMarket.parse(m)).toEqual(m);
       expect(m.venueId).toBe('sxbet');
+      expect(m.fee).toEqual({ kind: 'profit', rate: '0.01' });
       expect(m.externalId).toMatch(/^0x[0-9a-f]{64}$/);
       expect(m.status).toBe('open');
       expect(m.category).toBeTruthy();
