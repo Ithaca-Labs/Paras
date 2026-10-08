@@ -165,3 +165,17 @@ export {
   validRedirectUri,
   type OAuthScope,
 } from './oauth.js';
+export {
+  EXIT_STATUSES,
+  RESOLUTION_DELAY_MS,
+  TERMINAL_EXIT_STATUSES,
+  redeemPayout,
+  resolutionState,
+  toBase6,
+  txUrl,
+  valuePosition,
+  type ExitStatus,
+  type PositionMath,
+  type ResolutionState,
+  type TxChain,
+} from './portfolio.js';

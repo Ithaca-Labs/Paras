@@ -1,5 +1,10 @@
 import { isDispatchPaused, notify, schema, type Database, type NotifyMailer } from '@paras/db';
-import { fillWithinMaxPrice, TERMINAL_INTENT_STATUSES, type IntentStatus } from '@paras/domain';
+import {
+  fillWithinMaxPrice,
+  TERMINAL_INTENT_STATUSES,
+  toBase6,
+  type IntentStatus,
+} from '@paras/domain';
 import { and, eq, sql } from 'drizzle-orm';
 import { formatUnits, getAddress, parseUnits, type Address, type Hex } from 'viem';
 import { buildConvertCalls, buildSweepCalls } from '../wallet/calls.js';
@@ -18,7 +23,7 @@ import type {
   VaultEvent,
 } from './ports.js';
 
-const { intents, intentEvents } = schema;
+const { intents, intentEvents, markets, outcomes, positions } = schema;
 type IntentRow = typeof intents.$inferSelect;
 type Ctx = IntentRow['ctx'];
 
@@ -77,6 +82,7 @@ export class IntentEngine {
 
   /** Applies a Vault event: `submitted` arms a previewed Intent; cancel/expiry before dispatch end it. */
   async onVaultEvent(ev: VaultEvent): Promise<void> {
+    if (ev.kind === 'deposited' || ev.kind === 'withdrawn') return;
     const [row] = await this.d.db
       .select()
       .from(intents)
@@ -87,7 +93,7 @@ export class IntentEngine {
         row.detailsHash === ev.detailsHash &&
         row.amountUsdc === ev.amount.toString() &&
         Math.floor(row.expiry.getTime() / 1000) === Number(ev.expiry);
-      if (row.status === 'previewed' && same) await this.go(row, 'signed', {});
+      if (row.status === 'previewed' && same) await this.go(row, 'signed', { submitTx: ev.tx });
     } else if (row.status === 'previewed' || row.status === 'signed') {
       await this.finish(row, ev.kind === 'cancelled' ? 'cancelled' : 'expired', {});
     }
@@ -177,6 +183,7 @@ export class IntentEngine {
     const minted = BigInt(row.ctx.mintedUsdc!);
     const minOut = (minted * (10_000n - this.slip)) / 10_000n;
     const bal = await this.d.polygon.balances(wallet);
+    let convertTx: string | undefined;
     if (bal.native >= minted) {
       const { negRisk } = await this.d.books.asks(row.details);
       const { txId } = await this.d.wallets.submitSessionBatch({
@@ -189,11 +196,15 @@ export class IntentEngine {
           minOut,
         }),
       });
-      await this.d.relayer.waitConfirmed(txId);
+      convertTx = (await this.d.relayer.waitConfirmed(txId)).txHash ?? undefined;
     } else if (bal.pusd < minOut) {
       return this.waiting(row); // an earlier run already submitted; not settled yet
     }
-    return this.go(row, 'ordering', { pusd: minOut.toString(), orderKey: `paras:${row.id}` });
+    return this.go(row, 'ordering', {
+      pusd: minOut.toString(),
+      orderKey: `paras:${row.id}`,
+      convertTx,
+    });
   }
 
   private async order(row: IntentRow): Promise<StepResult> {
@@ -204,7 +215,9 @@ export class IntentEngine {
 
     if (!ctx.orderId) {
       if (!(await this.d.geoblock.allowed())) return 'wait';
-      if ((await this.d.polygon.balances(wallet)).pusd < pusd) return this.waiting(row);
+      if (!ctx.orderTs) return this.patch(row, { orderTs: this.now().getTime() }); // fixes the order hash for retries
+      // No balance pre-check: `ordering` follows a confirmed convert, and after a crash the order may already
+      // have spent the pUSD. `placeOrder` is idempotent per key, so re-calling it recovers the order id.
       const { asks, fee } = await this.d.books.asks(details);
       // Max price + depth: nothing within the cap to buy now and no resting order wanted -> give the funds back.
       const { fill } = fillWithinMaxPrice({ asks, fee }, formatUnits(pusd, 6), details.maxPrice);
@@ -217,6 +230,7 @@ export class IntentEngine {
       });
       const { orderId } = await this.d.clob.placeOrder({
         key: ctx.orderKey!,
+        timestamp: ctx.orderTs,
         wallet,
         tokenId: details.tokenId,
         price: details.maxPrice,
@@ -283,7 +297,13 @@ export class IntentEngine {
     const user = getAddress(row.userAddress);
     const id = row.intentId as Hex;
     if (!(await this.d.vault.messageUsed(ctx.returnMessage as Hex)))
-      await this.d.vault.settle(ctx.returnMessage as Hex, ctx.returnAttestation as Hex, id);
+      await this.patch(row, {
+        settleTx: await this.d.vault.settle(
+          ctx.returnMessage as Hex,
+          ctx.returnAttestation as Hex,
+          id,
+        ),
+      });
     // Nothing was bought: write off the swap-slippage remainder so the Vault shows no in-flight claim.
     if (
       !(Number(ctx.filledShares ?? 0) > 0) &&
@@ -349,9 +369,44 @@ export class IntentEngine {
     return 'done';
   }
 
+  /** What a fill bought, recorded atomically with the Intent's final status (exits and portfolio start here). */
+  private async openPosition(
+    tx: Pick<Database, 'select' | 'insert'>,
+    row: IntentRow,
+    ctx: Ctx,
+  ): Promise<void> {
+    const [m] = await tx
+      .select({ conditionId: markets.externalId, meta: markets.meta, index: outcomes.index })
+      .from(markets)
+      .innerJoin(outcomes, eq(outcomes.marketId, markets.id))
+      .where(and(eq(markets.id, row.details.marketId), eq(outcomes.id, row.details.outcomeId)));
+    if (!m) throw new Error(`market/outcome of Intent ${row.id} not found`);
+    const shares = toBase6(ctx.filledShares!).toString();
+    await tx
+      .insert(positions)
+      .values({
+        userId: row.userId,
+        intentRowId: row.id,
+        userAddress: row.userAddress,
+        eventId: row.details.eventId,
+        marketId: row.details.marketId,
+        outcomeId: row.details.outcomeId,
+        venueId: row.details.venueId,
+        tokenId: row.details.tokenId,
+        conditionId: m.conditionId,
+        outcomeIndex: m.index,
+        negRisk: m.meta.negRisk === true,
+        sharesBought: shares,
+        shares,
+        costUsdc: ctx.spentUsdc ?? '0',
+      })
+      .onConflictDoNothing();
+  }
+
   /** Compare-and-set on the status the step started from; a concurrent runner loses harmlessly. */
   private async transition(row: IntentRow, to: IntentStatus, ctx: Partial<Ctx>): Promise<boolean> {
     return this.d.db.transaction(async (tx) => {
+      const merged = { ...row.ctx, ...ctx };
       const moved = await tx
         .update(intents)
         .set({
@@ -368,6 +423,11 @@ export class IntentEngine {
         note: ctx.reason ? { reason: ctx.reason } : {},
         at: this.now(),
       });
+      if (
+        (to === 'filled' || to === 'partially_filled') &&
+        toBase6(merged.filledShares ?? '0') > 0n
+      )
+        await this.openPosition(tx, row, merged);
       return true;
     });
   }

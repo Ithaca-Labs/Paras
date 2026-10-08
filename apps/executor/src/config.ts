@@ -40,6 +40,8 @@ const Env = z.object({
     .string()
     .regex(/^0x[0-9a-fA-F]{64}$/)
     .optional(),
+  /** First block the Polygon indexer scans when it has no cursor yet (default: current head). */
+  POLYGON_START_BLOCK: z.coerce.number().int().optional(),
   POLYMARKET_RELAYER_URL: z.string().url().default('https://relayer-v2.polymarket.com'),
   /** Builder credentials (HITL #35). Required for live relayer calls. */
   POLYMARKET_BUILDER_API_KEY: z.string().optional(),

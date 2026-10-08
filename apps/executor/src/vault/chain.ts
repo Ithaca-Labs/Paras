@@ -65,20 +65,49 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
         toBlock,
         events: vaultIntentEvents,
       });
-      const events: VaultEvent[] = logs.map((l) => {
-        const { user, id } = l.args;
+      const times = new Map<bigint, Date>();
+      const events: VaultEvent[] = [];
+      for (const l of logs) {
         const block = l.blockNumber;
+        if (l.eventName === 'Deposited' || l.eventName === 'Withdrawn') {
+          if (!times.has(block))
+            times.set(
+              block,
+              new Date(Number((await pub.getBlock({ blockNumber: block })).timestamp) * 1000),
+            );
+          events.push({
+            kind: l.eventName === 'Deposited' ? 'deposited' : 'withdrawn',
+            user: l.args.user,
+            amount: l.args.amount,
+            block,
+            tx: l.transactionHash,
+            logIndex: l.logIndex,
+            at: times.get(block)!,
+          } as VaultEvent);
+          continue;
+        }
+        const { user, id } = l.args;
         if (l.eventName === 'IntentSubmitted') {
           const { amount, expiry, detailsHash } = l.args;
-          return { kind: 'submitted', user, id, amount, expiry, detailsHash, block } as VaultEvent;
+          events.push({
+            kind: 'submitted',
+            user,
+            id,
+            amount,
+            expiry,
+            detailsHash,
+            block,
+            tx: l.transactionHash,
+          } as VaultEvent);
+          continue;
         }
-        return {
+        events.push({
           kind: l.eventName === 'IntentCancelled' ? 'cancelled' : 'expired',
           user,
           id,
           block,
-        } as VaultEvent;
-      });
+        } as VaultEvent);
+      }
       return { events, toBlock };
     },
     async intentStatus(user, id) {
@@ -130,7 +159,7 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
       );
     },
     async settle(message, attestation, intentId) {
-      await mined(
+      return mined(
         await wallet.writeContract({
           address: vault,
           abi: vaultAbi,

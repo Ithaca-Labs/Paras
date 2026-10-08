@@ -29,7 +29,7 @@ export interface V2Order {
 export const EXCHANGE_DOMAIN_NAME = 'Polymarket CTF Exchange';
 export const ZERO32: Hex = `0x${'0'.repeat(64)}`;
 
-const ORDER_FIELDS = [
+export const ORDER_FIELDS = [
   { name: 'salt', type: 'uint256' },
   { name: 'maker', type: 'address' },
   { name: 'signer', type: 'address' },
@@ -152,4 +152,18 @@ export function buyAmounts(amountUsd: string, price: string, tick: string) {
   const takerAmount = ((toUnits(amountUsd) * 100n) / priceU) * 10_000n;
   if (takerAmount === 0n) throw new Error('amount too small for one share cent');
   return { makerAmount: (takerAmount * priceU) / U, takerAmount, price: fromUnits(priceU) };
+}
+
+/**
+ * SELL amounts: sell a whole number of cents of shares (rounded down) for at least `price` each, with the price
+ * rounded UP to the tick (never accepts less than asked). Maker gives shares, taker gives USDC.
+ */
+export function sellAmounts(shares: string, price: string, tick: string) {
+  const tickU = toUnits(tick);
+  const p = toUnits(price);
+  const priceU = ((p + tickU - 1n) / tickU) * tickU;
+  if (priceU < tickU || priceU > U - tickU) throw new Error(`price ${price} outside tick range`);
+  const makerAmount = (toUnits(shares) / 10_000n) * 10_000n;
+  if (makerAmount === 0n) throw new Error('amount too small for one share cent');
+  return { makerAmount, takerAmount: (makerAmount * priceU) / U, price: fromUnits(priceU) };
 }

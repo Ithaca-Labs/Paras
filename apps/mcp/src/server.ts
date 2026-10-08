@@ -168,21 +168,20 @@ export function createMcpServer(api: ApiClient, me: ApiClient = api): McpServer 
     'get_portfolio',
     {
       description:
-        "The user's Vault balances (idle, reserved, in-flight USDC). Read-only. Requires the portfolio:read scope. Empty until the Vault is live.",
+        "The user's portfolio: Vault balances (idle, reserved, in-flight USDC) plus positions with current value, realized/unrealized P&L, dispute/delay state and any running exit, and Polygon wallet collateral. Read-only. Requires the portfolio:read scope.",
       inputSchema: {},
     },
     async () => {
-      try {
-        return out(await me.getVaultBalances());
-      } catch (e) {
+      const vault = await me.getVaultBalances().catch((e) => {
         if (!(e instanceof ApiError && e.status === 503)) throw e;
-        return out({
+        return {
           vault: null,
           total: { idle: '0', reserved: '0', inFlight: '0' },
           accounts: [],
           note: 'The Vault is not live yet.',
-        });
-      }
+        };
+      });
+      return out({ ...vault, ...(await me.getPortfolio()) });
     },
   );
 

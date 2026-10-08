@@ -16,6 +16,8 @@ export const vaultIntentEvents = parseAbi([
   'event IntentSubmitted(address indexed user, bytes32 indexed id, uint256 amount, uint64 expiry, bytes32 detailsHash)',
   'event IntentCancelled(address indexed user, bytes32 indexed id)',
   'event IntentExpired(address indexed user, bytes32 indexed id)',
+  'event Deposited(address indexed user, uint256 amount)',
+  'event Withdrawn(address indexed user, uint256 amount)',
 ]);
 
 export const vaultDispatchedEvent = parseAbi([
@@ -38,3 +40,19 @@ export const messageTransmitterAbi = parseAbi([
 ]);
 
 export const erc20BalanceAbi = parseAbi(['function balanceOf(address) view returns (uint256)']);
+
+/** CTF reads (kept out of the policy's `ctfAbi`, which decodes what the Executor may sign). */
+export const ctfReadAbi = parseAbi([
+  'function balanceOf(address account, uint256 id) view returns (uint256)',
+  'function payoutDenominator(bytes32 conditionId) view returns (uint256)',
+  'function payoutNumerators(bytes32 conditionId, uint256 index) view returns (uint256)',
+]);
+
+export const erc20TransferEvent = parseAbi([
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
+]);
+
+export const ctfTransferEvents = parseAbi([
+  'event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)',
+  'event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)',
+]);

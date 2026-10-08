@@ -1,7 +1,7 @@
 import { schema } from '@paras/db';
 import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createHarness, USDC, type Harness } from './world.js';
+import { createHarness, type Harness } from './world.js';
 
 describe('Intent engine (Seam 4: Intent -> route -> bridge -> order -> fill)', () => {
   let t: Harness;
@@ -37,7 +37,7 @@ describe('Intent engine (Seam 4: Intent -> route -> bridge -> order -> fill)', (
     expect(w.count).toMatchObject({ dispatch: 1, mint: 1, batches: 1, orders: 1, settles: 0 });
     // One policy-checked batch: approve, swap native->USDC.e, approve, wrap, approve exchange.
     expect(w.submitted[0]!.calls).toHaveLength(5);
-    expect(w.pusd).toBe(USDC(10) - (USDC(10) / 10_000n) * 50n); // minOut at 50 bps slippage
+    expect(w.pusd).toBe(0n); // all of the 9.95 pUSD (minOut at 50 bps slippage) was spent
     expect(Number(r.ctx.filledShares)).toBeCloseTo(18.09, 2); // 9.95 pUSD at the 0.55 limit
     const n = await notes();
     expect(n).toHaveLength(1);

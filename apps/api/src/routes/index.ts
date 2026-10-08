@@ -12,6 +12,7 @@ import { notificationRoutes } from './notifications.js';
 import { oauthRoutes } from './oauth.js';
 import { opsRoutes } from './ops.js';
 import { openapiRoutes } from './openapi.js';
+import { portfolioRoutes } from './portfolio.js';
 import { profileRoutes } from './profile.js';
 import { taxonomyRoutes } from './taxonomy.js';
 import { venueRoutes } from './venues.js';
@@ -35,6 +36,7 @@ export const routePlugins: RoutePlugin[] = [
   jurisdictionRoutes,
   profileRoutes,
   vaultRoutes,
+  portfolioRoutes,
   feedRoutes,
   notificationRoutes,
   oauthRoutes,

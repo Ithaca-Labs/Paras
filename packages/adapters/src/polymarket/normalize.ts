@@ -58,6 +58,7 @@ export function normalizeGammaMarket(raw: GammaMarket): NormalizedMarket | null 
     gammaId: raw.id ?? null,
     eventSlug: raw.events?.[0]?.slug ?? null,
     negRisk: raw.negRisk ?? false,
+    umaResolutionStatus: raw.umaResolutionStatus ?? null,
     tickSize: raw.orderPriceMinTickSize ?? null,
     minOrderSize: raw.orderMinSize ?? null,
   };
