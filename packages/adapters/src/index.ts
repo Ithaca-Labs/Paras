@@ -7,6 +7,12 @@ export {
   type FakeAdapterOptions,
 } from './fake.js';
 export { createPolymarketAdapter, type PolymarketOptions } from './polymarket/index.js';
+export {
+  createPolymarketQuoteStream,
+  type QuoteStream,
+  type QuoteStreamOptions,
+  type SocketLike,
+} from './polymarket/stream.js';
 export { createLimitlessAdapter, type LimitlessOptions } from './limitless/index.js';
 export { createSxBetAdapter, type SxBetOptions } from './sxbet/index.js';
 export { createKalshiAdapter, type KalshiOptions } from './kalshi/index.js';

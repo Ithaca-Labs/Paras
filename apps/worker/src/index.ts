@@ -11,6 +11,7 @@ import { createTransformersEmbedder } from '@paras/embeddings';
 import { createMailer } from '@paras/shared';
 import { loadConfig } from './config.js';
 import { buildJobs, buildSchedules } from './jobs/index.js';
+import { startPolymarketStream } from './jobs/quote-stream.js';
 import { buildWorker } from './worker.js';
 
 const config = loadConfig();
@@ -25,6 +26,12 @@ const adapters = createAdapterRegistry([
 ]);
 const venues = [...adapters.keys()];
 
+const log = (msg: string, data?: Record<string, unknown>) => worker.app.log.info(data, msg);
+const quoteStream =
+  config.QUOTE_STREAM === 'on' && adapters.has('polymarket')
+    ? startPolymarketStream({ db, log })
+    : undefined;
+
 const worker = buildWorker({
   databaseUrl: config.DATABASE_URL,
   jobs: buildJobs({
@@ -37,7 +44,8 @@ const worker = buildWorker({
         cacheDir: config.EMBEDDING_CACHE_DIR,
       }),
     }),
-    log: (msg, data) => worker.app.log.info(data, msg),
+    ...(quoteStream && { streamCovers: quoteStream.covers }),
+    log,
   }),
   schedules: buildSchedules(venues),
   startup: venues.map((venue) => ({ queue: 'venue.sync-markets', data: { venue } })),
@@ -45,7 +53,14 @@ const worker = buildWorker({
 });
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
-  process.once(signal, () => void worker.stop().then(close));
+  process.once(
+    signal,
+    () =>
+      void worker
+        .stop()
+        .then(() => quoteStream?.stop())
+        .then(close),
+  );
 }
 
 await worker.start();

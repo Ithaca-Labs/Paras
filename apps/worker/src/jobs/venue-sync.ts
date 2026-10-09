@@ -23,6 +23,8 @@ export interface VenueJobContext {
   verifier?: MatchVerifier;
   /** Verifier calls allowed per matching run. */
   llmBudget?: number;
+  /** True when a live stream already serves this Outcome, so polling skips it. */
+  streamCovers?: (venue: string, outcomeExternalId: string) => boolean;
   log?: (msg: string, data?: Record<string, unknown>) => void;
 }
 
@@ -80,9 +82,9 @@ export function createSyncMarketsJob(ctx: VenueJobContext) {
 
 /**
  * Quote polling: fetch books for the highest-volume open Markets and persist Quotes.
- * V1 polls once per scheduled run (every minute); WebSocket streaming can replace it later.
+ * Runs every minute; Outcomes served by a live WebSocket stream are skipped (see quote-stream.ts).
  */
-export function createPollQuotesJob({ db, adapters, log }: VenueJobContext) {
+export function createPollQuotesJob({ db, adapters, streamCovers, log }: VenueJobContext) {
   return defineJob({
     name: 'venue.poll-quotes',
     payload: QuotePollPayload,
@@ -90,7 +92,9 @@ export function createPollQuotesJob({ db, adapters, log }: VenueJobContext) {
       withVenueRun(db, venue, 'quotes', async () => {
         const adapter = adapters.get(venue);
         if (!adapter) throw new Error(`unknown venue: ${venue}`);
-        const targets = await listPollTargets(db, venue, topMarkets);
+        const targets = (await listPollTargets(db, venue, topMarkets)).filter(
+          (id) => !streamCovers?.(venue, id),
+        );
         let updated = 0;
         let snapshots = 0;
         for (let i = 0; i < targets.length; i += QUOTE_BATCH) {
