@@ -4,7 +4,12 @@ import { and, eq, sql } from 'drizzle-orm';
 import { formatUnits, getAddress, parseUnits, zeroHash, type Address, type Hex } from 'viem';
 import type { Clob, Geoblock, Iris, PolygonChain, VaultChain } from '../intents/ports.js';
 import { VAULT_STATUS } from '../vault/abi.js';
-import { buildSweepCalls, redeemPositions, setCtfApproval } from '../wallet/calls.js';
+import {
+  buildSweepCalls,
+  redeemNegRiskPositions,
+  redeemPositions,
+  setCtfApproval,
+} from '../wallet/calls.js';
 import { CCTP_DOMAIN, POLYGON } from '../wallet/constants.js';
 import type { RelayerClient } from '../wallet/relayer.js';
 import type { WalletService } from '../wallet/service.js';
@@ -171,7 +176,13 @@ export class ExitEngine {
         const { txId } = await this.d.wallets.submitSessionBatch({
           walletId: wallet.id,
           intentId: pos.intentRowId,
-          calls: [redeemPositions(pos.conditionId as Hex, [1n, 2n])],
+          // Neg-risk: approve + redeem in one batch (the adapter pulls the shares); idempotent approval.
+          calls: pos.negRisk
+            ? [
+                setCtfApproval(POLYGON.negRiskCollateralAdapter, true),
+                redeemNegRiskPositions(pos.conditionId as Hex),
+              ]
+            : [redeemPositions(pos.conditionId as Hex, [1n, 2n])],
         });
         return this.patch(row, { redeemRelayerTx: txId });
       }
@@ -363,8 +374,7 @@ export class ExitEngine {
 
 /**
  * Redemption scan: opens a `redeem` exit for every open position whose Market has ended and whose condition
- * the CTF reports as resolved. Neg-risk Markets redeem through the NegRiskAdapter, which the policy layer does
- * not allow yet: those positions can be sold but are not auto-redeemed (follow-up).
+ * the CTF reports as resolved. Neg-risk Markets redeem through the NegRiskCtfCollateralAdapter (see `redeem`).
  */
 export async function scanResolved(db: Database, polygon: PolygonChain): Promise<number> {
   const rows = await db
@@ -380,7 +390,7 @@ export async function scanResolved(db: Database, polygon: PolygonChain): Promise
   );
   let opened = 0;
   for (const { p } of rows) {
-    if (p.negRisk || tried.has(p.id)) continue;
+    if (tried.has(p.id)) continue;
     if ((await polygon.payout(p.conditionId as Hex)).denominator === 0n) continue;
     const ins = await db
       .insert(exits)

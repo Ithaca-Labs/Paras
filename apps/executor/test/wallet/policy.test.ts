@@ -1,6 +1,6 @@
 import { encodeFunctionData, pad, type Address } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { erc20Abi, tokenMessengerAbi } from '../../src/wallet/abi.js';
+import { ctfAbi, erc20Abi, tokenMessengerAbi } from '../../src/wallet/abi.js';
 import type { Batch, Call } from '../../src/wallet/batch.js';
 import {
   addressToBytes32,
@@ -8,6 +8,7 @@ import {
   authorizeSessionSigner,
   burnToVault,
   buildSweepCalls,
+  redeemNegRiskPositions,
   redeemPositions,
   setCtfApproval,
   swapUsdc,
@@ -87,6 +88,16 @@ describe('Executor policy: allowed', () => {
     );
   });
 
+  it('neg-risk redeem: adapter approval + redeem', () => {
+    checkBatch(
+      batch([
+        setCtfApproval(POLYGON.negRiskCollateralAdapter, true),
+        redeemNegRiskPositions(pad('0x01', { size: 32 })),
+      ]),
+      ctx(),
+    );
+  });
+
   it('CLOB order/cancel only for the user wallet', () => {
     checkClobAction({ kind: 'order', maker: wallet, signer: wallet }, ctx());
     checkClobAction({ kind: 'cancel', maker: wallet }, ctx());
@@ -107,6 +118,32 @@ describe('Executor policy: negative (session key cannot move funds to arbitrary 
     target: token,
     value: 0n,
     data: encodeFunctionData({ abi: erc20Abi, functionName: 'transfer', args: [to, amt] }),
+  });
+
+  it('neg-risk adapter: only redeemPositions, only with pUSD', () => {
+    const id = pad('0x01', { size: 32 });
+    const onAdapter = (data: Call['data']): Call => ({
+      target: POLYGON.negRiskCollateralAdapter,
+      value: 0n,
+      data,
+    });
+    rejects(batch([onAdapter(transfer(POLYGON.pUSD, attacker, AMT).data)]), 'unknown_selector');
+    rejects(batch([onAdapter(setCtfApproval(attacker, true).data)]), 'negrisk_fn');
+    rejects(
+      batch([
+        onAdapter(
+          encodeFunctionData({
+            abi: ctfAbi,
+            functionName: 'redeemPositions',
+            args: [POLYGON.usdcE, pad('0x00', { size: 32 }), id, [1n]],
+          }),
+        ),
+      ]),
+      'redeem_collateral',
+    );
+    // the legacy adapter and look-alikes stay denied
+    for (const target of ['0xd91E80cF2E7be2e162c6513ceD06f1dD0dA35296', attacker] as Address[])
+      rejects(batch([{ ...redeemNegRiskPositions(id), target }]), 'target');
   });
 
   it.each([POLYGON.pUSD, POLYGON.usdcNative, POLYGON.usdcE])(
