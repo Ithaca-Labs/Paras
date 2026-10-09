@@ -129,7 +129,7 @@ export const exitPosition = defineRoute({
   path: '/v1/vault/positions/{id}/exit',
   operationId: 'exitPosition',
   summary:
-    'Sell a position through the Vault: the Executor sells on the Venue at no less than minPrice and, by default, bridges proceeds back to the Vault. 409 if an exit is already running',
+    'Sell a position through the Vault against a user-signed EIP-712 Exit: the Executor sells on the Venue at no less than minPrice and, by default, bridges proceeds back to the Vault. 409 if an exit is already running',
   tags: ['portfolio'],
   request: {
     params: z.object({ id: z.string().uuid() }),
@@ -140,6 +140,10 @@ export const exitPosition = defineRoute({
       shares: DecimalString.optional(),
       /** Defaults to the position's setting. */
       returnTo: ReturnTo.optional(),
+      /** Unix seconds, at most 10 minutes ahead. */
+      deadline: z.number().int().positive(),
+      /** EIP-712 `Exit` signature (domain `exitTypedData`) by the position's Vault user address; `shares` signed in base units, all held shares when omitted. */
+      signature: z.string().regex(/^0x[0-9a-fA-F]+$/),
     }),
   },
   response: ExitState,

@@ -4,10 +4,10 @@ Status 2026-10-09: all backend issues an agent can finish alone are merged (`mai
 
 ## 1. Decisions (answer in chat or on the issue)
 
-| #   | Decision                                                                                                                           | Recommendation                                                                                              | Unblocks                                                                                 |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| D1  | Exits are a signed-in API request, not a wallet-signed `Exit` (PRD decision log, #21). OK, or require an EIP-712 `Exit` signature? | Require the signature (matches "user-signed Intent"; small change)                                          | Closing the #21 open question (#82)                                                      |
-| D2  | Hosting provider (must run Docker; free/cheap) + a CDN in front of api and mcp (Cloudflare recommended)                            | Any Docker host + Cloudflare. The CDN must overwrite `CF-IPCountry`, or country checks (#16) can be spoofed | Public MCP URL for Claude/Codex (`docs/mcp.md`), real geo gating, OAuth issuer URL (#83) |
+| #   | Decision                                                                                                                   | Recommendation                                                  | Unblocks                                                |
+| --- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------- |
+| D1  | ~~Exit signature~~ **Decided (#82):** EIP-712 `Exit` required                                                              | Done                                                            | —                                                       |
+| D2  | ~~Hosting~~ **Decided (#83):** Vercel (web), Render (backend). Still need a CDN/header that sets a trusted country for #16 | Pick Cloudflare in front of Render, or read a Render-set header | Public MCP URL, real geo gating, OAuth issuer URL (#83) |
 
 ## 2. Accounts, keys and funds
 

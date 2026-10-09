@@ -86,6 +86,8 @@ export {
   TERMINAL_INTENT_STATUSES,
   intentDetailsHash,
   intentTypedData,
+  exitTypedData,
+  EXIT_MAX_TTL_S,
   registerTypedData,
   type IntentDetails,
   type IntentStatus,
