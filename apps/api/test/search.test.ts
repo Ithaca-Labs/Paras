@@ -115,7 +115,7 @@ beforeAll(async () => {
   // Deterministic "newest": the Lakers Event was created last.
   await t.db
     .update(schema.events)
-    .set({ createdAt: new Date('2026-10-09T11:00:00Z') })
+    .set({ createdAt: new Date(Date.now() + 86_400_000) })
     .where(eq(schema.events.title, 'Will the Lakers win the NBA Finals?'));
 
   // Same data, no embedder: full-text only.
