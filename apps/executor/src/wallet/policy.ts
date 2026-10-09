@@ -164,8 +164,18 @@ function checkCall(c: Call, ctx: PolicyContext): { swapIn: bigint; wrapped: bigi
       return none;
     }
     const [operator, approved] = args as [Address, boolean];
-    if (approved && !inList(operator, exchanges))
-      deny('operator', 'CTF operator must be a Polymarket exchange');
+    if (approved && !inList(operator, [...exchanges, POLYGON.negRiskCollateralAdapter]))
+      deny('operator', 'CTF operator must be a Polymarket exchange or the neg-risk adapter');
+    return none;
+  }
+
+  if (eq(target, POLYGON.negRiskCollateralAdapter)) {
+    // Only redeem; the adapter pays pUSD to msg.sender (the wallet), so no recipient can be chosen.
+    const { functionName, args } = decode(ctfAbi, c.data);
+    if (functionName !== 'redeemPositions')
+      return deny('negrisk_fn', 'only redeemPositions on the neg-risk adapter');
+    if (!eq(args[0] as Address, POLYGON.pUSD))
+      deny('redeem_collateral', 'redeem collateral must be pUSD');
     return none;
   }
 

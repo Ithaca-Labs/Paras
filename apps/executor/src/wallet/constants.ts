@@ -14,6 +14,8 @@ export const POLYGON = {
   onramp: a('0x93070a847efEf7F70739046A929D47a521F5B8ee'),
   offramp: a('0x2957922Eb93258b93368531d39fAcCA3B4dC5854'),
   ctf: a('0x4D97DCd97eC945f40cF65F87097ACe5EA0476045'),
+  /** Polymarket NegRiskCtfCollateralAdapter (docs + on-chain: COLLATERAL_TOKEN=pUSD, wraps legacy NegRiskAdapter). Redeems neg-risk positions to pUSD for the caller. */
+  negRiskCollateralAdapter: a('0xadA2005600Dec949baf300f4C6120000bDB6eAab'),
   ctfExchange: a('0xE111180000d2663C0091e4f400237545B87B996B'),
   negRiskExchange: a('0xe2222d279d744050d28e00520010520000310F59'),
   v2Exchange: a('0xe3333700cA9d93003F00f0F71f8515005F6c00Aa'),

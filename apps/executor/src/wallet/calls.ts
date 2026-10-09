@@ -96,6 +96,17 @@ export const redeemPositions = (conditionId: Hex, indexSets: bigint[]): Call =>
     }),
   );
 
+/** Neg-risk redeem: the adapter pulls the wallet's positions (needs the CTF operator approval) and pays pUSD back to the wallet. */
+export const redeemNegRiskPositions = (conditionId: Hex): Call =>
+  call(
+    POLYGON.negRiskCollateralAdapter,
+    encodeFunctionData({
+      abi: ctfAbi,
+      functionName: 'redeemPositions',
+      args: [POLYGON.pUSD, pad('0x00', { size: 32 }), conditionId, [1n, 2n]],
+    }),
+  );
+
 export const setCtfApproval = (operator: Address, approved: boolean): Call =>
   call(
     POLYGON.ctf,

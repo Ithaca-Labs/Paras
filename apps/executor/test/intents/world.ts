@@ -231,7 +231,7 @@ export class World {
       else [this.pusd, this.usdce] = [this.pusd - amount, this.usdce + amount];
     } else if (target === POLYGON.tokenMessengerV2) {
       this.native -= decodeFunctionData({ abi: tokenMessengerAbi, data }).args[0] as bigint;
-    } else if (target === POLYGON.ctf) {
+    } else if (target === POLYGON.ctf || target === POLYGON.negRiskCollateralAdapter) {
       const { functionName, args } = decodeFunctionData({ abi: ctfAbi, data });
       if (functionName === 'setApprovalForAll') this.count.approvals++;
       else {

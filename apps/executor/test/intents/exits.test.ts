@@ -1,9 +1,12 @@
 import { schema } from '@paras/db';
 import { eq } from 'drizzle-orm';
-import { zeroHash } from 'viem';
+import { toFunctionSelector, zeroHash } from 'viem';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { scanResolved } from '../../src/exits/engine.js';
+import { POLYGON } from '../../src/wallet/constants.js';
 import { createHarness, TOKEN, type Harness } from './world.js';
+
+const REDEEM_SELECTOR = toFunctionSelector('redeemPositions(address,bytes32,bytes32,uint256[])');
 
 describe('Exits, redemption and the return bridge (Seam 4)', () => {
   let t: Harness;
@@ -162,10 +165,17 @@ describe('Exits, redemption and the return bridge (Seam 4)', () => {
       expect(t.world.pusd).toBeGreaterThan(18_000_000n);
     });
 
-    it('does not auto-redeem neg-risk positions (not allowlisted yet)', async () => {
+    it('auto-redeems neg-risk positions through the NegRiskCtfCollateralAdapter only', async () => {
       await t.db.update(schema.positions).set({ negRisk: true });
       await resolve([1n, 0n]);
-      expect(await scanResolved(t.db, t.world.polygonChain)).toBe(0);
+      expect(await scanResolved(t.db, t.world.polygonChain)).toBe(1);
+      const [e] = await t.db.select().from(schema.exits);
+      expect(await t.exits().run(e!.id)).toBe('done');
+      expect(t.world.count).toMatchObject({ redeems: 1, settles: 1, closes: 1 });
+      const calls = t.world.submitted.flatMap((b) => b.calls);
+      const redeem = calls.filter((c) => c.data.startsWith(REDEEM_SELECTOR));
+      expect(redeem.map((c) => c.target)).toEqual([POLYGON.negRiskCollateralAdapter]);
+      expect((await position()).status).toBe('closed');
     });
   });
 
