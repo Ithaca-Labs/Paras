@@ -1,12 +1,15 @@
 import { createFakeAdapter, fakeMarket } from '@paras/adapters';
 import { recordQuotes, schema, upsertMarkets, upsertVenue } from '@paras/db';
+import { exitTypedData } from '@paras/domain';
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestApp, type TestApp } from './harness.js';
 
 const WALLET = '0x3333333333333333333333333333333333333333';
-const USER_ADDR = '0x1111111111111111111111111111111111111111';
+const signer = privateKeyToAccount(generatePrivateKey());
+const USER_ADDR = signer.address.toLowerCase();
 const H = (n: number) => `0x${n.toString(16).padStart(64, '0')}`;
 
 let t: TestApp;
@@ -252,16 +255,70 @@ describe('exits API', () => {
       payload: body,
     });
 
+  const deadline = () => Math.floor(Date.now() / 1000) + 300;
+  const signed = async (
+    body: { minPrice: string; shares?: string; returnTo?: 'vault' | 'polygon' },
+    o: { deadline?: number; account?: typeof signer; sharesBase?: bigint } = {},
+  ) => {
+    const d = o.deadline ?? deadline();
+    const signature = await (o.account ?? signer).signTypedData(
+      exitTypedData({
+        user: USER_ADDR,
+        positionId,
+        shares: o.sharesBase ?? 15_000_000n,
+        minPrice: body.minPrice,
+        returnTo: body.returnTo ?? 'vault',
+        deadline: BigInt(d),
+      }),
+    );
+    return { ...body, deadline: d, signature };
+  };
+
   it('validates, creates one live exit, and refuses a second', async () => {
-    expect((await exit(positionId, { minPrice: '1.5' })).statusCode).toBe(400);
-    expect((await exit(positionId, { minPrice: '0.5', shares: '99' })).statusCode).toBe(400);
-    expect((await exit(positionId, { minPrice: '0.5' }, otherHeaders)).statusCode).toBe(404);
-    const ok = await exit(positionId, { minPrice: '0.5', shares: '10', returnTo: 'polygon' });
+    expect((await exit(positionId, await signed({ minPrice: '1.5' }))).statusCode).toBe(400);
+    expect(
+      (await exit(positionId, await signed({ minPrice: '0.5', shares: '99' }))).statusCode,
+    ).toBe(400);
+    expect(
+      (await exit(positionId, await signed({ minPrice: '0.5' }), otherHeaders)).statusCode,
+    ).toBe(404);
+    const body = { minPrice: '0.5', shares: '10', returnTo: 'polygon' as const };
+    const ok = await exit(positionId, await signed(body, { sharesBase: 10_000_000n }));
     expect(ok.statusCode).toBe(200);
     expect(ok.json()).toMatchObject({ kind: 'sell', status: 'requested' });
     const [row] = await t.db.select().from(schema.exits).where(eq(schema.exits.id, ok.json().id));
     expect(row).toMatchObject({ shares: '10000000', minPrice: '0.5', returnTo: 'polygon' });
-    expect((await exit(positionId, { minPrice: '0.5' })).statusCode).toBe(409);
+    expect((await exit(positionId, await signed({ minPrice: '0.5' }))).statusCode).toBe(409);
+    await t.db.update(schema.exits).set({ status: 'failed' }).where(eq(schema.exits.id, row!.id));
+  });
+
+  it('requires a fresh Exit signature from the position owner, once', async () => {
+    const body = { minPrice: '0.5' };
+    const res = (b: object) => exit(positionId, b);
+    expect((await res(body)).statusCode).toBe(400);
+    const other = privateKeyToAccount(generatePrivateKey());
+    expect((await res(await signed(body, { account: other }))).json().error.code).toBe(
+      'bad_signature',
+    );
+    // Signed fields must match the request.
+    const s = await signed(body);
+    expect((await res({ ...s, minPrice: '0.4' })).json().error.code).toBe('bad_signature');
+    expect((await res({ ...s, returnTo: 'polygon' })).json().error.code).toBe('bad_signature');
+    const stale = Math.floor(Date.now() / 1000) - 1;
+    expect((await res(await signed(body, { deadline: stale }))).json().error.code).toBe(
+      'bad_deadline',
+    );
+    expect((await res(await signed(body, { deadline: stale + 3600 }))).json().error.code).toBe(
+      'bad_deadline',
+    );
+    const ok = await res(s);
+    expect(ok.statusCode).toBe(200);
+    // Replay after the exit ends is refused.
+    await t.db
+      .update(schema.exits)
+      .set({ status: 'failed' })
+      .where(eq(schema.exits.id, ok.json().id));
+    expect((await res(s)).statusCode).toBe(409);
   });
 
   it('lets the User choose where proceeds go', async () => {

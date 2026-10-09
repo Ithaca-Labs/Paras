@@ -108,6 +108,8 @@ export const exits = pgTable(
     minPrice: text('min_price'),
     returnTo: text('return_to').$type<'vault' | 'polygon'>().notNull(),
     ctx: jsonb('ctx').$type<ExitCtx>().notNull().default({}),
+    /** User's EIP-712 `Exit` signature (sell only); unique so it cannot be replayed. */
+    signature: text('signature').unique(),
     createdAt: tz('created_at').notNull().defaultNow(),
     updatedAt: tz('updated_at').notNull().defaultNow(),
   },

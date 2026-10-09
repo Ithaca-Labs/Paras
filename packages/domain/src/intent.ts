@@ -114,3 +114,32 @@ export function registerTypedData(p: Domain & { user: string; wallet: string }) 
     message: { user: p.user as `0x${string}`, wallet: p.wallet as `0x${string}` },
   };
 }
+
+/** Exits are verified by the API, not on-chain, so the domain names no contract. */
+export const EXIT_MAX_TTL_S = 600;
+
+/** EIP-712 payload the User signs to sell a position (#82). `shares` in base units, `deadline` unix seconds. */
+export function exitTypedData(p: {
+  user: string;
+  positionId: string;
+  shares: bigint;
+  minPrice: string;
+  returnTo: 'vault' | 'polygon';
+  deadline: bigint;
+}) {
+  return {
+    domain: { name: 'Paras', version: '1' },
+    types: {
+      Exit: [
+        { name: 'user', type: 'address' },
+        { name: 'positionId', type: 'string' },
+        { name: 'shares', type: 'uint256' },
+        { name: 'minPrice', type: 'string' },
+        { name: 'returnTo', type: 'string' },
+        { name: 'deadline', type: 'uint64' },
+      ],
+    },
+    primaryType: 'Exit' as const,
+    message: { ...p, user: p.user as `0x${string}` },
+  };
+}

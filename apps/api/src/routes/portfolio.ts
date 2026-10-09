@@ -1,8 +1,16 @@
 import { schema } from '@paras/db';
-import { resolutionState, toBase6, txUrl, valuePosition, type TxChain } from '@paras/domain';
+import {
+  EXIT_MAX_TTL_S,
+  exitTypedData,
+  resolutionState,
+  toBase6,
+  txUrl,
+  valuePosition,
+  type TxChain,
+} from '@paras/domain';
 import { apiRoutes, type HistoryItem } from '@paras/shared';
 import { and, desc, eq, inArray, lt, ne, sql } from 'drizzle-orm';
-import { formatUnits } from 'viem';
+import { formatUnits, getAddress, verifyTypedData, type Hex } from 'viem';
 import { HttpError, notFound } from '../errors.js';
 import { implement } from '../implement.js';
 import type { RoutePlugin } from './index.js';
@@ -363,6 +371,24 @@ export const portfolioRoutes: RoutePlugin = (app, { db, now = () => new Date() }
           'market_resolved',
           'Market resolved: it will be redeemed, not sold',
         );
+      const returnTo = body.returnTo ?? p.returnTo;
+      const nowS = Math.floor(now().getTime() / 1000);
+      if (body.deadline <= nowS || body.deadline > nowS + EXIT_MAX_TTL_S)
+        throw new HttpError(400, 'bad_deadline', 'deadline must be within the next 10 minutes');
+      const ok = await verifyTypedData({
+        address: getAddress(p.userAddress),
+        signature: body.signature as Hex,
+        ...exitTypedData({
+          user: p.userAddress,
+          positionId: p.id,
+          shares,
+          minPrice: body.minPrice,
+          returnTo,
+          deadline: BigInt(body.deadline),
+        }),
+      }).catch(() => false);
+      if (!ok)
+        throw new HttpError(400, 'bad_signature', 'Signature does not match the Exit typed data');
       const [e] = await db
         .insert(exits)
         .values({
@@ -371,7 +397,8 @@ export const portfolioRoutes: RoutePlugin = (app, { db, now = () => new Date() }
           kind: 'sell',
           shares: shares.toString(),
           minPrice: body.minPrice,
-          returnTo: body.returnTo ?? p.returnTo,
+          returnTo,
+          signature: body.signature.toLowerCase(),
         })
         .onConflictDoNothing()
         .returning();
