@@ -4,9 +4,11 @@ import type { Database } from './client.js';
 import {
   eventMarkets,
   events,
+  follows,
   latestQuotes,
   markets,
   outcomes,
+  positions,
   quoteSnapshots,
   venues,
 } from './schema/index.js';
@@ -264,7 +266,10 @@ export async function recordQuotes(
   return { updated, snapshots };
 }
 
-/** Outcome ids (Venue-native) of the highest-volume open Markets of a Venue, for Quote polling. */
+/**
+ * Outcome ids (Venue-native) of open Markets of a Venue, for Quote polling. Markets of followed Events
+ * and open Vault positions come first, then the rest by volume, all within `limit` Markets.
+ */
 export async function listPollTargets(
   db: Database,
   venueId: string,
@@ -274,7 +279,15 @@ export async function listPollTargets(
     .select({ id: markets.id })
     .from(markets)
     .where(and(eq(markets.venueId, venueId), eq(markets.status, 'open')))
-    .orderBy(sql`${markets.volume} desc`, markets.id)
+    .orderBy(
+      sql`(exists (select 1 from ${eventMarkets} em join ${follows} f
+            on f.kind = 'event' and f.target_id = em.event_id::text
+            where em.market_id = ${markets.id})
+          or exists (select 1 from ${positions} p
+            where p.market_id = ${markets.id} and p.status = 'open')) desc`,
+      sql`${markets.volume} desc`,
+      markets.id,
+    )
     .limit(limit);
   if (!top.length) return [];
   const rows = await db
