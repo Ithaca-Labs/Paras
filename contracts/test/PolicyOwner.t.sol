@@ -156,7 +156,9 @@ contract PolicyOwnerTest is PolicyOwnerHelpers {
         c[1] = Call(po.CTF(), 0, abi.encodeCall(IPolicyTargets.setApprovalForAll, (address(0xA11), false)));
         c[2] = Call(po.CTF(), 0, abi.encodeCall(IPolicyTargets.redeemPositions, (po.PUSD(), 0, keccak256("c"), sets)));
         c[3] = Call(
-            po.NEG_RISK_ADAPTER(), 0, abi.encodeCall(IPolicyTargets.redeemPositions, (po.PUSD(), 0, keccak256("c"), sets))
+            po.NEG_RISK_ADAPTER(),
+            0,
+            abi.encodeCall(IPolicyTargets.redeemPositions, (po.PUSD(), 0, keccak256("c"), sets))
         );
         assertTrue(_accepts(_batch(c)));
     }
@@ -293,9 +295,7 @@ contract PolicyOwnerTest is PolicyOwnerHelpers {
             operator != po.CTF_EXCHANGE() && operator != po.NEG_RISK_EXCHANGE() && operator != po.V2_EXCHANGE()
                 && operator != po.NEG_RISK_ADAPTER()
         );
-        _deniedWith(
-            _one(po.CTF(), abi.encodeCall(IPolicyTargets.setApprovalForAll, (operator, true))), "operator"
-        );
+        _deniedWith(_one(po.CTF(), abi.encodeCall(IPolicyTargets.setApprovalForAll, (operator, true))), "operator");
     }
 
     /// Any selector on an allowlisted target other than the allowed ones is denied (no transfer/transferFrom/etc.).
@@ -355,8 +355,7 @@ contract PolicyOwnerTest is PolicyOwnerHelpers {
         bytes32 batchD =
             po.batchDigest(_one(po.PUSD(), abi.encodeWithSignature("transfer(address,uint256)", executor, 1)));
         Order memory o = _order(wallet);
-        bytes memory sig =
-            abi.encode(po.KIND_ORDER(), abi.encode(o, "2", po.CTF_EXCHANGE()), _sig(executorKey, batchD));
+        bytes memory sig = abi.encode(po.KIND_ORDER(), abi.encode(o, "2", po.CTF_EXCHANGE()), _sig(executorKey, batchD));
         assertEq(po.isValidSignature(batchD, sig), INVALID);
     }
 

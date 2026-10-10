@@ -163,7 +163,8 @@ contract PolicyOwner {
     function batchDigest(Batch memory b) public view returns (bytes32) {
         bytes32[] memory ch = new bytes32[](b.calls.length);
         for (uint256 i; i < ch.length; i++) {
-            ch[i] = keccak256(abi.encode(CALL_TYPEHASH, b.calls[i].target, b.calls[i].value, keccak256(b.calls[i].data)));
+            ch[i] =
+                keccak256(abi.encode(CALL_TYPEHASH, b.calls[i].target, b.calls[i].value, keccak256(b.calls[i].data)));
         }
         bytes32 structHash =
             keccak256(abi.encode(BATCH_TYPEHASH, b.wallet, b.nonce, b.deadline, keccak256(abi.encodePacked(ch))));
@@ -265,8 +266,14 @@ contract PolicyOwner {
 
         if (t == TOKEN_MESSENGER) {
             if (sel != IPolicyTargets.depositForBurn.selector) _deny("burn_fn");
-            (uint256 amount, uint32 domain, bytes32 mintRecipient, address burnToken, bytes32 destCaller, uint256 maxFee,) =
-                abi.decode(args, (uint256, uint32, bytes32, address, bytes32, uint256, uint32));
+            (
+                uint256 amount,
+                uint32 domain,
+                bytes32 mintRecipient,
+                address burnToken,
+                bytes32 destCaller,
+                uint256 maxFee,
+            ) = abi.decode(args, (uint256, uint32, bytes32, address, bytes32, uint256, uint32));
             bytes32 vault32 = bytes32(uint256(uint160(vault)));
             if (domain != MONAD_DOMAIN) _deny("burn_domain");
             if (mintRecipient != vault32) _deny("burn_recipient");
@@ -303,7 +310,8 @@ contract PolicyOwner {
 
     function _split(bytes memory data) internal pure returns (bytes4 sel, bytes memory args) {
         if (data.length < 4) _deny("unknown_selector");
-        sel = bytes4(data);
+        // forge-lint: disable-next-line(unsafe-typecast)
+        sel = bytes4(data); // selector: first 4 bytes, truncation intended
         args = new bytes(data.length - 4);
         for (uint256 i; i < args.length; i++) {
             args[i] = data[i + 4];
