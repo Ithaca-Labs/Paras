@@ -10,7 +10,8 @@ import { CCTP_DOMAIN, POLYGON, USDC_SWAP_FEE } from './constants.js';
  * Polymarket's DepositWallet does NOT scope session keys on-chain (spikes/17: a session signer can batch-call
  * any target except the wallet and beacon). So the Executor itself refuses to sign any batch outside this
  * allowlist: approve/wrap/unwrap/swap/redeem/CCTP-burn-to-Vault, plus CLOB order/cancel. Everything else is denied,
- * including every plain token transfer. On-chain enforcement arrives with option A (per-user PolicyOwner).
+ * including every plain token transfer. Option A enforces the same allowlist on-chain: `contracts/src/PolicyOwner.sol`
+ * (#46). Keep both in sync.
  */
 export class PolicyViolation extends Error {
   constructor(
