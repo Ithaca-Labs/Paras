@@ -5,7 +5,7 @@ import { createApiClient } from '@paras/shared';
 import { createTestDatabase } from '@paras/testkit';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
-import type { OAuthDeps } from '../src/deps.js';
+import type { AppDeps, OAuthDeps } from '../src/deps.js';
 import { MemoryMailer } from '../src/auth/mailer.js';
 import type { MagicLinkDeps } from '../src/deps.js';
 import type { NearIntents } from '../src/near-intents.js';
@@ -32,6 +32,8 @@ export interface TestAppOptions {
   /** SSE re-read interval; tests use a small value. */
   ssePollMs?: number;
   oauth?: Partial<OAuthDeps>;
+  /** Fake Privy (`createFakePrivy().port`) + signer id; omit for the 503 path. */
+  privy?: AppDeps['privy'];
 }
 
 export const TEST_AUTH_DOMAIN = 'paras.test';
@@ -72,6 +74,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
     ...(options.now && { now: options.now }),
     ...(options.vault && { vault: options.vault }),
     ...(options.nearIntents && { nearIntents: options.nearIntents }),
+    ...(options.privy && { privy: options.privy }),
     ...(options.feedWeights && { feedWeights: options.feedWeights }),
     ssePollMs: options.ssePollMs ?? 50,
     ...(options.oauth && { oauth: { issuer: 'http://localhost:3000', ...options.oauth } }),

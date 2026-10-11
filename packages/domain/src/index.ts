@@ -82,6 +82,14 @@ export {
   type RouteVenue,
 } from './route.js';
 export {
+  DELEGATED_FUNCTIONS,
+  buildDelegationPolicy,
+  checkDelegatedRequest,
+  type DelegatedRequest,
+  type DelegationPolicyBody,
+  type DelegationScope,
+} from './delegation.js';
+export {
   INTENT_STATUSES,
   TERMINAL_INTENT_STATUSES,
   intentDetailsHash,

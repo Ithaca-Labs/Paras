@@ -40,6 +40,13 @@ import {
 import { exitPosition, getPortfolio, listHistory, setPositionReturn } from './portfolio.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
 import {
+  confirmDelegation,
+  getDelegation,
+  grantDelegation,
+  privyLogin,
+  revokeDelegation,
+} from './privy.js';
+import {
   authorizeOAuth,
   getOAuthClient,
   getTokenInfo,
@@ -125,6 +132,11 @@ export const apiRoutes = {
   removeFollow,
   listNotifications,
   markNotificationsRead,
+  privyLogin,
+  getDelegation,
+  grantDelegation,
+  confirmDelegation,
+  revokeDelegation,
   getNotificationPrefs,
   updateNotificationPrefs,
   getOAuthClient,
@@ -158,3 +170,4 @@ export * from './vault.js';
 export * from './portfolio.js';
 export * from './oauth.js';
 export * from './ops.js';
+export * from './privy.js';

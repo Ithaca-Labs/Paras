@@ -38,6 +38,11 @@ const Env = z.object({
   VAULT_CHAIN_ID: z.coerce.number().int().default(10143),
   /** 1Click API key (X-API-Key). Feature is on only when VAULT_CHAIN_ID is 143 (mainnet). */
   NEAR_INTENTS_API_KEY: z.string().optional(),
+  /** Privy (#92). All four set = Privy endpoints on; PRIVY_SIGNER_ID is the key-quorum id of the authorization key. */
+  PRIVY_APP_ID: z.string().optional(),
+  PRIVY_APP_SECRET: z.string().optional(),
+  PRIVY_AUTHORIZATION_PRIVATE_KEY: z.string().optional(),
+  PRIVY_SIGNER_ID: z.string().optional(),
   /** Comma-separated emails / wallet addresses that become admins on sign-in. */
   ADMIN_EMAILS: z.string().default(''),
   ADMIN_WALLETS: z.string().default(''),

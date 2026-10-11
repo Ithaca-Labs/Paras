@@ -11,10 +11,11 @@ import {
 } from '../auth/sessions.js';
 import { anonCookie, anonTokenOf, claimAnonProfile } from '../profile/store.js';
 import { loadMe, resolveIdentity, type Identity } from '../auth/users.js';
+import { HttpError } from '../errors.js';
 import { implement, type HandlerCtx } from '../implement.js';
 import type { RoutePlugin } from './index.js';
 
-export const authRoutes: RoutePlugin = (app, { db, auth }) => {
+export const authRoutes: RoutePlugin = (app, { db, auth, privy, vault }) => {
   /** Shared tail of both login flows: resolve User, then reuse the live session (link) or start one. */
   async function finish(
     identity: Identity,
@@ -68,6 +69,37 @@ export const authRoutes: RoutePlugin = (app, { db, auth }) => {
   implement(app, apiRoutes.verifySiwe, async ({ body }, ctx) => {
     const { address, chainId, returnTo } = await verifySiweMessage(db, auth, body);
     return finish({ kind: 'wallet', address, chainId }, body.session, returnTo, ctx);
+  });
+
+  implement(app, apiRoutes.privyLogin, async ({ body }, ctx) => {
+    if (!privy) throw new HttpError(503, 'privy_unavailable', 'Privy is not configured');
+    const login = await privy.port
+      .verifyLogin({ accessToken: body.accessToken, identityToken: body.identityToken })
+      .catch(() => {
+        throw new HttpError(401, 'invalid_privy_token', 'Privy token rejected');
+      });
+    if (!login.wallet)
+      throw new HttpError(400, 'no_embedded_wallet', 'Privy user has no embedded Ethereum wallet');
+    const address = login.wallet.address.toLowerCase();
+    const result = await finish(
+      { kind: 'wallet', address, chainId: vault?.chainId ?? 10143 },
+      body.session,
+      null,
+      ctx,
+    );
+    await db
+      .insert(schema.privyWallets)
+      .values({
+        walletId: login.wallet.id,
+        userId: result.user.id,
+        privyUserId: login.privyUserId,
+        address,
+      })
+      .onConflictDoUpdate({
+        target: schema.privyWallets.walletId,
+        set: { userId: result.user.id },
+      });
+    return result;
   });
 
   implement(app, apiRoutes.requestEmailCode, async ({ body }, ctx) => {

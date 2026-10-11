@@ -47,6 +47,9 @@ importers:
       '@paras/embeddings':
         specifier: workspace:*
         version: link:../../packages/embeddings
+      '@paras/privy':
+        specifier: workspace:*
+        version: link:../../packages/privy
       '@paras/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -266,6 +269,31 @@ importers:
       '@paras/domain':
         specifier: workspace:*
         version: link:../domain
+    devDependencies:
+      '@types/node':
+        specifier: 22.20.5
+        version: 22.20.5
+      vitest:
+        specifier: 3.2.7
+        version: 3.2.7(@types/node@22.20.5)(tsx@4.23.15)(yaml@2.9.1)
+
+  packages/privy:
+    dependencies:
+      '@paras/db':
+        specifier: workspace:*
+        version: link:../db
+      '@paras/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@privy-io/node':
+        specifier: 0.35.0
+        version: 0.35.0(viem@2.57.4(typescript@5.9.3)(zod@4.6.5))
+      drizzle-orm:
+        specifier: 0.45.4
+        version: 0.45.4(@types/pg@8.23.1)(pg@8.23.1)
+      viem:
+        specifier: 2.57.4
+        version: 2.57.4(typescript@5.9.3)(zod@4.6.5)
     devDependencies:
       '@types/node':
         specifier: 22.20.5
