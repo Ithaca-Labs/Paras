@@ -1,5 +1,5 @@
 import type { EventView } from '@paras/shared';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { EventCard } from '@/components/event-card';
 import { Nav } from '@/components/nav';
@@ -57,6 +57,30 @@ describe('ErrorState', () => {
   it('announces the error', () => {
     render(<ErrorState message="boom" />);
     expect(screen.getByRole('alert').textContent).toContain('boom');
+  });
+});
+
+describe('ConnectedAppsList', () => {
+  it('revokes an app and removes it', async () => {
+    const { ConnectedAppsList } = await import('@/components/connected-apps-list');
+    const { api } = await import('@/lib/api');
+    const spy = vi.spyOn(api, 'revokeConnectedApp').mockResolvedValue({ ok: true });
+    const id = '33333333-3333-4333-8333-333333333333';
+    render(
+      <ConnectedAppsList
+        initial={[
+          {
+            id,
+            client: { id: 'c', name: 'Claude' },
+            scopes: ['markets:read'],
+            connectedAt: '2026-10-10T00:00:00.000Z',
+          },
+        ]}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke' }));
+    await waitFor(() => expect(screen.queryByText('Claude')).toBeNull());
+    expect(spy).toHaveBeenCalledWith({ params: { id } });
   });
 });
 
