@@ -13,7 +13,7 @@ import {DemoCctp} from "../src/DemoCctp.sol";
 ///   MULTISIG=0x.. EXECUTOR=0x.. forge script script/DeployVault.s.sol --rpc-url $MONAD_RPC_URL --broadcast --private-key $DEPLOYER_KEY
 /// The deployer keeps no role: the Timelock (proposer/executor = MULTISIG) is Vault admin, MULTISIG is pauser.
 /// Testnet demo (#98): MULTISIG and EXECUTOR default to the sender (demo only; mainnet MUST pass a Safe), and
-/// DEMO_CCTP=true deploys `DemoCctp` (Executor = attester) as TokenMessenger and MessageTransmitter, because the
+/// DEMO_CCTP=true deploys `DemoCctp` (attester = ATTESTER, default EXECUTOR) as TokenMessenger and MessageTransmitter, because the
 /// Polygon leg is simulated and cannot produce a real CCTP return. DemoCctp reverts off chain 10143.
 contract DeployVault is Script {
     function run() external returns (Vault vault, TimelockController timelock) {
@@ -27,7 +27,7 @@ contract DeployVault is Script {
 
         vm.startBroadcast();
         if (vm.envOr("DEMO_CCTP", false)) {
-            DemoCctp demo = new DemoCctp(IERC20(usdc), executor);
+            DemoCctp demo = new DemoCctp(IERC20(usdc), vm.envOr("ATTESTER", executor));
             (tm, mt) = (address(demo), address(demo));
             console.log("DemoCctp", address(demo));
         }
