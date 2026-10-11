@@ -1,8 +1,10 @@
 import { createAdapterRegistry, createPolymarketAdapter } from '@paras/adapters';
 import { createDb } from '@paras/db';
-import { http } from 'viem';
+import { createPublicClient, http, parseAbi, parseEventLogs, type Address, type Hex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { buildApp } from './app.js';
+import { grantDemoSessionKeys } from './demo/keys.js';
+import { createDemoSim } from './demo/sim.js';
 import { HttpClob } from './clob/client.js';
 import { loadConfig } from './config.js';
 import { createBookSource } from './intents/books.js';
@@ -18,8 +20,22 @@ import { HttpRelayerClient } from './wallet/relayer.js';
 import { WalletService } from './wallet/service.js';
 import { syncWalletRequests } from './wallet/sync.js';
 
+/** The DemoCctp `DemoBurn` behind a Vault dispatch tx (what the real Iris reads off the CCTP message). */
+const demoBurnOf = (rpc: string) => {
+  const pub = createPublicClient({ transport: http(rpc) });
+  const abi = parseAbi([
+    'event DemoBurn(address indexed burner, uint256 amount, uint32 destinationDomain, bytes32 mintRecipient)',
+  ]);
+  return async (tx: Hex) => {
+    const receipt = await pub.getTransactionReceipt({ hash: tx }).catch(() => null);
+    const [burn] = receipt ? parseEventLogs({ abi, logs: receipt.logs }) : [];
+    return burn ? { amount: burn.args.amount, mintRecipient: burn.args.mintRecipient } : null;
+  };
+};
+
 const config = loadConfig();
-const app = buildApp({ logger: { level: config.LOG_LEVEL } });
+const demo = config.EXECUTOR_DEMO_MODE === 'simulate';
+const app = buildApp({ logger: { level: config.LOG_LEVEL } }, { demo });
 const stops: (() => Promise<unknown>)[] = [() => app.close()];
 
 if (config.EXECUTOR_INTENTS_ENABLED) {
@@ -51,18 +67,31 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     messageTransmitter: config.MONAD_MESSAGE_TRANSMITTER as `0x${string}`,
     fromBlock: BigInt(config.VAULT_START_BLOCK),
   });
-  const polygon = createPolygon({
-    transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')),
-    account,
-  });
-  const relayer = new HttpRelayerClient({
-    baseUrl: config.POLYMARKET_RELAYER_URL,
-    creds: {
-      apiKey: need(config.POLYMARKET_BUILDER_API_KEY, 'POLYMARKET_BUILDER_API_KEY'),
-      secret: need(config.POLYMARKET_BUILDER_SECRET, 'POLYMARKET_BUILDER_SECRET'),
-      passphrase: need(config.POLYMARKET_BUILDER_PASSPHRASE, 'POLYMARKET_BUILDER_PASSPHRASE'),
-    },
-  });
+  // Testnet demo (#98): the Polymarket leg is simulated behind the same ports; the Vault stays real.
+  const sim = demo
+    ? createDemoSim({
+        attester: account,
+        cctp: config.MONAD_MESSAGE_TRANSMITTER as Address,
+        vault: config.VAULT_ADDRESS as Address,
+        db,
+        burnOf: demoBurnOf(need(config.MONAD_RPC_URL, 'MONAD_RPC_URL')),
+        clobUrl: config.POLYMARKET_CLOB_URL,
+      })
+    : undefined;
+  if (demo) app.log.warn('EXECUTOR_DEMO_MODE=simulate: Polymarket leg is SIMULATED (testnet demo)');
+  const polygon =
+    sim?.polygon ??
+    createPolygon({ transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')), account });
+  const relayer =
+    sim?.relayer ??
+    new HttpRelayerClient({
+      baseUrl: config.POLYMARKET_RELAYER_URL,
+      creds: {
+        apiKey: need(config.POLYMARKET_BUILDER_API_KEY, 'POLYMARKET_BUILDER_API_KEY'),
+        secret: need(config.POLYMARKET_BUILDER_SECRET, 'POLYMARKET_BUILDER_SECRET'),
+        passphrase: need(config.POLYMARKET_BUILDER_PASSPHRASE, 'POLYMARKET_BUILDER_PASSPHRASE'),
+      },
+    });
   const wallets = new WalletService({
     db,
     cipher: new EnvKeyCipher(need(config.EXECUTOR_MASTER_KEY, 'EXECUTOR_MASTER_KEY')),
@@ -70,13 +99,15 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     chain: polygon,
     vault: monad.registry,
   });
-  const iris = createIris({ baseUrl: config.IRIS_URL });
-  const clob = new HttpClob({
-    baseUrl: config.POLYMARKET_CLOB_URL,
-    builderCode: need(config.POLYMARKET_BUILDER_CODE, 'POLYMARKET_BUILDER_CODE') as `0x${string}`,
-    sessionKey: (w) => wallets.sessionAccount(w),
-  });
-  const geoblock = createGeoblock();
+  const iris = sim?.iris ?? createIris({ baseUrl: config.IRIS_URL });
+  const clob =
+    sim?.clob ??
+    new HttpClob({
+      baseUrl: config.POLYMARKET_CLOB_URL,
+      builderCode: need(config.POLYMARKET_BUILDER_CODE, 'POLYMARKET_BUILDER_CODE') as `0x${string}`,
+      sessionKey: (w) => wallets.sessionAccount(w),
+    });
+  const geoblock = sim ? { allowed: async () => true } : createGeoblock();
   const engine = new IntentEngine({
     db,
     wallets,
@@ -98,9 +129,9 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     clob,
     geoblock,
   });
-  const logs = createPolygonLogs({
-    transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')),
-  });
+  const logs = sim
+    ? undefined
+    : createPolygonLogs({ transport: http(need(config.POLYGON_RPC_URL, 'POLYGON_RPC_URL')) });
   const log = (msg: string, data?: object) => app.log.info(data, msg);
   const runner = createRunner({
     db,
@@ -111,6 +142,7 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
     startBlock: BigInt(config.VAULT_START_BLOCK),
     onTick: async () => {
       await syncWalletRequests(db, wallets, log);
+      if (!logs) return grantDemoSessionKeys(db, wallets); // demo: no Polygon to index or redeem
       await indexPolygon(
         db,
         logs,
