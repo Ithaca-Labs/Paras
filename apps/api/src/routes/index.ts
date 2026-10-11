@@ -15,6 +15,7 @@ import { opsRoutes } from './ops.js';
 import { openapiRoutes } from './openapi.js';
 import { portfolioRoutes } from './portfolio.js';
 import { profileRoutes } from './profile.js';
+import { orderRoutes } from './orders.js';
 import { privyRoutes } from './privy.js';
 import { taxonomyRoutes } from './taxonomy.js';
 import { venueRoutes } from './venues.js';
@@ -40,6 +41,7 @@ export const routePlugins: RoutePlugin[] = [
   profileRoutes,
   vaultRoutes,
   privyRoutes,
+  orderRoutes,
   portfolioRoutes,
   feedRoutes,
   notificationRoutes,

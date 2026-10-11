@@ -39,5 +39,8 @@ export const conditionalOrders = pgTable(
     createdAt: tz('created_at').notNull().defaultNow(),
     updatedAt: tz('updated_at').notNull().defaultNow(),
   },
-  (t) => [index('conditional_orders_status_idx').on(t.status), index('conditional_orders_user_idx').on(t.userId)],
+  (t) => [
+    index('conditional_orders_status_idx').on(t.status),
+    index('conditional_orders_user_idx').on(t.userId),
+  ],
 );
