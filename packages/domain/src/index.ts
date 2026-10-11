@@ -96,6 +96,15 @@ export {
   type RouteVenue,
 } from './route.js';
 export {
+  CONDITIONAL_KINDS,
+  CONDITIONAL_STATUSES,
+  shouldTrigger,
+  validateTrigger,
+  type ConditionalKind,
+  type ConditionalStatus,
+  type TriggerQuote,
+} from './conditional.js';
+export {
   DELEGATED_FUNCTIONS,
   buildDelegationPolicy,
   checkDelegatedRequest,

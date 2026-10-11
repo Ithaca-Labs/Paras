@@ -39,6 +39,7 @@ import {
 } from './jurisdiction.js';
 import { exitPosition, getPortfolio, listHistory, setPositionReturn } from './portfolio.js';
 import { createMagicLink, resolveMagicLink } from './magic-links.js';
+import { cancelOrder, createOrder, listOrders, oneClickBet } from './orders.js';
 import {
   confirmDelegation,
   getDelegation,
@@ -133,6 +134,10 @@ export const apiRoutes = {
   removeFollow,
   listNotifications,
   markNotificationsRead,
+  createOrder,
+  listOrders,
+  cancelOrder,
+  oneClickBet,
   privyLogin,
   getDelegation,
   grantDelegation,
@@ -172,3 +177,4 @@ export * from './portfolio.js';
 export * from './oauth.js';
 export * from './ops.js';
 export * from './privy.js';
+export * from './orders.js';

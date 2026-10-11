@@ -49,6 +49,8 @@ export interface AppDeps {
   privy?: { port: PrivyPort; signerId: string };
   /** Envio GraphQL source for Vault deposits/withdrawals; omit to read the polled table. */
   activity?: VaultActivitySource;
+  /** Conditional-order evaluation interval in ms; 0/omitted = engine off (tests call `runOrders`). */
+  orderPollMs?: number;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** Overrides for the Feed scorer weights (defaults: DEFAULT_FEED_WEIGHTS). */

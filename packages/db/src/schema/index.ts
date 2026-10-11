@@ -13,3 +13,4 @@ export * from './ops.js';
 export * from './positions.js';
 export * from './privy.js';
 export * from './smart-money.js';
+export * from './orders.js';

@@ -59,6 +59,7 @@ const app = buildApp(
           }),
           signerId: config.PRIVY_SIGNER_ID,
         },
+        orderPollMs: 15_000,
       }),
     ...(config.ENVIO_GRAPHQL_URL && { activity: createEnvioActivity(config.ENVIO_GRAPHQL_URL) }),
     oauth: {
