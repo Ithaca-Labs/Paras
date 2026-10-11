@@ -1,0 +1,76 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens: the ONLY place colors/fonts/radius live. Neutral placeholder theme;
+ * brand assets (#25) later replace these values and nothing else.
+ * Components use the Tailwind utilities below (bg-surface, text-muted, ...), never raw colors.
+ */
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --surface-2: #f1f1ef;
+  --border: #e4e4e0;
+  --fg: #171717;
+  --muted: #6b6b66;
+  --accent: #171717;
+  --accent-fg: #fafaf9;
+  --positive: #15803d;
+  --negative: #b91c1c;
+  --warning: #a16207;
+  --radius: 0.75rem;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0e0e0d;
+    --surface: #171716;
+    --surface-2: #222220;
+    --border: #2e2e2b;
+    --fg: #f2f2ef;
+    --muted: #9a9a93;
+    --accent: #f2f2ef;
+    --accent-fg: #0e0e0d;
+    --positive: #4ade80;
+    --negative: #f87171;
+    --warning: #facc15;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0e0e0d;
+  --surface: #171716;
+  --surface-2: #222220;
+  --border: #2e2e2b;
+  --fg: #f2f2ef;
+  --muted: #9a9a93;
+  --accent: #f2f2ef;
+  --accent-fg: #0e0e0d;
+  --positive: #4ade80;
+  --negative: #f87171;
+  --warning: #facc15;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --radius-card: var(--radius);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}

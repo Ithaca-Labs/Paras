@@ -10,7 +10,7 @@
     "TESTCONTAINERS_HOST_OVERRIDE"
   ],
   "tasks": {
-    "build": { "outputs": ["dist/**"] },
+    "build": { "outputs": ["dist/**", ".next/**", "!.next/cache/**"] },
     "typecheck": {},
     "test": { "cache": false }
   }

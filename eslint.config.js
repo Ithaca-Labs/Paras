@@ -9,6 +9,7 @@ export default tseslint.config(
       '**/.turbo/**',
       'contracts/**',
       'indexer/**',
+      '**/.next/**',
       'packages/db/drizzle/**',
       '.claude/**',
     ],
