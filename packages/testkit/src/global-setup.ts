@@ -22,7 +22,18 @@ export default async function setup(project: TestProject) {
     const { PostgreSqlContainer } = (await import(
       /* @vite-ignore */ pathToFileURL(entry).href
     )) as typeof Testcontainers;
-    const container = await new PostgreSqlContainer('pgvector/pgvector:pg16').start();
+    const container = await new PostgreSqlContainer('pgvector/pgvector:pg16')
+      // Throwaway DB: CREATE/DROP DATABASE force checkpoints, which fsync and stall under parallel load.
+      .withCommand([
+        'postgres',
+        '-c',
+        'fsync=off',
+        '-c',
+        'synchronous_commit=off',
+        '-c',
+        'full_page_writes=off',
+      ])
+      .start();
     adminUrl = container.getConnectionUri();
     stopContainer = async () => void (await container.stop());
   }
