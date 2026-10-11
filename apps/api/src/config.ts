@@ -43,6 +43,8 @@ const Env = z.object({
   PRIVY_APP_SECRET: z.string().optional(),
   PRIVY_AUTHORIZATION_PRIVATE_KEY: z.string().optional(),
   PRIVY_SIGNER_ID: z.string().optional(),
+  /** Envio HyperIndex GraphQL endpoint; unset = history reads the polled `vault_activity` table. */
+  ENVIO_GRAPHQL_URL: z.string().url().optional(),
   /** Comma-separated emails / wallet addresses that become admins on sign-in. */
   ADMIN_EMAILS: z.string().default(''),
   ADMIN_WALLETS: z.string().default(''),

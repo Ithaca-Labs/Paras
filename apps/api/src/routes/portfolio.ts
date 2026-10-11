@@ -32,7 +32,7 @@ const usdc = (n: bigint) => formatUnits(n, 6);
 /** No progress for this long on a live step = delayed. */
 const STALL_MS = 15 * 60_000;
 
-export const portfolioRoutes: RoutePlugin = (app, { db, now = () => new Date() }) => {
+export const portfolioRoutes: RoutePlugin = (app, { db, activity, now = () => new Date() }) => {
   type MarketRow = Pick<
     typeof markets.$inferSelect,
     'id' | 'question' | 'status' | 'endDate' | 'meta'
@@ -222,19 +222,21 @@ export const portfolioRoutes: RoutePlugin = (app, { db, now = () => new Date() }
         .where(and(eq(exits.userId, auth.userId), before && lt(exits.createdAt, before)))
         .orderBy(desc(exits.createdAt))
         .limit(n + 1);
-      const cash = links.length
-        ? await db
-            .select()
-            .from(vaultActivity)
-            .where(
-              and(
-                inArray(vaultActivity.userAddress, links),
-                before && lt(vaultActivity.at, before),
-              ),
-            )
-            .orderBy(desc(vaultActivity.at))
-            .limit(n)
-        : [];
+      const fromDb = () =>
+        db
+          .select()
+          .from(vaultActivity)
+          .where(
+            and(inArray(vaultActivity.userAddress, links), before && lt(vaultActivity.at, before)),
+          )
+          .orderBy(desc(vaultActivity.at))
+          .limit(n);
+      // Envio when configured; the viem-polled table is the fallback.
+      const cash = !links.length
+        ? []
+        : activity
+          ? await activity.cash({ users: links, ...(before && { before }), limit: n }).catch(fromDb)
+          : await fromDb();
       const pos = await db.select().from(positions).where(eq(positions.userId, auth.userId));
       const mk = await marketsById([
         ...new Set([...buys.map((b) => b.details.marketId), ...pos.map((p) => p.marketId)]),

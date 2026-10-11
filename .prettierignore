@@ -12,3 +12,6 @@ tasks
 .github/pull_request_template.md
 spikes
 .claude
+indexer/.envio
+indexer/envio-env.d.ts
+indexer/abis

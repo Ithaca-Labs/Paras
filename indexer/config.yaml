@@ -1,0 +1,29 @@
+# Vault events on Monad testnet. Address is a placeholder until the Vault is deployed (#98):
+# set ENVIO_VAULT_ADDRESS and ENVIO_START_BLOCK.
+name: paras-vault
+ecosystem: evm
+contracts:
+  - name: Vault
+    abi_file_path: abis/Vault.json
+    handler: src/EventHandlers.ts
+    events:
+      - event: Deposited
+      - event: Withdrawn
+      - event: DepositWalletRegistered
+      - event: IntentSubmitted
+      - event: IntentCancelled
+      - event: IntentExpired
+      - event: IntentDispatched
+      - event: Settled
+      - event: IntentClosed
+chains:
+  - id: 10143
+    start_block: ${ENVIO_START_BLOCK:-0}
+    hypersync_config:
+      url: https://monad-testnet.hypersync.xyz
+    contracts:
+      - name: Vault
+        address: '${ENVIO_VAULT_ADDRESS:-0x0000000000000000000000000000000000000001}'
+field_selection:
+  transaction_fields:
+    - hash

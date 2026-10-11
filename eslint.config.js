@@ -4,7 +4,14 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/.turbo/**', 'contracts/**', 'packages/db/drizzle/**', '.claude/**'],
+    ignores: [
+      '**/dist/**',
+      '**/.turbo/**',
+      'contracts/**',
+      'indexer/**',
+      'packages/db/drizzle/**',
+      '.claude/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

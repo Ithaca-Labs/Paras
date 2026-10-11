@@ -14,6 +14,7 @@ import { createMailer } from './auth/mailer.js';
 import { defaultAuthConfig } from './auth/types.js';
 import { loadConfig, loadMagicLinkKeys } from './config.js';
 import { createNearIntents } from './near-intents.js';
+import { createEnvioActivity } from './envio.js';
 import { createVaultReader } from './vault.js';
 
 const config = loadConfig();
@@ -59,6 +60,7 @@ const app = buildApp(
           signerId: config.PRIVY_SIGNER_ID,
         },
       }),
+    ...(config.ENVIO_GRAPHQL_URL && { activity: createEnvioActivity(config.ENVIO_GRAPHQL_URL) }),
     oauth: {
       issuer: config.OAUTH_ISSUER,
       ...(config.OAUTH_CONSENT_URL && { consentUrl: config.OAUTH_CONSENT_URL }),

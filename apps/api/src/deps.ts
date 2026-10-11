@@ -3,6 +3,7 @@ import type { Database } from '@paras/db';
 import type { PrivyPort } from '@paras/privy';
 import type { Embedder, FeedWeights, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
+import type { VaultActivitySource } from './envio.js';
 import type { GeoResolver } from './jurisdiction.js';
 import type { NearIntents } from './near-intents.js';
 import type { VaultReader } from './vault.js';
@@ -46,6 +47,8 @@ export interface AppDeps {
   nearIntents?: NearIntents;
   /** Privy client + Paras's session-signer key-quorum id; omit and Privy endpoints answer 503. */
   privy?: { port: PrivyPort; signerId: string };
+  /** Envio GraphQL source for Vault deposits/withdrawals; omit to read the polled table. */
+  activity?: VaultActivitySource;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** Overrides for the Feed scorer weights (defaults: DEFAULT_FEED_WEIGHTS). */

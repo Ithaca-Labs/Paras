@@ -1,0 +1,13 @@
+# One row per Vault event. `kind` is a VaultKind (src/mapping.ts); amounts are USDC base units (6 dp).
+type VaultActivity {
+  id: ID!
+  user: String! # lowercase address
+  kind: String!
+  amount: String
+  intentId: String
+  wallet: String
+  txHash: String!
+  logIndex: Int!
+  blockNumber: Int!
+  blockTimestamp: Int!
+}
