@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { AccountButton } from './account-button';
 import { Nav } from './nav';
+import { NotificationBell } from './notification-bell';
 
 /** Header + content frame. Pages render only their own content inside `<main>`; never add chrome. */
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -12,7 +13,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             Paras
           </Link>
           <Nav />
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <NotificationBell />
             <AccountButton />
           </div>
         </div>
