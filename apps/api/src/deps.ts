@@ -3,6 +3,7 @@ import type { Database } from '@paras/db';
 import type { Embedder, FeedWeights, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
 import type { GeoResolver } from './jurisdiction.js';
+import type { NearIntents } from './near-intents.js';
 import type { VaultReader } from './vault.js';
 
 export interface MagicLinkDeps {
@@ -40,6 +41,8 @@ export interface AppDeps {
   geo?: GeoResolver;
   /** Monad Vault reader; omit and the balance endpoint answers 503. */
   vault?: VaultReader;
+  /** 1Click client; set only on mainnet, else the any-chain deposit routes answer 404 feature_disabled. */
+  nearIntents?: NearIntents;
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** Overrides for the Feed scorer weights (defaults: DEFAULT_FEED_WEIGHTS). */
