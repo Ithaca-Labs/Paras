@@ -42,8 +42,22 @@ Develop a single app against the compose Postgres: `docker compose up -d postgre
 | `packages/shared`   | zod schemas, route definitions, OpenAPI generation, typed API client |
 | `packages/testkit`  | Fixture record/replay + Postgres test database helpers               |
 | `contracts`         | Foundry (forge-std as git submodule)                                 |
+| `indexer`           | Envio HyperIndex for Vault events (standalone, not in the workspace) |
 
 Internal packages export TypeScript source (no build step); apps are bundled with tsup, which inlines `@paras/*`. Third-party deps used by any inlined package must be installed in the image (the Dockerfiles hoist them on deploy).
+
+## Indexer (Envio)
+
+`indexer/` indexes Vault events (deposits, withdrawals, Intents, Deposit Wallet registration) on Monad testnet via HyperSync into a `VaultActivity` entity. It is standalone (own lockfile, excluded from root lint/turbo); a separate CI job runs its tests.
+
+```
+cd indexer && pnpm install --ignore-workspace
+pnpm codegen && pnpm test          # handler tests, no network
+ENVIO_VAULT_ADDRESS=0x... ENVIO_START_BLOCK=<deploy block> ENVIO_API_TOKEN=... \
+  docker compose --profile indexer up   # Hasura GraphQL on :8080
+```
+
+Set `ENVIO_GRAPHQL_URL=http://localhost:8080/v1/graphql` on the API and `GET /v1/vault/history` reads deposits/withdrawals from Envio, falling back to the viem-polled `vault_activity` table if unset or the query fails. The Vault address is a placeholder until deployed (#98).
 
 ## Conventions
 

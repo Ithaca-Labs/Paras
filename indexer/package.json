@@ -1,0 +1,16 @@
+{
+  "name": "paras-indexer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "codegen": "envio codegen",
+    "dev": "envio dev",
+    "start": "envio start",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "envio": "3.14.0",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

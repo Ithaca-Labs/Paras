@@ -9,6 +9,7 @@ import type { AppDeps, OAuthDeps } from '../src/deps.js';
 import { MemoryMailer } from '../src/auth/mailer.js';
 import type { MagicLinkDeps } from '../src/deps.js';
 import type { NearIntents } from '../src/near-intents.js';
+import type { VaultActivitySource } from '../src/envio.js';
 import type { VaultReader } from '../src/vault.js';
 import { defaultAuthConfig, type AuthConfig } from '../src/auth/types.js';
 
@@ -25,6 +26,7 @@ export interface TestAppOptions {
   vault?: VaultReader;
   /** 1Click client; omit for the testnet (feature_disabled) path. */
   nearIntents?: NearIntents;
+  activity?: VaultActivitySource;
   /** Injected clock for freshness (`stale`) assertions. */
   now?: () => Date;
   /** Feed weight overrides. */
@@ -75,6 +77,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
     ...(options.vault && { vault: options.vault }),
     ...(options.nearIntents && { nearIntents: options.nearIntents }),
     ...(options.privy && { privy: options.privy }),
+    ...(options.activity && { activity: options.activity }),
     ...(options.feedWeights && { feedWeights: options.feedWeights }),
     ssePollMs: options.ssePollMs ?? 50,
     ...(options.oauth && { oauth: { issuer: 'http://localhost:3000', ...options.oauth } }),

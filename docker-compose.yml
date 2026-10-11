@@ -67,5 +67,51 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-info}
       EXECUTOR_PORT: 3003
 
+  # Envio HyperIndex (Vault events, Monad testnet). `docker compose --profile indexer up`.
+  indexer-db:
+    profiles: [indexer]
+    image: postgres:17
+    environment: { POSTGRES_USER: envio, POSTGRES_PASSWORD: envio, POSTGRES_DB: envio }
+    volumes: ['indexerdata:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U envio']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  hasura:
+    profiles: [indexer]
+    image: hasura/graphql-engine:v2.43.0
+    ports: ['8080:8080']
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://envio:envio@indexer-db:5432/envio
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET:-testing}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public
+    depends_on:
+      indexer-db: { condition: service_healthy }
+
+  indexer:
+    profiles: [indexer]
+    image: node:22-slim
+    working_dir: /app
+    volumes: ['./indexer:/app']
+    command: sh -c "corepack enable && pnpm install --ignore-workspace && pnpm codegen && pnpm start"
+    environment:
+      ENVIO_API_TOKEN: ${ENVIO_API_TOKEN:-}
+      ENVIO_VAULT_ADDRESS: ${ENVIO_VAULT_ADDRESS:-0x0000000000000000000000000000000000000001}
+      ENVIO_START_BLOCK: ${ENVIO_START_BLOCK:-0}
+      ENVIO_PG_HOST: indexer-db
+      ENVIO_PG_PORT: 5432
+      ENVIO_PG_USER: envio
+      ENVIO_PG_PASSWORD: envio
+      ENVIO_PG_DATABASE: envio
+      HASURA_GRAPHQL_ENDPOINT: http://hasura:8080/v1/metadata
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET:-testing}
+    depends_on:
+      indexer-db: { condition: service_healthy }
+      hasura: { condition: service_started }
+
 volumes:
   pgdata:
+  indexerdata:
