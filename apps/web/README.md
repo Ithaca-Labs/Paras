@@ -26,3 +26,9 @@ Env (read from the repo-root `.env`, see `next.config.ts`): `API_URL` (default `
 - **Webpack, not Turbopack**: `@paras/shared` imports `./x.js` for `x.ts`; Turbopack can't alias that. Scripts pass `--webpack`.
 - **Tests**: Vitest + jsdom + Testing Library in `test/`. Test components through their rendered output.
 - **Event page (#27)**: `/events/[id]`. Bet slot is `components/bet-panel.tsx` (`<BetPanel eventId>`, anchor `#bet`); #30/#109 replace its body, keep name + prop. Venue buttons: `venue-action.tsx` (from API `availability`). Live Quotes: `event-live.tsx` (EventSource on `/v1/events/{id}/stream`). `/explore` is a GET form (searchParams) over `listEvents`.
+
+## Deep links and OAuth (#29)
+
+- **Magic Link** `/magic/[token]`: resolves via `/v1/magic-links/{token}`, shows the prefill, never executes. Hands off to the Event page with query params the Bet panel (#30) reads: `/events/{id}?outcome=<label>&amount=<usdc>&maxPrice=<0-1>` (all optional). Signed-out users on a bound link get a sign-in prompt; the page refreshes in place after login (Privy is a modal, so no `returnTo` navigation is needed).
+- **Connected apps** `/settings/connected-apps`: list + revoke (`/v1/connected-apps`).
+- **OAuth consent** `/oauth/consent`: set API env `OAUTH_CONSENT_URL=<web origin>/oauth/consent` so `/oauth/authorize` redirects Claude/Codex connects here instead of the plain fallback page. Uses `GET /v1/oauth/clients/{id}` and `POST /v1/oauth/authorize`.
