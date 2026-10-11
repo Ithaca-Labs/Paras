@@ -1,5 +1,6 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { BetPanel } from '@/components/bet-panel';
 import { HistoryList } from '@/components/history-list';
 import { VaultGate } from '@/components/vault-gate';
 
@@ -7,6 +8,10 @@ const api = vi.hoisted(() => ({
   getVaultEligibility: vi.fn(),
   getDisclosures: vi.fn(),
   listHistory: vi.fn(),
+  getConfig: vi.fn(),
+}));
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams('outcome=Yes&amount=5&maxPrice=0.6'),
 }));
 vi.mock('@/lib/api', () => ({ api }));
 vi.mock('next/link', () => ({
@@ -90,5 +95,17 @@ describe('HistoryList', () => {
     await waitFor(() =>
       expect(screen.getByText('Deposit').getAttribute('href')).toBe('https://x.test/tx/0xabc'),
     );
+  });
+});
+
+describe('BetPanel', () => {
+  it('is mounted at #bet, shows the demo banner and extension slot only when eligible', async () => {
+    api.getConfig.mockResolvedValue({ features: {}, vault: null, demoMode: true });
+    api.getDisclosures.mockResolvedValue(disclosures);
+    api.getVaultEligibility.mockResolvedValue(elig({ reasons: ['attestation_required'] }));
+    const { container } = render(<BetPanel eventId="e1" extension={() => 'ext-slot'} />);
+    expect(container.querySelector('#bet')).toBeTruthy();
+    expect(await screen.findByText(/Polymarket leg simulated/)).toBeTruthy();
+    expect(screen.queryByText('ext-slot')).toBeNull();
   });
 });
