@@ -41,13 +41,15 @@ describe('EventCard', () => {
 });
 
 describe('Nav', () => {
-  it('lists the four sections and marks the active one', () => {
+  it('lists the sections and marks the active one', () => {
     render(<Nav />);
     expect(screen.getAllByRole('link').map((a) => a.textContent)).toEqual([
       'Feed',
       'Explore',
       'Vault',
       'Portfolio',
+      'Orders',
+      'Settings',
     ]);
     expect(screen.getByRole('link', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
   });
