@@ -11,7 +11,10 @@ const NOT_ATOMIC = {
 };
 const QUOTE_TTL_MS = 3600_000;
 
-export const depositRoutes: RoutePlugin = (app, { db, nearIntents, now = () => new Date() }) => {
+export const depositRoutes: RoutePlugin = (
+  app,
+  { db, nearIntents, vault, chain, now = () => new Date() },
+) => {
   const ni = () => {
     if (!nearIntents) {
       throw new HttpError(404, 'feature_disabled', 'Any-chain deposit is mainnet-only');
@@ -19,7 +22,18 @@ export const depositRoutes: RoutePlugin = (app, { db, nearIntents, now = () => n
     return nearIntents;
   };
 
-  implement(app, apiRoutes.getConfig, () => ({ features: { anyChainDeposit: !!nearIntents } }));
+  implement(app, apiRoutes.getConfig, () => ({
+    features: { anyChainDeposit: !!nearIntents },
+    vault:
+      vault && chain
+        ? {
+            address: vault.vault.toLowerCase() as `0x${string}`,
+            chainId: vault.chainId,
+            usdc: chain.usdc.toLowerCase() as `0x${string}`,
+          }
+        : null,
+    demoMode: chain?.demo ?? false,
+  }));
 
   implement(
     app,

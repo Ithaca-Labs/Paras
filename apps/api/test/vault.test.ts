@@ -25,7 +25,10 @@ let n = 0;
 
 beforeAll(async () => {
   t = await createTestApp();
-  withVault = await createTestApp({ vault: fake });
+  withVault = await createTestApp({
+    vault: fake,
+    chain: { usdc: '0x534b2f3a21130d7a60830c2df862319e593943a3', demo: true },
+  });
 });
 afterAll(async () => {
   await t.close();
@@ -50,6 +53,16 @@ async function signIn(app: TestApp, wallets: string[] = []) {
   }
   return headers;
 }
+
+describe('GET /v1/config', () => {
+  it('exposes Vault, USDC and demo mode for the client', async () => {
+    const res = await withVault.app.inject({ method: 'GET', url: '/v1/config' });
+    expect(res.json()).toMatchObject({
+      vault: { address: VAULT.toLowerCase(), chainId: fake.chainId },
+      demoMode: true,
+    });
+  });
+});
 
 describe('GET /v1/vault/balance', () => {
   it('401 when signed out', async () => {

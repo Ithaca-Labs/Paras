@@ -36,6 +36,13 @@ const Env = z.object({
     .regex(/^0x[0-9a-fA-F]{40}$/)
     .optional(),
   VAULT_CHAIN_ID: z.coerce.number().int().default(10143),
+  /** Monad USDC the Vault holds (testnet default from DeployVault). */
+  USDC_ADDRESS: z
+    .string()
+    .regex(/^0x[0-9a-fA-F]{40}$/)
+    .default('0x534b2f3A21130d7a60830c2Df862319e593943A3'),
+  /** Shared with the Executor: `simulate` = Polymarket leg simulated (testnet demo banner). */
+  EXECUTOR_DEMO_MODE: z.enum(['off', 'simulate']).default('off'),
   /** 1Click API key (X-API-Key). Feature is on only when VAULT_CHAIN_ID is 143 (mainnet). */
   NEAR_INTENTS_API_KEY: z.string().optional(),
   /** Privy (#92). All four set = Privy endpoints on; PRIVY_SIGNER_ID is the key-quorum id of the authorization key. */

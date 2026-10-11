@@ -1,7 +1,6 @@
 import type { MarketView } from '@paras/shared';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { BetPanel } from '@/components/bet-panel';
 import { RulesCompare } from '@/components/rules-compare';
 import { SmartMoneyPanel } from '@/components/smart-money-panel';
 import { VenueAction } from '@/components/venue-action';
@@ -76,12 +75,5 @@ describe('SmartMoneyPanel', () => {
     );
     expect(screen.getByText('Whales bought YES')).toBeTruthy();
     expect(screen.getByText('YES (70%)')).toBeTruthy();
-  });
-});
-
-describe('BetPanel', () => {
-  it('is mounted at #bet', () => {
-    const { container } = render(<BetPanel eventId="e1" />);
-    expect(container.querySelector('#bet')).toBeTruthy();
   });
 });

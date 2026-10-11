@@ -43,6 +43,8 @@ export interface AppDeps {
   geo?: GeoResolver;
   /** Monad Vault reader; omit and the balance endpoint answers 503. */
   vault?: VaultReader;
+  /** Monad USDC + executor demo flag, echoed by GET /v1/config. */
+  chain?: { usdc: `0x${string}`; demo: boolean };
   /** 1Click client; set only on mainnet, else the any-chain deposit routes answer 404 feature_disabled. */
   nearIntents?: NearIntents;
   /** Privy client + Paras's session-signer key-quorum id; omit and Privy endpoints answer 503. */

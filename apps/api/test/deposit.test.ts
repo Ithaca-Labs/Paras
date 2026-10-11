@@ -92,7 +92,11 @@ const quoteBody = (over: Record<string, unknown> = {}) => ({
 describe('testnet (no 1Click client)', () => {
   it('flag is off and every endpoint answers 404 feature_disabled', async () => {
     const cfg = await testnet.app.inject({ method: 'GET', url: '/v1/config' });
-    expect(cfg.json()).toEqual({ features: { anyChainDeposit: false } });
+    expect(cfg.json()).toEqual({
+      features: { anyChainDeposit: false },
+      vault: null,
+      demoMode: false,
+    });
     const headers = await signIn(testnet, [WALLET]);
     for (const [method, url, payload] of [
       ['GET', '/v1/deposit/any-chain/tokens'],

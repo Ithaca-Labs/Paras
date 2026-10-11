@@ -24,6 +24,8 @@ export interface TestAppOptions {
   embedder?: Embedder;
   /** Fake Vault chain reader; omit for the 503 path. */
   vault?: VaultReader;
+  /** Monad USDC + demo flag for GET /v1/config. */
+  chain?: AppDeps['chain'];
   /** 1Click client; omit for the testnet (feature_disabled) path. */
   nearIntents?: NearIntents;
   activity?: VaultActivitySource;
@@ -75,6 +77,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
     ...(options.embedder && { embedder: options.embedder }),
     ...(options.now && { now: options.now }),
     ...(options.vault && { vault: options.vault }),
+    ...(options.chain && { chain: options.chain }),
     ...(options.nearIntents && { nearIntents: options.nearIntents }),
     ...(options.privy && { privy: options.privy }),
     ...(options.activity && { activity: options.activity }),
