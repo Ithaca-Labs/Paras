@@ -44,6 +44,10 @@ const app = buildApp(
           chainId: config.VAULT_CHAIN_ID,
         }),
       }),
+    chain: {
+      usdc: config.USDC_ADDRESS as `0x${string}`,
+      demo: config.EXECUTOR_DEMO_MODE === 'simulate',
+    },
     ...(config.VAULT_CHAIN_ID === 143 && {
       nearIntents: createNearIntents({ apiKey: config.NEAR_INTENTS_API_KEY }),
     }),

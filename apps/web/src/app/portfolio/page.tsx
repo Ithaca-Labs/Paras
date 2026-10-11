@@ -1,14 +1,13 @@
 import { PageHeader } from '@/components/app-shell';
-import { EmptyState } from '@/components/states';
+import { PortfolioView } from '@/components/portfolio-view';
 
 export const metadata = { title: 'Portfolio' };
 
-// STUB page (#30 builds the Portfolio UI).
 export default function PortfolioPage() {
   return (
     <>
-      <PageHeader title="Portfolio" />
-      <EmptyState>Portfolio UI lands in #30.</EmptyState>
+      <PageHeader title="Portfolio">Positions, P&amp;L and Vault history.</PageHeader>
+      <PortfolioView />
     </>
   );
 }

@@ -9,6 +9,10 @@ export const AppConfig = z.object({
     /** Aurora / NEAR Intents any-chain USDC deposit; mainnet (Monad 143) only. */
     anyChainDeposit: z.boolean(),
   }),
+  /** Vault on Monad for client-side deposit/withdraw; null when the chain is not configured. */
+  vault: z.object({ address: Address, chainId: z.number().int(), usdc: Address }).nullable(),
+  /** Executor simulates the Polymarket leg (testnet demo): the UI shows a banner. */
+  demoMode: z.boolean(),
 });
 
 export const getConfig = defineRoute({
