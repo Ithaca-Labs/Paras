@@ -7,6 +7,7 @@ import {
   longTailAdaptersFromEnv,
 } from '@paras/adapters';
 import { createDb } from '@paras/db';
+import { createPrivyPort } from '@paras/privy';
 import { createTransformersEmbedder } from '@paras/embeddings';
 import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
@@ -45,6 +46,19 @@ const app = buildApp(
     ...(config.VAULT_CHAIN_ID === 143 && {
       nearIntents: createNearIntents({ apiKey: config.NEAR_INTENTS_API_KEY }),
     }),
+    ...(config.PRIVY_APP_ID &&
+      config.PRIVY_APP_SECRET &&
+      config.PRIVY_AUTHORIZATION_PRIVATE_KEY &&
+      config.PRIVY_SIGNER_ID && {
+        privy: {
+          port: createPrivyPort({
+            appId: config.PRIVY_APP_ID,
+            appSecret: config.PRIVY_APP_SECRET,
+            authorizationPrivateKey: config.PRIVY_AUTHORIZATION_PRIVATE_KEY,
+          }),
+          signerId: config.PRIVY_SIGNER_ID,
+        },
+      }),
     oauth: {
       issuer: config.OAUTH_ISSUER,
       ...(config.OAUTH_CONSENT_URL && { consentUrl: config.OAUTH_CONSENT_URL }),

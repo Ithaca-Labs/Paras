@@ -21,6 +21,7 @@
     "@paras/db": "workspace:*",
     "@paras/domain": "workspace:*",
     "@paras/embeddings": "workspace:*",
+    "@paras/privy": "workspace:*",
     "@paras/shared": "workspace:*",
     "drizzle-orm": "0.45.4",
     "fastify": "5.12.5",

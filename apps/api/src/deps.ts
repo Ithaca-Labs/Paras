@@ -1,5 +1,6 @@
 import type { AdapterRegistry } from '@paras/adapters';
 import type { Database } from '@paras/db';
+import type { PrivyPort } from '@paras/privy';
 import type { Embedder, FeedWeights, MagicLinkKeys } from '@paras/domain';
 import type { AuthDeps } from './auth/types.js';
 import type { GeoResolver } from './jurisdiction.js';
@@ -43,6 +44,8 @@ export interface AppDeps {
   vault?: VaultReader;
   /** 1Click client; set only on mainnet, else the any-chain deposit routes answer 404 feature_disabled. */
   nearIntents?: NearIntents;
+  /** Privy client + Paras's session-signer key-quorum id; omit and Privy endpoints answer 503. */
+  privy?: { port: PrivyPort; signerId: string };
   /** Wall clock, injectable for freshness tests. */
   now?: () => Date;
   /** Overrides for the Feed scorer weights (defaults: DEFAULT_FEED_WEIGHTS). */

@@ -11,3 +11,4 @@ export * from './oauth.js';
 export * from './intents.js';
 export * from './ops.js';
 export * from './positions.js';
+export * from './privy.js';
