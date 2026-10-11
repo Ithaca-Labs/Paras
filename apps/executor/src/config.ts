@@ -52,7 +52,22 @@ const Env = z.object({
   POLYMARKET_BUILDER_API_KEY: z.string().optional(),
   POLYMARKET_BUILDER_SECRET: z.string().optional(),
   POLYMARKET_BUILDER_PASSPHRASE: z.string().optional(),
+  /**
+   * `simulate` (#98): testnet demo, the Polymarket leg is simulated against live books (see `demo/sim.ts`).
+   * Needs a DemoCctp Vault (`MONAD_MESSAGE_TRANSMITTER` = DemoCctp). Impossible outside Monad testnet (below).
+   */
+  EXECUTOR_DEMO_MODE: z.enum(['off', 'simulate']).default('off'),
 });
 
-export const loadConfig = (env: NodeJS.ProcessEnv = process.env) => Env.parse(env);
+const Checked = Env.refine(
+  (c) =>
+    c.EXECUTOR_DEMO_MODE === 'off' ||
+    (c.EXECUTOR_NETWORK === 'testnet' && c.VAULT_CHAIN_ID === 10143),
+  {
+    message:
+      'EXECUTOR_DEMO_MODE=simulate only runs with EXECUTOR_NETWORK=testnet and VAULT_CHAIN_ID=10143',
+  },
+);
+
+export const loadConfig = (env: NodeJS.ProcessEnv = process.env) => Checked.parse(env);
 export type ExecutorConfig = ReturnType<typeof loadConfig>;

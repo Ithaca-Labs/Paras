@@ -4,6 +4,7 @@ import { createTestDatabase, type TestDatabase } from '@paras/testkit';
 import { randomUUID } from 'node:crypto';
 import { decodeFunctionData, getAddress, pad, toHex, type Address, type Hex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { createDemoSim } from '../../src/demo/sim.js';
 import { ctfAbi, rampAbi, swapRouterAbi, tokenMessengerAbi } from '../../src/wallet/abi.js';
 import { batchTypedData, type Batch } from '../../src/wallet/batch.js';
 import { POLYGON, POLYGON_CHAIN_ID } from '../../src/wallet/constants.js';
@@ -249,6 +250,9 @@ export class World {
 
 export interface Harness {
   world: World;
+  /** Present when created with `{ sim: true }`: the testnet demo's simulated Polygon/Polymarket side. */
+  sim?: ReturnType<typeof createDemoSim>;
+  attester: ReturnType<typeof privateKeyToAccount>;
   db: DbHandle['db'];
   svc: WalletService;
   userId: string;
@@ -268,19 +272,47 @@ export interface Harness {
 }
 
 /** Real DB, real WalletService (policy layer, session key, owner-signed grant) over the fake world. */
-export async function createHarness(): Promise<Harness> {
+export async function createHarness(o: { sim?: boolean } = {}): Promise<Harness> {
   const testDb: TestDatabase = await createTestDatabase();
   const h = createDb(testDb.url);
   const world = new World();
   const owner = privateKeyToAccount(generatePrivateKey());
   const clock = { now: new Date('2026-10-09T12:00:00Z') };
   const [u] = await h.db.insert(schema.users).values({}).returning();
-  const svc = new WalletService({
+  const attester = privateKeyToAccount(generatePrivateKey());
+  const sim = o.sim
+    ? createDemoSim({
+        attester,
+        cctp: '0x3333333333333333333333333333333333333333',
+        vault: VAULT,
+        db: h.db,
+        burnOf: async (tx) => {
+          const amount = world.burns.get(tx);
+          const w = await svc.registeredWalletOf(owner.address);
+          return amount && w
+            ? { amount, mintRecipient: pad(w.walletAddress as Address, { size: 32 }) }
+            : null;
+        },
+        clobUrl: 'https://clob.test',
+        fetch: (async () =>
+          Response.json({
+            asks: world.asks,
+            bids: [{ price: '0.65', size: '10000' }],
+          })) as typeof fetch,
+      })
+    : undefined;
+  const px = {
+    relayer: sim?.relayer ?? world.relayer,
+    polygon: sim?.polygon ?? world.polygonChain,
+    iris: sim?.iris ?? world.iris,
+    clob: sim?.clob ?? world.clob,
+  };
+  const svc: WalletService = new WalletService({
     db: h.db,
     cipher: new EnvKeyCipher('11'.repeat(32)),
-    relayer: world.relayer,
+    relayer: px.relayer,
     now: () => clock.now,
-    chain: {
+    chain: sim?.polygon ?? {
       predictWalletAddress: async (salt) => getAddress(`0x${salt.slice(2, 42)}`),
       walletOwner: async () => owner.address,
     },
@@ -311,11 +343,11 @@ export async function createHarness(): Promise<Harness> {
     new IntentEngine({
       db: h.db,
       wallets: svc,
-      relayer: world.relayer,
+      relayer: px.relayer,
       vault: world.vaultChain,
-      polygon: world.polygonChain,
-      iris: world.iris,
-      clob: world.clob,
+      polygon: px.polygon,
+      iris: px.iris,
+      clob: px.clob,
       books: world.books,
       geoblock: world.geoblock,
       now: () => clock.now,
@@ -325,11 +357,11 @@ export async function createHarness(): Promise<Harness> {
     new ExitEngine({
       db: h.db,
       wallets: svc,
-      relayer: world.relayer,
+      relayer: px.relayer,
       vault: world.vaultChain,
-      polygon: world.polygonChain,
-      iris: world.iris,
-      clob: world.clob,
+      polygon: px.polygon,
+      iris: px.iris,
+      clob: px.clob,
       geoblock: world.geoblock,
       now: () => clock.now,
     });
@@ -358,6 +390,8 @@ export async function createHarness(): Promise<Harness> {
   let n = 0;
   return {
     world,
+    sim,
+    attester,
     db: h.db,
     svc,
     userId: u!.id,
