@@ -8,6 +8,8 @@ import { errMsg, useLoad } from '@/lib/use-api';
 import { useVaultWallet } from '@/lib/use-vault-wallet';
 import { publicClient, validAmount, vaultAbi } from '@/lib/vault-chain';
 import { DemoBanner } from './demo-banner';
+import { LimitOrderForm } from './limit-order-form';
+import { OneClickBet } from './one-click-bet';
 import { IntentTimeline } from './intent-timeline';
 import { useSession } from './providers';
 import { ErrorState } from './states';
@@ -27,7 +29,7 @@ export interface BetContext {
 /**
  * Bet on an Event through the Vault: Intent preview -> EIP-712 signature -> on-chain submit -> status.
  * Prefills from Magic Link query params `outcome`, `amount`, `maxPrice`.
- * `extension` renders below the form with the current selection: #109 mounts one-click / limit controls there.
+ * `extension` renders below the form with the current selection: one-click and limit controls (#109) are built in; this is for further controls.
  */
 export function BetPanel(props: { eventId: string; extension?: (ctx: BetContext) => ReactNode }) {
   return (
@@ -318,6 +320,12 @@ function Form({
         <p role="alert" className="text-sm text-negative">
           {err}
         </p>
+      )}
+      {selected && (
+        <div className="grid gap-4 border-t border-border pt-3 md:grid-cols-2">
+          <OneClickBet eventId={eventId} outcome={selected} />
+          <LimitOrderForm eventId={eventId} outcome={selected} />
+        </div>
       )}
       {extension?.({ eventId, outcome: selected, amount, maxPrice })}
     </div>

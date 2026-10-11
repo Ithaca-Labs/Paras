@@ -8,6 +8,7 @@ import { useVaultWallet } from '@/lib/use-vault-wallet';
 import { toUsdc } from '@/lib/vault-chain';
 import { DemoBanner } from './demo-banner';
 import { HistoryList } from './history-list';
+import { TpSlForm } from './tp-sl-form';
 import { EmptyState, ErrorState } from './states';
 import { VaultGate } from './vault-gate';
 
@@ -71,6 +72,7 @@ function Positions({ extras }: { extras?: (p: PortfolioPosition) => ReactNode })
       ) : (
         pf.data.positions.map((p) => (
           <Position key={p.id} p={p} onChange={pf.reload}>
+            {p.status === 'open' && <TpSlForm positionId={p.id} />}
             {extras?.(p)}
           </Position>
         ))
