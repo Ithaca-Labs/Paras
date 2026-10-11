@@ -22,6 +22,11 @@ const Env = z.object({
     .string()
     .regex(/^0x[0-9a-fA-F]{64}$/)
     .optional(),
+  /** Who signs Monad Vault txs: local key (tests/dev) or a Privy server wallet with policy (hackathon / prod). */
+  EXECUTOR_MONAD_SIGNER: z.enum(['env', 'privy']).default('env'),
+  PRIVY_APP_ID: z.string().optional(),
+  PRIVY_APP_SECRET: z.string().optional(),
+  PRIVY_EXECUTOR_WALLET_ID: z.string().optional(),
   MONAD_RPC_URL: z.string().url().optional(),
   VAULT_ADDRESS: z
     .string()

@@ -12,6 +12,7 @@ import { createGeoblock, createIris, createPolygon, createPolygonLogs } from './
 import { IntentEngine } from './intents/engine.js';
 import { createRunner } from './intents/runner.js';
 import { createMonad } from './vault/chain.js';
+import { createPrivy, privyExecutorAccount } from './vault/privy.js';
 import { EnvKeyCipher } from './wallet/key-cipher.js';
 import { HttpRelayerClient } from './wallet/relayer.js';
 import { WalletService } from './wallet/service.js';
@@ -30,11 +31,22 @@ if (config.EXECUTOR_INTENTS_ENABLED) {
   const account = privateKeyToAccount(
     need(config.EXECUTOR_PRIVATE_KEY, 'EXECUTOR_PRIVATE_KEY') as `0x${string}`,
   );
+  // Polygon (CLOB/relayer) keeps the env key; only Monad Vault txs move to Privy.
+  const monadAccount =
+    config.EXECUTOR_MONAD_SIGNER === 'privy'
+      ? await privyExecutorAccount(
+          createPrivy({
+            appId: need(config.PRIVY_APP_ID, 'PRIVY_APP_ID'),
+            appSecret: need(config.PRIVY_APP_SECRET, 'PRIVY_APP_SECRET'),
+          }),
+          need(config.PRIVY_EXECUTOR_WALLET_ID, 'PRIVY_EXECUTOR_WALLET_ID'),
+        )
+      : account;
   const { db, close } = createDb(databaseUrl);
   const monad = createMonad({
     transport: http(need(config.MONAD_RPC_URL, 'MONAD_RPC_URL')),
     chainId: need(config.VAULT_CHAIN_ID, 'VAULT_CHAIN_ID'),
-    account,
+    account: monadAccount,
     vault: need(config.VAULT_ADDRESS, 'VAULT_ADDRESS') as `0x${string}`,
     messageTransmitter: config.MONAD_MESSAGE_TRANSMITTER as `0x${string}`,
     fromBlock: BigInt(config.VAULT_START_BLOCK),

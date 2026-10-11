@@ -18,6 +18,7 @@
     "@paras/db": "workspace:*",
     "@paras/domain": "workspace:*",
     "@paras/shared": "workspace:*",
+    "@privy-io/node": "0.35.0",
     "drizzle-orm": "0.45.4",
     "fastify": "5.12.5",
     "pg-boss": "11.1.2",
