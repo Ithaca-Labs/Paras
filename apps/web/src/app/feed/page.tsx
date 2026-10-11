@@ -1,28 +1,34 @@
 import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { PageHeader } from '@/components/app-shell';
-import { EventCard } from '@/components/event-card';
+import { FeedList } from '@/components/feed-list';
 import { EmptyState } from '@/components/states';
 import { serverApi } from '@/lib/api';
 
 export const metadata = { title: 'Feed' };
 
-// STUB page (#27 builds the real Feed UI). Shows the wiring: server component -> typed client.
 export default async function FeedPage() {
-  const cookie = (await cookies()).toString();
-  const feed = await serverApi(cookie).getFeed({ query: { limit: 20 } });
+  const api = serverApi((await cookies()).toString());
+  const profile = await api.getProfile();
+  if (profile.status === 'none') redirect('/onboarding');
+  const [feed, follows] = await Promise.all([
+    api.getFeed({ query: { limit: 20 } }),
+    api.listFollows(),
+  ]);
+  const followed = follows.items.filter((f) => f.kind === 'event').map((f) => f.targetId);
   return (
     <>
       <PageHeader title="Feed">
-        {feed.personalized ? 'Picked for you.' : 'Popular right now.'}
+        {feed.personalized ? 'Picked for you.' : 'Popular right now.'}{' '}
+        <Link href="/onboarding" className="underline">
+          Edit interests
+        </Link>
       </PageHeader>
-      {feed.items.length === 0 ? (
+      {feed.items.length + feed.beginners.length === 0 ? (
         <EmptyState>No Events yet.</EmptyState>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {feed.items.map((i) => (
-            <EventCard key={i.event.id} event={i.event} reason={i.reason} />
-          ))}
-        </div>
+        <FeedList feed={feed} followedEventIds={followed} />
       )}
     </>
   );
