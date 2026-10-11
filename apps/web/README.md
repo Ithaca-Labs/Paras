@@ -9,7 +9,7 @@ pnpm --filter @paras/api dev          # API on :3000
 pnpm --filter @paras/web dev          # web on :3100 (webpack, see below)
 ```
 
-Env (read from the repo-root `.env`, see `next.config.ts`): `API_URL` (default `http://localhost:3000`), `NEXT_PUBLIC_PRIVY_APP_ID` (falls back to `PRIVY_APP_ID`). Unset Privy id = sign-in button disabled, everything else works.
+Env (read from the repo-root `.env`, see `next.config.ts`): `API_URL` (default `http://localhost:3000`; baked into the `/v1` rewrite at build time), `DEV_COUNTRY` (ISO alpha-2, non-production only: `src/proxy.ts` stamps it as `CF-IPCountry` so the Vault gate is demoable; in production `serverApi` and the rewrite forward the CDN header), `NEXT_PUBLIC_PRIVY_APP_ID` (falls back to `PRIVY_APP_ID`). Unset Privy id = sign-in button disabled, everything else works.
 
 ## Conventions
 
