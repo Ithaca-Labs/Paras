@@ -84,6 +84,32 @@ describe('ConnectedAppsList', () => {
   });
 });
 
+describe('ConsentForm', () => {
+  it('posts the approve decision and redirects', async () => {
+    vi.doMock('@/components/providers', () => ({
+      useSession: () => ({ configured: true, loading: false, user: {}, signIn: vi.fn() }),
+    }));
+    const { ConsentForm } = await import('@/components/consent-form');
+    const { api } = await import('@/lib/api');
+    const spy = vi
+      .spyOn(api, 'authorizeOAuth')
+      .mockResolvedValue({ redirectUrl: 'http://localhost:9999/cb?code=x' });
+    const assign = vi.fn();
+    vi.stubGlobal('location', { assign });
+    render(
+      <ConsentForm
+        clientName="Claude"
+        scopes={['markets:read']}
+        params={{ client_id: 'c', redirect_uri: 'http://localhost:9999/cb', response_type: 'code' }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Allow' }));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith('http://localhost:9999/cb?code=x'));
+    expect(spy.mock.calls[0]![0].body).toMatchObject({ client_id: 'c', approve: true });
+    vi.unstubAllGlobals();
+  });
+});
+
 describe('format', () => {
   it('formats cents and usd', () => {
     expect(cents('0.5')).toBe('50¢');
