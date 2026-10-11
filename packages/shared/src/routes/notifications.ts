@@ -1,7 +1,13 @@
 import { defineRoute } from '../route.js';
 import { z } from '../zod.js';
 
-export const NotificationKind = z.enum(['price_move', 'closing_soon', 'digest', 'intent_update']);
+export const NotificationKind = z.enum([
+  'price_move',
+  'closing_soon',
+  'digest',
+  'intent_update',
+  'smart_money',
+]);
 export const NotificationFrequency = z.enum(['instant', 'daily', 'weekly', 'off']);
 
 export const Notification = z.object({

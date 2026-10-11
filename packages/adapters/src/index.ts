@@ -25,3 +25,9 @@ export { createProphetXAdapter, type ProphetXOptions } from './prophetx/index.js
 export { createNovigAdapter, type NovigOptions } from './novig/index.js';
 export { longTailAdaptersFromEnv } from './long-tail.js';
 export { toDecimalString } from './decimal.js';
+export {
+  createNansenClient,
+  NansenError,
+  type NansenClient,
+  type NansenOptions,
+} from './nansen/index.js';

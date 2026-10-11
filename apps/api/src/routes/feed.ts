@@ -1,4 +1,4 @@
-import { schema } from '@paras/db';
+import { eventSmartMoney, schema } from '@paras/db';
 import {
   beginnerPicks,
   hiddenEventIds,
@@ -105,6 +105,7 @@ export const feedRoutes: RoutePlugin = (
         tagsOf.set(t.eventId, [...(tagsOf.get(t.eventId) ?? []), t.tagId]);
       }
 
+      const smart = await eventSmartMoney(db, ids);
       const candidates: FeedCandidate[] = rows.map((r) => ({
         id: r.id,
         volume: Number(r.volume),
@@ -115,6 +116,7 @@ export const feedRoutes: RoutePlugin = (
         createdAt: r.createdAt,
         tags: tagsOf.get(r.id) ?? [],
         embedding: r.embedding,
+        smartMoney: smart.get(r.id) ?? null,
       }));
       const signals: FeedSignal[] = signalRows.map((s) => ({
         eventId: s.eventId,

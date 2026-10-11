@@ -124,6 +124,22 @@ export function createMcpServer(api: ApiClient, me: ApiClient = api): McpServer 
   );
 
   server.registerTool(
+    'explain_market',
+    {
+      description:
+        'Why an Event is moving: its 24h price move plus the Nansen smart-money signal (profitable holders and recent flow lean YES or NO). Read-only; includes a Magic Link.',
+      inputSchema: { eventId: z.string().uuid(), source },
+    },
+    async ({ eventId, source: src }) => {
+      const [why, event] = await Promise.all([
+        api.explainEvent({ params: { id: eventId } }),
+        api.getEvent({ params: { id: eventId } }),
+      ]);
+      return out({ ...why, magicLink: (await withLinks([event], src))[0]!.magicLink });
+    },
+  );
+
+  server.registerTool(
     'create_magic_link',
     {
       description:

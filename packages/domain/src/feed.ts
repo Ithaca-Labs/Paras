@@ -1,4 +1,5 @@
 import { cosine } from './embedding.js';
+import { SMART_MONEY_MIN, smartMoneyLeaning } from './smart-money.js';
 import { taxonomyNode } from './taxonomy.js';
 
 export const SIGNAL_KINDS = ['view', 'dismiss', 'fewer_like_this', 'bet'] as const;
@@ -16,6 +17,8 @@ export interface FeedWeights {
   follow: number;
   /** Boost/penalty from implicit signals (views, bets, fewer-like-this, dismissals). */
   signals: number;
+  /** Boost from a strong smart-money lean (Nansen). */
+  smartMoney: number;
   /** Subtracted per already-ranked item that shares the same primary tag. */
   diversity: number;
   /** Liquidity (USD) at which the liquidity component saturates. */
@@ -33,6 +36,7 @@ export const DEFAULT_FEED_WEIGHTS: FeedWeights = {
   freshness: 0.15,
   follow: 1.5,
   signals: 0.4,
+  smartMoney: 0.3,
   diversity: 0.15,
   liquidityFloor: 500,
   strictLiquidityFloor: 2000,
@@ -52,6 +56,8 @@ export interface FeedCandidate {
   /** Taxonomy tag ids (category, topics, entities). */
   tags: readonly string[];
   embedding: readonly number[] | null;
+  /** Smart-money signal (lean -1 NO .. +1 YES, strength 0..1), if known. */
+  smartMoney?: { lean: number; strength: number } | null;
 }
 
 export interface FeedProfile {
@@ -156,6 +162,10 @@ export function rankFeed(input: FeedInput): FeedEntry[] {
       follow: w.follow * followed,
       interest: w.interest * interest,
       signals: w.signals * sig,
+      smartMoney:
+        c.smartMoney && c.smartMoney.strength >= SMART_MONEY_MIN
+          ? w.smartMoney * c.smartMoney.strength
+          : 0,
       trending: w.trending * trend,
       freshness: w.freshness * fresh,
       liquidity: w.liquidity * liq,
@@ -167,6 +177,7 @@ export function rankFeed(input: FeedInput): FeedEntry[] {
     const personal: (keyof typeof parts)[] = [
       'follow',
       'signals',
+      'smartMoney',
       ...(personalized ? (['interest'] as const) : []),
     ];
     const bestOf = (keys: (keyof typeof parts)[]) =>
@@ -190,6 +201,8 @@ export function rankFeed(input: FeedInput): FeedEntry[] {
           : 'Similar to your interests';
     } else if (top === 'signals') {
       reason = sig > 0 ? 'Similar to Events you viewed or bet on' : 'Related to your activity';
+    } else if (top === 'smartMoney') {
+      reason = `Smart money is leaning ${smartMoneyLeaning(c.smartMoney!)}`;
     } else if (top === 'trending') {
       reason =
         c.move24h >= 0.05

@@ -59,6 +59,7 @@ describe('mcp', () => {
     expect(names).toEqual([
       'compare_prices',
       'create_magic_link',
+      'explain_market',
       'get_event',
       'get_my_feed',
       'get_portfolio',
@@ -67,6 +68,16 @@ describe('mcp', () => {
       'search_events',
     ]);
     expect(names.join()).not.toMatch(/trade|bet|order|deposit|withdraw|execute|sign|place/);
+    await client.close();
+  });
+
+  it('explain_market returns the summary and smart-money signal with a Magic Link', async () => {
+    const client = await connect();
+    const [ev] = (await t.client.listEvents({ query: { limit: 1 } })).items;
+    const r = await call(client, 'explain_market', { eventId: ev!.id });
+    expect(r.summary).toContain(ev!.title);
+    expect(r.smartMoney).toBeNull();
+    expect(r.magicLink).toMatch(/^https:\/\/web\.paras\.test\/magic\//);
     await client.close();
   });
 

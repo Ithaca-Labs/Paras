@@ -85,6 +85,23 @@ export const TagView = z.object({
 });
 export type TagView = z.infer<typeof TagView>;
 
+/** Nansen smart-money read on an Event (profitable holders + recent flow). Null until fetched. */
+export const SmartMoneyView = z.object({
+  leaning: z.enum(['YES', 'NO', 'neutral']),
+  /** 0..1 */
+  strength: z.number(),
+  /** Share of profitable-holder value on YES. */
+  yesShare: z.number().nullable(),
+  smartHolders: z.number().int(),
+  /** Net USD recently traded toward YES (negative = NO). */
+  flowUsd: z.number(),
+  /** Smart-money token netflow 24h (crypto-price Events only). */
+  netflow24hUsd: z.number().nullable(),
+  reason: z.string(),
+  updatedAt: z.iso.datetime(),
+});
+export type SmartMoneyView = z.infer<typeof SmartMoneyView>;
+
 export const EventView = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -104,6 +121,7 @@ export const EventView = z.object({
   /** Newest Quote observation across all Venues. */
   quotesUpdatedAt: z.iso.datetime().nullable(),
   markets: z.array(MarketView),
+  smartMoney: SmartMoneyView.nullable(),
 });
 export type EventView = z.infer<typeof EventView>;
 
@@ -160,6 +178,25 @@ export const getEvent = defineRoute({
   tags: ['events'],
   request: { params: z.object({ id: z.string().uuid() }) },
   response: EventView,
+});
+
+export const ExplainView = z.object({
+  eventId: z.string().uuid(),
+  move24h: DecimalString,
+  smartMoney: SmartMoneyView.nullable(),
+  /** Plain-language why this Event is moving. */
+  summary: z.string(),
+});
+export type ExplainView = z.infer<typeof ExplainView>;
+
+export const explainEvent = defineRoute({
+  method: 'get',
+  path: '/v1/events/{id}/explain',
+  operationId: 'explainEvent',
+  summary: 'Why an Event is moving: 24h move plus the Nansen smart-money signal, in plain language',
+  tags: ['events'],
+  request: { params: z.object({ id: z.string().uuid() }) },
+  response: ExplainView,
 });
 
 /** One `quote` SSE message: a fresh Quote for one Outcome of the Event. */

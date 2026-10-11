@@ -1,0 +1,66 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://api.nansen.ai/api/v1/prediction-market/top-holders",
+    "body": "{\"market_id\":\"0xcond1\",\"pagination\":{\"page\":1,\"per_page\":20},\"order_by\":[{\"field\":\"position_size\",\"direction\":\"DESC\"}]}"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "pagination": {
+        "page": 1,
+        "per_page": 10,
+        "is_last_page": true
+      },
+      "data": [
+        {
+          "market_id": "0xcond1",
+          "outcome_index": 0,
+          "address": "0xa1",
+          "owner_address": "0xa1",
+          "side": "Yes",
+          "position_size": 50000,
+          "avg_entry_price": 0.4,
+          "current_price": 0.6,
+          "unrealized_pnl_usd": 9000
+        },
+        {
+          "market_id": "0xcond1",
+          "outcome_index": 0,
+          "address": "0xa2",
+          "owner_address": "0xa2",
+          "side": "Yes",
+          "position_size": 20000,
+          "avg_entry_price": 0.4,
+          "current_price": 0.6,
+          "unrealized_pnl_usd": 1500
+        },
+        {
+          "market_id": "0xcond1",
+          "outcome_index": 1,
+          "address": "0xa3",
+          "owner_address": "0xa3",
+          "side": "No",
+          "position_size": 8000,
+          "avg_entry_price": 0.4,
+          "current_price": 0.4,
+          "unrealized_pnl_usd": 700
+        },
+        {
+          "market_id": "0xcond1",
+          "outcome_index": 1,
+          "address": "0xa4",
+          "owner_address": "0xa4",
+          "side": "No",
+          "position_size": 40000,
+          "avg_entry_price": 0.4,
+          "current_price": 0.4,
+          "unrealized_pnl_usd": -3000
+        }
+      ]
+    }
+  }
+}

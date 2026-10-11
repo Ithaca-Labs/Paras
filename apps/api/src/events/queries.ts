@@ -2,12 +2,20 @@ import {
   isLowConfidence,
   isStale,
   reciprocalRankFusion,
+  smartMoneyLeaning,
+  smartMoneyReason,
   taxonomyNode,
   venueAvailabilityFor,
   venueLabel,
 } from '@paras/domain';
-import { schema, type Database } from '@paras/db';
-import type { EventView, MarketStatus, MarketView, QuoteStreamMessage } from '@paras/shared';
+import { eventSmartMoney, schema, type Database, type EventSmartMoney } from '@paras/db';
+import type {
+  EventView,
+  MarketStatus,
+  MarketView,
+  QuoteStreamMessage,
+  SmartMoneyView,
+} from '@paras/shared';
 import { and, asc, desc, eq, gt, gte, inArray, isNotNull, lte, sql } from 'drizzle-orm';
 
 const { events, eventMarkets, eventTags, markets, outcomes, latestQuotes, venues } = schema;
@@ -164,6 +172,20 @@ export async function tagCounts(db: Database): Promise<Map<string, number>> {
   return new Map(rows.map((r) => [r.tagId, r.n]));
 }
 
+export const toSmartMoneyView = (s: EventSmartMoney | undefined): SmartMoneyView | null =>
+  s
+    ? {
+        leaning: smartMoneyLeaning(s),
+        strength: s.strength,
+        yesShare: s.yesShare,
+        smartHolders: s.smartHolders,
+        flowUsd: s.flowUsd,
+        netflow24hUsd: s.netflow24hUsd,
+        reason: smartMoneyReason(s),
+        updatedAt: s.updatedAt.toISOString(),
+      }
+    : null;
+
 /** Full EventViews (Markets, Outcomes, latest Quotes) for the ids, in the order given. */
 export async function loadEventViews(
   db: Database,
@@ -193,6 +215,7 @@ export async function loadEventViews(
     .from(eventTags)
     .where(inArray(eventTags.eventId, [...ids]))
     .orderBy(desc(eventTags.score), eventTags.tagId);
+  const smart = await eventSmartMoney(db, ids);
   const marketIds = links.map((l) => l.market.id);
   const outcomeRows = marketIds.length
     ? await db
@@ -286,6 +309,7 @@ export async function loadEventViews(
         ),
         quotesUpdatedAt: times.length ? times.reduce((a, b) => (a > b ? a : b)) : null,
         markets: ms,
+        smartMoney: toSmartMoneyView(smart.get(id)),
       },
     ];
   });

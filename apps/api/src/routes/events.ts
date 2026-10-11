@@ -1,7 +1,15 @@
+import { eventSmartMoney } from '@paras/db';
+import { explainMarket } from '@paras/domain';
 import { apiRoutes, sseRoutes } from '@paras/shared';
 import { QUOTE_STALE_AFTER_MS } from '../deps.js';
 import { HttpError, notFound } from '../errors.js';
-import { eventExists, loadEventQuotes, loadEventViews, searchEventIds } from '../events/queries.js';
+import {
+  eventExists,
+  loadEventQuotes,
+  loadEventViews,
+  searchEventIds,
+  toSmartMoneyView,
+} from '../events/queries.js';
 import { implement, implementSse } from '../implement.js';
 import { headerGeo, viewerCountries } from '../jurisdiction.js';
 import type { RoutePlugin } from './index.js';
@@ -63,6 +71,27 @@ export const eventRoutes: RoutePlugin = (
       const [event] = await loadEventViews(db, [params.id], now(), QUOTE_STALE_AFTER_MS, countries);
       if (!event) throw notFound('Event');
       return event;
+    },
+    { auth: 'optional' },
+  );
+
+  implement(
+    app,
+    apiRoutes.explainEvent,
+    async ({ params }) => {
+      const [event] = await loadEventViews(db, [params.id], now(), QUOTE_STALE_AFTER_MS, []);
+      if (!event) throw notFound('Event');
+      const sm = (await eventSmartMoney(db, [params.id])).get(params.id);
+      return {
+        eventId: event.id,
+        move24h: event.move24h,
+        smartMoney: toSmartMoneyView(sm),
+        summary: explainMarket({
+          title: event.title,
+          move24h: Number(event.move24h),
+          signal: sm ?? null,
+        }),
+      };
     },
     { auth: 'optional' },
   );
