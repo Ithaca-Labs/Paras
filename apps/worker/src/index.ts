@@ -2,6 +2,7 @@ import {
   createAdapterRegistry,
   createKalshiAdapter,
   createLimitlessAdapter,
+  createNansenClient,
   createPolymarketAdapter,
   createSxBetAdapter,
   longTailAdaptersFromEnv,
@@ -45,9 +46,14 @@ const worker = buildWorker({
       }),
     }),
     ...(quoteStream && { streamCovers: quoteStream.covers }),
+    ...(config.NANSEN_API_KEY && {
+      nansen: createNansenClient({ apiKey: config.NANSEN_API_KEY }),
+      nansenDailyCap: config.NANSEN_DAILY_CAP,
+      nansenTtlHours: config.NANSEN_TTL_HOURS,
+    }),
     log,
   }),
-  schedules: buildSchedules(venues),
+  schedules: buildSchedules(venues, { nansen: !!config.NANSEN_API_KEY }),
   startup: venues.map((venue) => ({ queue: 'venue.sync-markets', data: { venue } })),
   logger: { level: config.LOG_LEVEL },
 });

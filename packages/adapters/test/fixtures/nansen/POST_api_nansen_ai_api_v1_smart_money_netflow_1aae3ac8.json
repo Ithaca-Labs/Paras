@@ -1,0 +1,35 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://api.nansen.ai/api/v1/smart-money/netflow",
+    "body": "{\"chains\":[\"all\"],\"filters\":{\"token_address\":\"BTC\"},\"pagination\":{\"page\":1,\"per_page\":10}}"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "pagination": {
+        "page": 1,
+        "per_page": 10,
+        "is_last_page": true
+      },
+      "data": [
+        {
+          "token_address": "0xbtc",
+          "token_symbol": "BTC",
+          "net_flow_1h_usd": 1,
+          "net_flow_24h_usd": 2500000,
+          "net_flow_7d_usd": 3,
+          "net_flow_30d_usd": 4,
+          "chain": "ethereum",
+          "token_sectors": [],
+          "trader_count": 40,
+          "token_age_days": 5000,
+          "market_cap_usd": 1000000000000
+        }
+      ]
+    }
+  }
+}

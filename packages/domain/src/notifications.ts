@@ -1,4 +1,5 @@
 import { cosine } from './embedding.js';
+import { SMART_MONEY_ALERT, smartMoneyLeaning, smartMoneyReason } from './smart-money.js';
 import { rankFeed, type FeedCandidate, type FeedProfile } from './feed.js';
 
 export const NOTIFICATION_KINDS = [
@@ -6,6 +7,7 @@ export const NOTIFICATION_KINDS = [
   'closing_soon',
   'digest',
   'intent_update',
+  'smart_money',
 ] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 export const NOTIFICATION_FREQUENCIES = ['instant', 'daily', 'weekly', 'off'] as const;
@@ -26,7 +28,11 @@ export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
 const WEEK = 7 * DAY;
-export const ALERT_KINDS: readonly NotificationKind[] = ['price_move', 'closing_soon'];
+export const ALERT_KINDS: readonly NotificationKind[] = [
+  'price_move',
+  'closing_soon',
+  'smart_money',
+];
 const ALERT_GAP: Record<NotificationFrequency, number> = {
   instant: 0,
   daily: DAY,
@@ -72,9 +78,10 @@ export interface AlertEvent {
   title: string;
   move24h: number;
   endDate: Date | null;
+  smartMoney?: { lean: number; strength: number } | null;
 }
 export interface AlertDraft {
-  kind: 'price_move' | 'closing_soon';
+  kind: 'price_move' | 'closing_soon' | 'smart_money';
   /** Same key = same alert: one per Event per UTC day for moves, once for closing. */
   dedupeKey: string;
   title: string;
@@ -90,6 +97,15 @@ export function detectAlerts(e: AlertEvent, t: AlertThresholds, now: Date): Aler
       dedupeKey: `move:${e.id}:${now.toISOString().slice(0, 10)}`,
       title: `Sharp move: ${e.title}`,
       body: `A price moved ${Math.round(e.move24h * 100)} points in the last 24h.`,
+    });
+  }
+  const sm = e.smartMoney;
+  if (sm && sm.strength >= SMART_MONEY_ALERT) {
+    out.push({
+      kind: 'smart_money',
+      dedupeKey: `smart:${e.id}:${smartMoneyLeaning(sm)}:${now.toISOString().slice(0, 10)}`,
+      title: `Smart money moved: ${e.title}`,
+      body: `${smartMoneyReason(sm)} (strength ${Math.round(sm.strength * 100)}%).`,
     });
   }
   const left = e.endDate ? e.endDate.getTime() - now.getTime() : -1;

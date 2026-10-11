@@ -21,3 +21,4 @@ export {
   type MatchOptions,
   type MatchResult,
 } from './match.js';
+export { eventSmartMoney, type EventSmartMoney } from './smart-money.js';

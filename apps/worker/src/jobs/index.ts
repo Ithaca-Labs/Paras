@@ -1,5 +1,6 @@
 import { z } from '@paras/shared';
 import { defineJob, type JobDefinition } from './define.js';
+import { createSmartMoneyJob, type SmartMoneyContext } from './smart-money.js';
 import { createAlertScanJob, createDigestJob, type NotifyJobContext } from './notifications.js';
 import { systemPing } from './system-ping.js';
 import {
@@ -11,7 +12,7 @@ import {
 
 /** Register new jobs here (one file per job; Venue sync, matching, alerts, ...). */
 export function buildJobs(
-  ctx: VenueJobContext & Pick<NotifyJobContext, 'mailer' | 'now'>,
+  ctx: VenueJobContext & Pick<NotifyJobContext, 'mailer' | 'now'> & Partial<SmartMoneyContext>,
 ): JobDefinition[] {
   return [
     systemPing as JobDefinition,
@@ -19,6 +20,7 @@ export function buildJobs(
     createPollQuotesJob(ctx) as JobDefinition,
     createAlertScanJob(ctx) as JobDefinition,
     createDigestJob(ctx) as JobDefinition,
+    ...(ctx.nansen ? [createSmartMoneyJob({ ...ctx, nansen: ctx.nansen }) as JobDefinition] : []),
     // Also runs after every sync; this queue is for manual re-runs (e.g. after an operator fix).
     defineJob({
       name: 'events.match',
@@ -36,12 +38,18 @@ export interface Schedule {
 }
 
 /** Recurring work per Venue: metadata every 10 minutes, Quotes every minute (cron's floor). */
-export function buildSchedules(venues: readonly string[]): Schedule[] {
+export function buildSchedules(
+  venues: readonly string[],
+  opts: { nansen?: boolean } = {},
+): Schedule[] {
   return [
     ...venues.flatMap((venue) => [
       { queue: 'venue.sync-markets', cron: '*/10 * * * *', key: venue, data: { venue } },
       { queue: 'venue.poll-quotes', cron: '* * * * *', key: venue, data: { venue } },
     ]),
+    ...(opts.nansen
+      ? [{ queue: 'nansen.refresh-signals', cron: '15 * * * *', key: 'all', data: {} }]
+      : []),
     { queue: 'notify.scan-alerts', cron: '*/5 * * * *', key: 'all', data: {} },
     { queue: 'notify.weekly-digest', cron: '0 9 * * 1', key: 'all', data: {} },
   ];

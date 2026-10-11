@@ -1,4 +1,18 @@
 // Pure business logic only: no I/O, no clocks, no randomness unless injected.
+export {
+  SMART_MONEY_ALERT,
+  SMART_MONEY_MIN,
+  computeSmartMoney,
+  cryptoSymbol,
+  explainMarket,
+  priceDirection,
+  smartMoneyLeaning,
+  smartMoneyReason,
+  type HolderRow,
+  type SmartMoneyLeaning,
+  type SmartMoneySignal,
+  type TradeRow,
+} from './smart-money.js';
 export { quoteSpread, type SpreadInput } from './quote.js';
 export {
   normalizeEmail,

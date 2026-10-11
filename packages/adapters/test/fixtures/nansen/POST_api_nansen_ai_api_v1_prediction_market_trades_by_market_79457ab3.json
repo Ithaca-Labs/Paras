@@ -1,0 +1,74 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://api.nansen.ai/api/v1/prediction-market/trades-by-market",
+    "body": "{\"market_id\":\"0xcond1\",\"pagination\":{\"page\":1,\"per_page\":100},\"date\":{\"from\":\"2026-10-10T00:00:00.000Z\"},\"order_by\":[{\"field\":\"timestamp\",\"direction\":\"DESC\"}]}"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "pagination": {
+        "page": 1,
+        "per_page": 10,
+        "is_last_page": true
+      },
+      "data": [
+        {
+          "timestamp": "2026-10-10T20:00:00Z",
+          "buyer": "0x1",
+          "seller": "0x2",
+          "taker_action": "buy",
+          "side": "Yes",
+          "outcome_index": 0,
+          "size": 10000,
+          "price": 0.6,
+          "usdc_value": 6000,
+          "tx_hash": "0xabc",
+          "market_id": "0xcond1"
+        },
+        {
+          "timestamp": "2026-10-10T18:00:00Z",
+          "buyer": "0x1",
+          "seller": "0x2",
+          "taker_action": "buy",
+          "side": "Yes",
+          "outcome_index": 0,
+          "size": 5000,
+          "price": 0.6,
+          "usdc_value": 3000,
+          "tx_hash": "0xabc",
+          "market_id": "0xcond1"
+        },
+        {
+          "timestamp": "2026-10-10T16:00:00Z",
+          "buyer": "0x1",
+          "seller": "0x2",
+          "taker_action": "sell",
+          "side": "No",
+          "outcome_index": 1,
+          "size": 1666.6666666666667,
+          "price": 0.6,
+          "usdc_value": 1000,
+          "tx_hash": "0xabc",
+          "market_id": "0xcond1"
+        },
+        {
+          "timestamp": "2026-10-10T15:00:00Z",
+          "buyer": "0x1",
+          "seller": "0x2",
+          "taker_action": "buy",
+          "side": "No",
+          "outcome_index": 1,
+          "size": 833.3333333333334,
+          "price": 0.6,
+          "usdc_value": 500,
+          "tx_hash": "0xabc",
+          "market_id": "0xcond1"
+        }
+      ]
+    }
+  }
+}

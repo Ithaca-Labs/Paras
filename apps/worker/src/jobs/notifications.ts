@@ -1,4 +1,4 @@
-import { notify, schema, type Database, type NotifyMailer } from '@paras/db';
+import { eventSmartMoney, notify, schema, type Database, type NotifyMailer } from '@paras/db';
 import {
   DEFAULT_ALERT_THRESHOLDS,
   detectAlerts,
@@ -45,9 +45,14 @@ export function createAlertScanJob({ db, mailer, now = () => new Date(), log }: 
         .from(follows)
         .innerJoin(events, eq(sql`${events.id}::text`, follows.targetId))
         .where(and(eq(follows.kind, 'event'), eq(events.status, 'open')));
+      const smart = await eventSmartMoney(db, [...new Set(rows.map((r) => r.id))]);
       let sent = 0;
       for (const r of rows) {
-        const alerts = detectAlerts({ ...r, move24h: Number(r.move24h) }, thresholds, at);
+        const alerts = detectAlerts(
+          { ...r, move24h: Number(r.move24h), smartMoney: smart.get(r.id) ?? null },
+          thresholds,
+          at,
+        );
         for (const a of alerts) {
           if (await notify(db, mailer, { ownerKey: r.ownerKey, eventId: r.id, ...a }, at)) sent++;
         }

@@ -15,7 +15,7 @@ import {
   updateEventLabels,
 } from './admin.js';
 import { compareEvent, getEventHistory } from './compare.js';
-import { getEvent, listEvents, streamEventQuotes } from './events.js';
+import { explainEvent, getEvent, listEvents, streamEventQuotes } from './events.js';
 import { addFollow, getFeed, listFollows, recordFeedSignal, removeFollow } from './feed.js';
 import { getHealth } from './health.js';
 import {
@@ -92,6 +92,7 @@ export const apiRoutes = {
   getMe,
   listEvents,
   getEvent,
+  explainEvent,
   compareEvent,
   getEventHistory,
   createMagicLink,
