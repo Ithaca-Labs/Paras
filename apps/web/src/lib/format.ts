@@ -12,3 +12,14 @@ export const usd = (v: string) =>
     notation: 'compact',
     maximumFractionDigits: 1,
   }).format(Number(v));
+
+/** "0.4213" -> "$0.421" (per-share amounts). */
+export const perShare = (v: string | null | undefined) =>
+  v == null ? '—' : `$${Number(v).toFixed(3)}`;
+
+/** "0.0513" -> "5.1¢" (spreads, fees). */
+export const centsPrecise = (v: string | null | undefined) =>
+  v == null ? '—' : `${(Number(v) * 100).toFixed(1)}¢`;
+
+export const when = (iso: string | null | undefined) =>
+  iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
