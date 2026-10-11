@@ -1,6 +1,6 @@
 'use client';
 
-import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
+import { PrivyProvider, useIdentityToken, usePrivy } from '@privy-io/react-auth';
 import type { Me } from '@paras/shared';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { endSession, exchangePrivyToken, fetchMe } from '@/lib/session';
@@ -36,6 +36,7 @@ export const useSession = () => useContext(SessionContext);
 /** Privy sign-in -> API session. Must sit inside PrivyProvider. */
 function PrivySession({ children }: { children: React.ReactNode }) {
   const { ready, authenticated, login, logout, getAccessToken } = usePrivy();
+  const { identityToken } = useIdentityToken();
   const [user, setUser] = useState<Me | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +46,9 @@ function PrivySession({ children }: { children: React.ReactNode }) {
     (async () => {
       if (authenticated) {
         const token = await getAccessToken();
-        if (token) await exchangePrivyToken(token).catch(() => undefined);
+        // The identity token arrives after login; re-runs once it is set.
+        if (token && identityToken)
+          await exchangePrivyToken(token, identityToken).catch(() => undefined);
       }
       const me = await fetchMe();
       if (live) {
@@ -56,7 +59,7 @@ function PrivySession({ children }: { children: React.ReactNode }) {
     return () => {
       live = false;
     };
-  }, [ready, authenticated, getAccessToken]);
+  }, [ready, authenticated, identityToken, getAccessToken]);
 
   const signOut = useCallback(async () => {
     await endSession();
