@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/app-shell';
+import { AnyChainDeposit } from '@/components/any-chain-deposit';
 import { EmptyState } from '@/components/states';
 
 export const metadata = { title: 'Vault' };
@@ -9,6 +10,7 @@ export default function VaultPage() {
     <>
       <PageHeader title="Vault" />
       <EmptyState>Vault UI lands in #29.</EmptyState>
+      <AnyChainDeposit />
     </>
   );
 }
