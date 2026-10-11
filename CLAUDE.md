@@ -31,12 +31,12 @@ Use PRD glossary terms exactly in code, UI and docs: Venue, Market, Outcome, Eve
 ## Build order: backend first, frontend LAST
 
 - Do **not** create or modify `apps/web` until you are working on a `frontend`-labeled issue.
-- Frontend issues are blocked until the user provides brand assets (logo, banner, colors, fonts) in the `hitl` assets issue. Never invent a brand or design.
+- Hackathon exception (2026-10-11, user-approved): the web app is built now with a **neutral theme** (theme tokens only, no invented logo or brand). Brand assets from #25 later only swap tokens/assets. Never invent a brand.
 - Backend issues expose everything the UI needs as API endpoints. UI work belongs only in `frontend` issues.
 
 ## Non-negotiables (do not change without updating PRD decision log + user approval)
 
-- The MCP server is read-only. It has no tool that moves money or places trades. Execution only happens on Paras with a user-signed Intent.
+- The MCP server is read-only. It has no tool that moves money or places trades. Execution only happens on Paras with a user-signed Intent, or one signed by Paras under the user's Privy delegation (session signer + Privy policy: Vault contract only, bet/exit/cancel functions only, spend cap) for conditional orders the user configured (limit, take-profit, stop-loss). User-approved 2026-10-11.
 - The Vault keeps each user's funds segregated. No pooled shares or NAV.
 - The Executor can only move a user's funds to that user's own Deposit Wallet, or back to that user, and only against a valid, unexpired, user-signed Intent. Caveat (#36): on Polygon in V1 this is enforced off-chain by the Executor policy layer (`apps/executor/src/wallet/policy.ts`, deny-by-default) and Polymarket's relayer, since stock session keys are not scoped on-chain; on Monad it is on-chain. Never weaken the policy allowlist. Option A (`contracts/src/PolicyOwner.sol`, #46) enforces the same allowlist on-chain; it goes live once #35 confirms Polymarket accepts a contract owner (wiring: #89). Keep `policy.ts` and `PolicyOwner` in sync.
 - The user chooses the Event, Outcome and amount. The Vault only chooses the Venue. No autonomous strategies.
@@ -87,7 +87,8 @@ CI never makes live Venue calls. Record fixtures with the fixture harness. Every
 
 - `ready-for-agent`: fully specified; an agent can pick it up.
 - `hitl`: needs a human action or decision.
-- `frontend`: web UI work. Build it last, and only after the brand assets issue is closed.
+- `frontend`: web UI work. Neutral theme until #25 assets arrive (hackathon exception).
+- `hackathon`: Monad Metropolis submission (deadline 2026-10-13). Track: Onchain Finance & Trading. Bounties: Privy, Nansen, Aurora/NEAR Intents, Envio. Testnet demo; Aurora enabled on mainnet only.
 
 ## Session memory
 
