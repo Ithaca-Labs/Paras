@@ -1,4 +1,5 @@
 node_modules
+.next
 dist
 pnpm-lock.yaml
 .turbo
@@ -15,3 +16,4 @@ spikes
 indexer/.envio
 indexer/envio-env.d.ts
 indexer/abis
+next-env.d.ts
