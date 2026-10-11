@@ -12,6 +12,7 @@ import { buildApp } from './app.js';
 import { createMailer } from './auth/mailer.js';
 import { defaultAuthConfig } from './auth/types.js';
 import { loadConfig, loadMagicLinkKeys } from './config.js';
+import { createNearIntents } from './near-intents.js';
 import { createVaultReader } from './vault.js';
 
 const config = loadConfig();
@@ -41,6 +42,9 @@ const app = buildApp(
           chainId: config.VAULT_CHAIN_ID,
         }),
       }),
+    ...(config.VAULT_CHAIN_ID === 143 && {
+      nearIntents: createNearIntents({ apiKey: config.NEAR_INTENTS_API_KEY }),
+    }),
     oauth: {
       issuer: config.OAUTH_ISSUER,
       ...(config.OAUTH_CONSENT_URL && { consentUrl: config.OAUTH_CONSENT_URL }),

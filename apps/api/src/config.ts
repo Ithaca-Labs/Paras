@@ -36,6 +36,8 @@ const Env = z.object({
     .regex(/^0x[0-9a-fA-F]{40}$/)
     .optional(),
   VAULT_CHAIN_ID: z.coerce.number().int().default(10143),
+  /** 1Click API key (X-API-Key). Feature is on only when VAULT_CHAIN_ID is 143 (mainnet). */
+  NEAR_INTENTS_API_KEY: z.string().optional(),
   /** Comma-separated emails / wallet addresses that become admins on sign-in. */
   ADMIN_EMAILS: z.string().default(''),
   ADMIN_WALLETS: z.string().default(''),

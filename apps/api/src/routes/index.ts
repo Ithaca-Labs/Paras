@@ -3,6 +3,7 @@ import type { AppDeps } from '../deps.js';
 import { adminRoutes } from './admin.js';
 import { authRoutes } from './auth.js';
 import { compareRoutes } from './compare.js';
+import { depositRoutes } from './deposit.js';
 import { eventRoutes } from './events.js';
 import { feedRoutes } from './feed.js';
 import { healthRoutes } from './health.js';
@@ -27,6 +28,7 @@ export type RoutePlugin = (app: FastifyInstance, deps: AppDeps) => void;
  */
 export const routePlugins: RoutePlugin[] = [
   healthRoutes,
+  depositRoutes,
   authRoutes,
   eventRoutes,
   compareRoutes,

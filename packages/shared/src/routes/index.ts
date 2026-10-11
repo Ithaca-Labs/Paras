@@ -19,6 +19,13 @@ import { getEvent, listEvents, streamEventQuotes } from './events.js';
 import { addFollow, getFeed, listFollows, recordFeedSignal, removeFollow } from './feed.js';
 import { getHealth } from './health.js';
 import {
+  getConfig,
+  getDepositStatus,
+  listDepositTokens,
+  quoteDeposit,
+  submitDeposit,
+} from './deposit.js';
+import {
   getNotificationPrefs,
   listNotifications,
   markNotificationsRead,
@@ -65,6 +72,11 @@ import {
  */
 export const apiRoutes = {
   getHealth,
+  getConfig,
+  listDepositTokens,
+  quoteDeposit,
+  submitDeposit,
+  getDepositStatus,
   getSiweNonce,
   verifySiwe,
   requestEmailCode,
@@ -133,6 +145,7 @@ export * from './admin.js';
 export * from './events.js';
 export * from './compare.js';
 export * from './health.js';
+export * from './deposit.js';
 export * from './magic-links.js';
 export * from './taxonomy.js';
 export * from './profile.js';
