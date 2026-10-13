@@ -24,6 +24,16 @@ export const centsPrecise = (v: string | null | undefined) =>
 export const when = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
 
+/** ISO time -> "just now" / "4 min ago" / "3 h ago" / "2 d ago". */
+export const ago = (iso: string | null | undefined, now = Date.now()) => {
+  if (!iso) return 'never';
+  const s = Math.max(0, (now - new Date(iso).getTime()) / 1000);
+  if (s < 45) return 'just now';
+  if (s < 3600) return `${Math.round(s / 60)} min ago`;
+  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+  return `${Math.round(s / 86400)} d ago`;
+};
+
 const ENTITIES: Record<string, string> = {
   amp: '&',
   lt: '<',
