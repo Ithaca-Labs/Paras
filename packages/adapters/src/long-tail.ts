@@ -3,7 +3,6 @@ import { createNovigAdapter } from './novig/index.js';
 import { createOpinionAdapter } from './opinion/index.js';
 import { createPolymarketUsAdapter } from './polymarket-us/index.js';
 import { createPredictFunAdapter } from './predictfun/index.js';
-import { createProbableAdapter } from './probable/index.js';
 import { createProphetXAdapter } from './prophetx/index.js';
 import type { VenueAdapter } from './types.js';
 
@@ -21,7 +20,6 @@ export function longTailAdaptersFromEnv(env: Env): VenueAdapter[] {
     createPolymarketUsAdapter(),
     createOpinionAdapter(),
     createMyriadAdapter({ apiKey: env.MYRIAD_API_KEY || undefined }),
-    createProbableAdapter(),
     createNovigAdapter(),
     ...(predictFunKey
       ? [

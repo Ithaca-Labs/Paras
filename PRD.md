@@ -248,7 +248,7 @@ Paras serves both US and non-US users. Discovery, the Feed, MCP and price compar
 - One interface per Venue. Each normalizes into the shared Market, Outcome and Quote schema: list/sync Markets, fetch Quotes and order book, fetch price history, provide a deep link URL, and report capabilities (read-only vs. routable, regulation, jurisdictions).
 - **Data sourcing (free first, reliability second):**
   - Polymarket (Gamma + CLOB public endpoints and WebSocket), Kalshi (public market data API), Limitless and SX Bet use native adapters against their free public APIs. These are the most reliable sources and need no paid vendor.
-  - Long-tail Venues also use native adapters (Polymarket US, Opinion, Myriad, Probable, Novig keyless; Predict.fun and ProphetX gated by an env API key, off while unset). No aggregator. A Venue outage only fails that Venue's sync jobs.
+  - Long-tail Venues also use native adapters (Polymarket US, Opinion, Myriad, Novig keyless; Predict.fun and ProphetX gated by an env API key, off while unset). No aggregator. A Venue outage only fails that Venue's sync jobs.
   - Manifold is excluded from the default Feed. If included, it is labeled play-money.
 - Adapters are pure translators with no ranking or matching logic. This keeps them testable with recorded fixtures.
 - The interface is `VenueAdapter` in `packages/adapters/src/types.ts`; the normalized schema (Market, Outcome, OrderBook, Quote, PricePoint, FeeSchedule, capabilities) is zod in `packages/shared/src/venue.ts`. How to add a Venue: `packages/adapters/README.md`.
@@ -434,7 +434,7 @@ then (filled | partially_filled) → (exited | redeemed) → returning → settl
 
 - **Research findings (Oct 2026):**
   - Polymarket and Kalshi hold over 97% of prediction market volume.
-  - Limitless (Base) and SX Bet have the most accessible free APIs among the rest. Opinion, Predict.fun/Probable, Myriad, ProphetX, Novig and Polymarket US are tier-2, each reached through its own native adapter (#52).
+  - Limitless (Base) and SX Bet have the most accessible free APIs among the rest. Opinion, Predict.fun, Myriad, ProphetX, Novig and Polymarket US are tier-2, each reached through its own native adapter (#52).
   - No prediction market Venue is confirmed live on Monad itself. Paras on Monad is the Monad angle.
   - Robinhood resells Kalshi, so skip it. PredictIt, Drift BET, Zeitgeist, Augur and Hedgehog are small or unverified.
 - **Vault feasibility:**
@@ -632,6 +632,7 @@ Deployed 2026-10-14, start block `70795955`, deployer `0xAc99290B7Cd053276839Fb4
 
 ## Decision log
 
+- 2026-10-14 (#128, user decision): Probable removed as a Venue (it moved). Adapter, fixtures and tests deleted; migration `0022_remove_probable` drops its Markets, Probable-only Events (unless a Magic Link references them), runs and Venue row.
 - 2026-10-11 (hackathon, user-approved): Monad Metropolis, Onchain Finance & Trading track + Privy, Nansen, Aurora (NEAR Intents 1Click), Envio bounties; testnet demo (Polymarket leg simulated on testnet). Privy beyond login: embedded wallets as the Vault account; session signers + Privy policies for conditional orders (limit/TP/SL) and one-click bets (non-negotiable reworded: user-signed or user-delegated under Privy policy); Privy server wallet for Executor Monad keys (replaces env master key). Nansen: Polymarket smart-money signals (prediction-market endpoints) + smart-money netflow for crypto-price Events, driving Feed ranking, alerts and an MCP tool; cached (credit budget). Envio HyperIndex indexes Vault events (Monad testnet 10143) for portfolio/history. Aurora 1Click any-chain deposit to the user's Monad wallet, mainnet-only (disabled on testnet; not atomic, user then deposits). Frontend built now with a neutral theme.
 
 - 2026-10-11 (#98, user-approved scope): testnet demo mode simulates the Polymarket leg (see Module: Executor, "Testnet demo mode"); never enabled on mainnet (config refuses, `DemoCctp` reverts off chain 10143). Demo deploy uses the deployer EOA for multisig/pauser roles; mainnet requires a Safe.

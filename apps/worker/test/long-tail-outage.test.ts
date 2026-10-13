@@ -1,8 +1,8 @@
 import {
   createAdapterRegistry,
   createFakeAdapter,
+  createNovigAdapter,
   createOpinionAdapter,
-  createProbableAdapter,
   fakeMarket,
 } from '@paras/adapters';
 import { createDb, schema, type DbHandle } from '@paras/db';
@@ -28,7 +28,7 @@ beforeAll(async () => {
     hits++;
     return new Response('bad gateway', { status: 502 });
   };
-  const longTail = [createOpinionAdapter({ fetch: down }), createProbableAdapter({ fetch: down })];
+  const longTail = [createOpinionAdapter({ fetch: down }), createNovigAdapter({ fetch: down })];
   const adapters = createAdapterRegistry([core, ...longTail]);
   const venues = [...adapters.keys()];
   worker = buildWorker({
