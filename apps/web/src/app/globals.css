@@ -21,7 +21,7 @@
   --seal: #c3563d;
   --celadon: #c9dcc0;
   --banner: url('/brand/banner.jpg');
-  --radius: 0.375rem;
+  --radius: 1rem;
 }
 
 :root[data-theme='dark'] {
@@ -300,29 +300,21 @@ h2 {
   }
 }
 
-/* Card frame, after the brand "frame tile": inset gold hairline with corner brackets. */
+/* Card frame, after the brand "frame tile": a soft inset gold hairline. */
 .scroll-frame::before {
   content: '';
   position: absolute;
   inset: 5px;
   pointer-events: none;
-  border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
-  border-radius: 2px;
-  --c: var(--gold);
-  background:
-    linear-gradient(var(--c), var(--c)) top left / 14px 2px,
-    linear-gradient(var(--c), var(--c)) top left / 2px 14px,
-    linear-gradient(var(--c), var(--c)) top right / 14px 2px,
-    linear-gradient(var(--c), var(--c)) top right / 2px 14px,
-    linear-gradient(var(--c), var(--c)) bottom left / 14px 2px,
-    linear-gradient(var(--c), var(--c)) bottom left / 2px 14px,
-    linear-gradient(var(--c), var(--c)) bottom right / 14px 2px,
-    linear-gradient(var(--c), var(--c)) bottom right / 2px 14px;
-  background-repeat: no-repeat;
-  transition: inset 0.4s var(--ease-ink);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  border-radius: calc(var(--radius) - 5px);
+  transition:
+    inset 0.4s var(--ease-ink),
+    border-color 0.4s;
 }
 .scroll-frame:hover::before {
-  inset: 3px;
+  inset: 4px;
+  border-color: color-mix(in srgb, var(--gold) 75%, transparent);
 }
 /* Ornament fades into the paper on its left/bottom edge and stirs on hover. */
 .ornament {
@@ -349,7 +341,7 @@ h2 {
   }
   100% {
     scale: 1;
-    rotate: -3deg;
+    rotate: 0deg;
   }
 }
 .stamp-badge {

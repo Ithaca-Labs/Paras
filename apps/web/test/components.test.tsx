@@ -35,7 +35,7 @@ describe('EventCard', () => {
     );
     expect(screen.getByText('Polymarket')).toBeTruthy();
     expect(screen.getAllByText('42¢').length).toBeGreaterThan(0);
-    expect(screen.getByText('Yes · best price')).toBeTruthy();
+    expect(screen.getByText('Best price')).toBeTruthy();
     expect(screen.getByText('$1.5M traded')).toBeTruthy();
     expect(screen.getByText('Because you follow the Fed')).toBeTruthy();
   });

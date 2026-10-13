@@ -28,14 +28,14 @@ export function OddsLine({ event, size = 'sm' }: { event: EventView; size?: 'sm'
   const lg = size === 'lg';
   return (
     <div className={lg ? 'pt-8' : ''}>
-      <div className={`relative ${lg ? 'h-1' : 'h-[3px]'} rounded-full bg-border/70`}>
+      <div className={`relative ${lg ? 'h-1.5' : 'h-1'} rounded-full bg-border`}>
         <span
           className="ink-stroke absolute inset-y-0 left-0 rounded-full bg-fg"
           style={{ width: pct(lo) }}
         />
         {hi > lo && (
           <span
-            className="spread-wash absolute inset-y-0 bg-seal/45"
+            className="spread-wash absolute inset-y-0 rounded-full bg-seal/40"
             style={{ left: pct(lo), width: `calc(${pct(hi)} - ${pct(lo)})` }}
           />
         )}
@@ -44,7 +44,7 @@ export function OddsLine({ event, size = 'sm' }: { event: EventView; size?: 'sm'
             key={p.id}
             tabIndex={lg ? 0 : -1}
             aria-label={`${p.venue}: ${p.label} ${cents(String(p.price))}`}
-            className={`seal group absolute top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-[2px] bg-seal ring-2 ring-surface ${lg ? 'size-3.5' : 'size-2.5'}`}
+            className={`seal group absolute top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-seal shadow-sm ring-[3px] ring-surface ${lg ? 'size-3.5' : 'size-3'}`}
             style={{ left: pct(p.price), animationDelay: `${450 + i * 90}ms` }}
           >
             {lg && (
