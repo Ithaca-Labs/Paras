@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSession } from './providers';
 
 const btn =
-  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
+  'rounded-full bg-accent px-4 py-1.5 shadow-sm ring-1 ring-gold/40 transition font-display text-[0.95rem] font-semibold tracking-wide text-accent-fg hover:brightness-110 disabled:opacity-50';
 
 export function AccountButton() {
   const { configured, loading, user, signIn, signOut } = useSession();
@@ -22,7 +22,7 @@ export function AccountButton() {
   if (user)
     return (
       <div className="flex items-center gap-3">
-        <Link href="/settings/connected-apps" className="text-sm text-muted hover:text-fg">
+        <Link href="/settings/connected-apps" className="rounded-full px-3 py-1.5 text-sm text-muted hover:bg-surface hover:text-fg">
           Connected apps
         </Link>
         <button

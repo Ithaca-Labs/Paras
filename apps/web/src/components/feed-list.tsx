@@ -7,7 +7,22 @@ import { EventCard } from './event-card';
 
 const chip = 'inline-flex items-center gap-1.5 text-xs';
 const act =
-  'rounded-sm px-2 py-1 text-xs text-muted hover:bg-surface-2 hover:text-fg disabled:opacity-50';
+  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition disabled:opacity-50';
+const quiet = `${act} border-transparent text-muted hover:border-border hover:bg-surface hover:text-fg`;
+const icon = (d: string) => (
+  <svg
+    aria-hidden
+    viewBox="0 0 16 16"
+    className="size-3.5"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d={d} />
+  </svg>
+);
 
 /** Feed card with reason chip + dismiss / fewer-like-this / follow. Ranking is the API's; we only send signals. */
 function FeedCard({
@@ -57,16 +72,34 @@ function FeedCard({
         </span>
       </div>
       <EventCard event={item.event} />
-      <div className="flex gap-2">
-        <button className={act} disabled={busy} onClick={toggleFollow} aria-pressed={following}>
+      <div className="flex items-center gap-1 px-1">
+        <button
+          className={`${act} ${
+            following
+              ? 'border-accent bg-accent text-accent-fg hover:brightness-110'
+              : 'border-accent/50 text-accent hover:border-accent hover:bg-accent/10'
+          }`}
+          disabled={busy}
+          onClick={toggleFollow}
+          aria-pressed={following}
+        >
+          {icon(following ? 'M3.5 8.5l3 3 6-7' : 'M8 3.5v9M3.5 8h9')}
           {following ? 'Following' : 'Follow'}
         </button>
-        <button className={act} disabled={busy} onClick={() => signal('fewer_like_this')}>
-          Fewer like this
-        </button>
-        <button className={act} disabled={busy} onClick={() => signal('dismiss')}>
-          Dismiss
-        </button>
+        <span className="ml-auto flex items-center gap-0.5">
+          <button className={quiet} disabled={busy} onClick={() => signal('fewer_like_this')}>
+            {icon('M4 8h8')}
+            Fewer like this
+          </button>
+          <button
+            className={`${quiet} hover:!text-negative`}
+            disabled={busy}
+            onClick={() => signal('dismiss')}
+          >
+            {icon('M4.5 4.5l7 7M11.5 4.5l-7 7')}
+            Dismiss
+          </button>
+        </span>
       </div>
     </div>
   );

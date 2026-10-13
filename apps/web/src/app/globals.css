@@ -38,6 +38,8 @@
   --negative: #e58b72;
   --warning: #d4b878;
   --banner: url('/brand/banner-dark.jpg');
+  --wave: var(--gold);
+  --wave-opacity: 0.07;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,6 +56,8 @@
     --negative: #e58b72;
     --warning: #d4b878;
     --banner: url('/brand/banner-dark.jpg');
+  --wave: var(--gold);
+  --wave-opacity: 0.07;
   }
 }
 
@@ -362,11 +366,11 @@ h2 {
   animation: stamp-tilt 0.5s 0.6s var(--ease-ink) both;
   background: color-mix(in srgb, var(--seal) 8%, transparent);
 }
-:root[data-theme='dark'] .ornament {
+:root[data-theme='dark'] :is(.ornament, .ornament-soft) {
   filter: brightness(1.45) saturate(1.15);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .ornament {
+  :root:not([data-theme='light']) :is(.ornament, .ornament-soft) {
     filter: brightness(1.45) saturate(1.15);
   }
 }
@@ -378,8 +382,8 @@ body::after {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.07;
-  --w: color-mix(in srgb, var(--indigo, #536b8f) 100%, transparent);
+  opacity: var(--wave-opacity, 0.09);
+  --w: var(--wave, var(--indigo));
   background:
     radial-gradient(
         circle at 50% 100%,
@@ -403,7 +407,7 @@ body::after {
         transparent 50%
       )
       24px 12px / 48px 24px;
-  mask-image: linear-gradient(to bottom, #000, transparent 45%, transparent 75%, #000);
+  mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 50%, #000);
 }
 
 /* Pill selects keep a chevron after appearance-none. */
@@ -419,4 +423,45 @@ select.pill-field {
 }
 :root[data-theme='dark'] .ornament-soft {
   filter: brightness(1.45) saturate(1.15);
+}
+
+/* Floating header: quiet glass, one hairline. */
+.nav-float {
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 32px -24px rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(16px);
+}
+.nav-tray { background: none; }
+.nav-wordmark { transition: scale 0.4s var(--ease-ink); }
+.nav-wordmark:hover { scale: 1.04; }
+
+/* Dark theme stays quiet: no page pattern or glows, dim ornaments, faint frames. */
+:root[data-theme='dark'] {
+  --wave-opacity: 0;
+}
+:root[data-theme='dark'] body {
+  background: var(--bg);
+}
+:root[data-theme='dark'] :is(.ornament, .ornament-soft) {
+  filter: saturate(0.6);
+  opacity: 0.35;
+}
+:root[data-theme='dark'] .scroll-frame::before {
+  border-color: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --wave-opacity: 0;
+  }
+  :root:not([data-theme='light']) body {
+    background: var(--bg);
+  }
+  :root:not([data-theme='light']) :is(.ornament, .ornament-soft) {
+    filter: saturate(0.6);
+    opacity: 0.35;
+  }
+  :root:not([data-theme='light']) .scroll-frame::before {
+    border-color: color-mix(in srgb, var(--gold) 14%, transparent);
+  }
 }

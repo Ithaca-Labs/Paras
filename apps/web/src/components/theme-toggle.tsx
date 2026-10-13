@@ -27,24 +27,29 @@ export function ThemeToggle() {
       onClick={flip}
       aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
       title={dark ? 'Light theme' : 'Dark theme'}
-      className="group grid size-8 place-items-center rounded-sm text-muted hover:bg-surface-2 hover:text-fg"
+      className="group grid size-8 place-items-center rounded-full text-muted hover:bg-surface hover:text-fg"
     >
       <svg viewBox="0 0 24 24" className="size-[18px] overflow-visible" aria-hidden>
+        {/* Mask cuts the crescent so it works on any background. */}
+        <mask id="theme-crescent">
+          <rect x="-4" y="-4" width="32" height="32" fill="white" />
+          <circle
+            cx="12"
+            cy="12"
+            r="7"
+            fill="black"
+            className={`transition-transform duration-500 ease-[var(--ease-ink)] ${
+              dark ? 'translate-x-[4px] -translate-y-[3px]' : 'translate-x-[14px] -translate-y-[10px]'
+            }`}
+          />
+        </mask>
         <circle
           cx="12"
           cy="12"
           r="7"
+          mask="url(#theme-crescent)"
           className={`origin-center transition-all duration-500 ease-[var(--ease-ink)] ${
             dark ? 'fill-gold' : 'fill-seal group-hover:scale-110'
-          }`}
-        />
-        {/* Shadow disc slides over the sun to cut the crescent. */}
-        <circle
-          cx="12"
-          cy="12"
-          r="7"
-          className={`fill-bg transition-transform duration-500 ease-[var(--ease-ink)] ${
-            dark ? 'translate-x-[4px] -translate-y-[3px]' : 'translate-x-[14px] -translate-y-[10px]'
           }`}
         />
       </svg>
