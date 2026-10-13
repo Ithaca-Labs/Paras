@@ -19,7 +19,6 @@ export { createKalshiAdapter, type KalshiOptions } from './kalshi/index.js';
 export { createPolymarketUsAdapter, type PolymarketUsOptions } from './polymarket-us/index.js';
 export { createOpinionAdapter, type OpinionOptions } from './opinion/index.js';
 export { createMyriadAdapter, type MyriadOptions } from './myriad/index.js';
-export { createProbableAdapter, type ProbableOptions } from './probable/index.js';
 export { createPredictFunAdapter, type PredictFunOptions } from './predictfun/index.js';
 export { createProphetXAdapter, type ProphetXOptions } from './prophetx/index.js';
 export { createNovigAdapter, type NovigOptions } from './novig/index.js';

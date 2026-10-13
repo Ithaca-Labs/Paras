@@ -30,7 +30,7 @@ Provide logo (SVG), favicon, banner/OG images, color palette, fonts, any style r
 | What                                                                                           | Why                                                   |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | Open a few Kalshi "Bet on Kalshi" links from `GET /v1/events`                                  | Kalshi blocks bots; URL shape unverified (#4)         |
-| Open deep links for Polymarket US, Probable, Predict.fun, Novig, ProphetX, SX Bet              | Patterns are best guesses (#7, #52)                   |
+| Open deep links for Polymarket US, Predict.fun, Novig, ProphetX, SX Bet                        | Patterns are best guesses (#7, #52)                   |
 | Confirm regulation labels (Novig, ProphetX = `unknown`; Myriad/Opinion/Predict.fun = offshore) | Legal accuracy of labels shown to users (#8, #52)     |
 | Read each Venue's ToS on redistributing prices                                                 | Paras republishes quotes; none of the docs address it |
 
@@ -55,4 +55,4 @@ Key-gated long-tail adapters are off while their env var is unset and never affe
 | ProphetX          | `PROPHETX_API_KEY` (+ optional `PROPHETX_API_URL`)     | Email the ProphetX Market Data team (see docs.prophetx.co, "Requesting API Access") | ProphetX sports Markets and ask quotes; also lets us re-record fixtures against sandbox | #62   |
 | Myriad (optional) | `MYRIAD_API_KEY`                                       | Myriad builders channel (docs.myriad.markets)                                       | Higher rate limit only (30 req/10 s -> 200 req/s); adapter works without it             | #63   |
 
-Keyless (no action): Polymarket US, Opinion, Probable, Novig.
+Keyless (no action): Polymarket US, Opinion, Novig.
