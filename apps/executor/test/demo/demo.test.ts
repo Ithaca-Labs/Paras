@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { keccak256, recoverAddress, type Hex } from 'viem';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { loadConfig } from '../../src/config.js';
+import { createDemoSim } from '../../src/demo/sim.js';
 import { mintedAmount } from '../../src/intents/cctp.js';
 import { createHarness, type Harness } from '../intents/world.js';
 
@@ -47,6 +48,24 @@ describe('testnet demo mode: simulated Polymarket leg (Seam 4, #98)', () => {
     // Sold at the best bid 0.65, less swap floors: more than was put in.
     const [msg] = [...t.world.usedMonad] as Hex[];
     expect(mintedAmount(msg!)).toBeGreaterThan(10_000_000n);
+  });
+
+  it('an Executor restart keeps the filled shares sellable (#126: sim re-seeds from open Positions)', async () => {
+    const id = await t.engine().run(await t.newIntent({ amount: 10 }));
+    expect(id).toBe('done');
+    const [pos] = await t.db.select().from(schema.positions);
+    const [dw] = await t.db.select().from(schema.depositWallets);
+    const fresh = createDemoSim({
+      attester: t.attester,
+      cctp: '0x3333333333333333333333333333333333333333',
+      vault: '0x2222222222222222222222222222222222222222',
+      db: t.db,
+      burnOf: async () => null,
+      clobUrl: 'https://clob.test',
+    });
+    const wallet = dw!.walletAddress as `0x${string}`;
+    expect(await fresh.polygon.ctfBalance(wallet, pos!.tokenId)).toBe(BigInt(pos!.shares));
+    expect(await fresh.polygon.ctfBalance(wallet, 'other-token')).toBe(0n);
   });
 
   it('attestations are signed by the Executor key (the DemoCctp attester)', async () => {

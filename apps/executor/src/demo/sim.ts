@@ -1,6 +1,6 @@
 import { toBase6 } from '@paras/domain';
 import { schema, type Database } from '@paras/db';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import {
   decodeFunctionData,
   getAddress,
@@ -21,7 +21,7 @@ import type { WalletChain } from '../wallet/service.js';
  * TESTNET DEMO (#98, `EXECUTOR_DEMO_MODE=simulate`): the Polymarket leg is simulated. The Vault on Monad testnet
  * is real; everything past its CCTP burn (mint, swap, wrap, CLOB, sweep back) is this in-memory world behind the
  * same ports the live code uses. Fills come from the LIVE Polymarket book at its quote price; no order is placed
- * and no Polygon tx is sent. State is in memory: a restart forgets Polygon balances/positions (demo only).
+ * and no Polygon tx is sent. State is in memory; CTF shares are re-seeded from open Positions after a restart (#126).
  */
 
 const b32 = (a: Address) => pad(a, { size: 32 });
@@ -82,6 +82,32 @@ export function createDemoSim(o: DemoSimOptions) {
     return bal.get(k)!;
   };
   const ctfKey = (w: Address, t: string) => `${getAddress(w)}|${t}`;
+  /** Wallet's shares of a token; after a restart, seeded once from the owner's open Positions. */
+  const held = async (w: Address, t: string): Promise<bigint> => {
+    const k = ctfKey(w, t);
+    if (!ctf.has(k)) {
+      const rows = await o.db
+        .select({ shares: schema.positions.shares })
+        .from(schema.positions)
+        .innerJoin(
+          schema.depositWallets,
+          eq(schema.depositWallets.ownerAddress, schema.positions.userAddress),
+        )
+        .where(
+          and(
+            eq(schema.depositWallets.walletAddress, w.toLowerCase()),
+            eq(schema.positions.tokenId, t),
+            eq(schema.positions.status, 'open'),
+          ),
+        );
+      if (!ctf.has(k))
+        ctf.set(
+          k,
+          rows.reduce((n, r) => n + BigInt(r.shares), 0n),
+        );
+    }
+    return ctf.get(k)!;
+  };
   const nonceOf = (m: Hex) => m.slice(2 + 12 * 2, 2 + 44 * 2);
   const txHash = () => pad(toHex(++txs), { size: 32 });
   const attest = async (message: Hex) => ({
@@ -130,12 +156,13 @@ export function createDemoSim(o: DemoSimOptions) {
       const shares = toBase6(r.shares.toFixed(6));
       const usd = toBase6(r.usd.toFixed(6));
       const k = ctfKey(req.wallet, req.tokenId);
+      const have = await held(req.wallet, req.tokenId);
       if (req.side === 'SELL') {
-        ctf.set(k, (ctf.get(k) ?? 0n) - shares);
+        ctf.set(k, have - shares);
         w.pusd += usd;
       } else {
         w.pusd -= usd;
-        ctf.set(k, (ctf.get(k) ?? 0n) + shares);
+        ctf.set(k, have + shares);
       }
       orders.set(req.key, { filledShares: r.shares.toFixed(6), spentUsd: r.usd.toFixed(6) });
       return { orderId: req.key };
@@ -147,7 +174,7 @@ export function createDemoSim(o: DemoSimOptions) {
 
   const polygon: PolygonChain & WalletChain = {
     balances: async (w) => ({ ...wallet(w) }),
-    ctfBalance: async (w, t) => ctf.get(ctfKey(w, t)) ?? 0n,
+    ctfBalance: held,
     // shortcut: no resolution/redemption in the demo (exit by selling), revisit if the demo needs auto-redeem
     payout: async () => ({ denominator: 0n, numerators: [] }),
     messageUsed: async (m) => usedNonces.has(nonceOf(m) as Hex),
