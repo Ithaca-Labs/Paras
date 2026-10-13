@@ -4,8 +4,9 @@ import { ApiError } from '@paras/shared';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export const inputCls = 'w-full rounded-lg border border-border bg-bg px-3 py-1.5 text-sm';
-export const btnCls = 'rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50';
+export const inputCls = 'w-full rounded-sm border border-border bg-bg px-3 py-1.5 text-sm';
+export const btnCls =
+  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
 
 /** Runs an API action; keeps the error (or a success note) for <SubmitStatus>. */
 export function useSubmit() {

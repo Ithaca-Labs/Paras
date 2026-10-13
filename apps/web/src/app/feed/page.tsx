@@ -2,7 +2,6 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { PageHeader } from '@/components/app-shell';
-import { BrandHero } from '@/components/brand-hero';
 import { FeedList } from '@/components/feed-list';
 import { EmptyState } from '@/components/states';
 import { serverApi } from '@/lib/api';
@@ -20,14 +19,11 @@ export default async function FeedPage() {
   const followed = follows.items.filter((f) => f.kind === 'event').map((f) => f.targetId);
   return (
     <>
-      <BrandHero>
-        <span className="text-[0.6875rem] tracking-[0.28em] text-fg uppercase">
-          01 &nbsp; Your Feed
-        </span>
-      </BrandHero>
-      <PageHeader title="Feed">
-        {feed.personalized ? 'Picked for you.' : 'Popular right now.'}{' '}
-        <Link href="/onboarding" className="underline">
+      <PageHeader title={feed.personalized ? 'Picked for you' : 'Popular right now'}>
+        {feed.personalized
+          ? 'Ranked from your interests.'
+          : 'Pick a few interests and this list becomes yours.'}{' '}
+        <Link href="/onboarding" className="text-fg underline decoration-gold underline-offset-4">
           Edit interests
         </Link>
       </PageHeader>

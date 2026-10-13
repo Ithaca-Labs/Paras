@@ -26,7 +26,7 @@ export function ErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg"
+          className="rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110"
         >
           Try again
         </button>

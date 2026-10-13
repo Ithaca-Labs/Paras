@@ -1,46 +1,57 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens: the ONLY place colors/fonts/radius live. Brand palette from #25
- * (brand-assets/colour-sheer.png): Parchment, Celadon, Moss, Jade + Ink Navy, Dusty Indigo,
- * Terracotta, Muted Gold, Mist Grey, Soft Charcoal.
- * Components use the Tailwind utilities below (bg-surface, text-muted, ...), never raw colors.
+ * Design tokens: the ONLY place colors/fonts/radius live. Brand palette (#25,
+ * brand-assets/colour-sheer.png). Components use the Tailwind utilities below, never raw colors.
+ * Terracotta (seal) is reserved for Venue seals and price disagreement; gold for hairlines.
  */
 :root {
   --bg: #f6f1e6; /* parchment */
-  --surface: #fbf8f1;
-  --surface-2: #eee7d6;
-  --border: #dcd2bd;
+  --surface: #fbf8f0;
+  --surface-2: #efe8d8;
+  --border: #ddd3bf;
   --fg: #1e2b3f; /* ink navy */
-  --muted: #5d6472;
+  --muted: #5b6474;
   --accent: #2f685b; /* jade */
   --accent-fg: #f6f1e6;
-  --positive: #4d6c3b; /* moss, darkened for text contrast */
-  --negative: #a8442d; /* terracotta, darkened for text contrast */
-  --warning: #85672a; /* muted gold, darkened for text contrast */
+  --positive: #4a6b38; /* moss, deepened for text */
+  --negative: #a8442d; /* terracotta, deepened for text */
+  --warning: #82652a; /* muted gold, deepened for text */
   --gold: #d4b878;
   --seal: #c3563d;
   --celadon: #c9dcc0;
-  --indigo: #536b8f;
-  --ink-glow: rgb(47 104 91 / 0.1);
   --banner: url('/brand/banner.jpg');
-  --radius: 0.625rem;
+  --radius: 0.375rem;
+}
+
+:root[data-theme='dark'] {
+  --bg: #141619;
+  --surface: #1b1e22;
+  --surface-2: #24282e;
+  --border: #33373e;
+  --fg: #efe9dc;
+  --muted: #a9aba3;
+  --accent: #c9dcc0; /* celadon */
+  --accent-fg: #1e2b3f;
+  --positive: #9dbf84;
+  --negative: #e58b72;
+  --warning: #d4b878;
+  --banner: url('/brand/banner-dark.jpg');
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #15171b; /* soft charcoal, deepened */
-    --surface: #1c1f25;
-    --surface-2: #252931;
-    --border: #343944;
-    --fg: #f6f1e6;
-    --muted: #b8b9b0; /* mist grey */
+  :root:not([data-theme='light']) {
+    --bg: #141619;
+    --surface: #1b1e22;
+    --surface-2: #24282e;
+    --border: #33373e;
+    --fg: #efe9dc;
+    --muted: #a9aba3;
     --accent: #c9dcc0; /* celadon */
     --accent-fg: #1e2b3f;
     --positive: #9dbf84;
-    --negative: #e0846c;
+    --negative: #e58b72;
     --warning: #d4b878;
-    --ink-glow: rgb(212 184 120 / 0.09);
     --banner: url('/brand/banner-dark.jpg');
   }
 }
@@ -60,10 +71,10 @@
   --color-gold: var(--gold);
   --color-seal: var(--seal);
   --color-celadon: var(--celadon);
-  --color-indigo: var(--indigo);
+  --color-parchment: #f6f1e6;
   --radius-card: var(--radius);
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-serif), 'Iowan Old Style', Georgia, serif;
+  --font-display: var(--font-mincho), 'Hiragino Mincho ProN', Georgia, serif;
   --font-mono: var(--font-code), ui-monospace, Menlo, monospace;
   --ease-ink: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -75,15 +86,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Paper grain over everything; pointer-events off so it never blocks input. */
+/* Washi grain. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 ::selection {
@@ -92,14 +103,14 @@ body::before {
 }
 
 h1,
-h2,
-h3 {
+h2 {
   font-family: var(--font-display);
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -111,99 +122,133 @@ h3 {
       background-color 0.2s,
       border-color 0.2s,
       box-shadow 0.25s,
-      transform 0.2s var(--ease-ink),
-      translate 0.3s var(--ease-ink);
+      scale 0.15s var(--ease-ink);
   }
   button:not(:disabled):active {
-    transform: scale(0.97);
+    scale: 0.97;
   }
   button:disabled {
     cursor: not-allowed;
   }
 }
 
-/* Section label, as on the brand sheets: "01  PRIMARY COLORS ────". */
-.brand-label {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.6875rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.brand-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--border), transparent);
-}
-
-/* Cards: lift + pointer-following ink spotlight (vars set by <PointerFx>). */
-.ink-card {
+/* Event slip: hover lifts the card and re-inks its odds line. */
+.slip {
   position: relative;
-  isolation: isolate;
   transition:
-    transform 0.35s var(--ease-ink),
-    box-shadow 0.35s var(--ease-ink),
-    border-color 0.35s;
+    translate 0.4s var(--ease-ink),
+    box-shadow 0.4s var(--ease-ink),
+    border-color 0.3s;
 }
-.ink-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s;
-  background: radial-gradient(
-    320px circle at var(--mx, 50%) var(--my, 50%),
-    var(--ink-glow),
-    transparent 70%
-  );
-}
-.ink-card:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--gold) 70%, var(--border));
-  box-shadow: 0 14px 30px -18px rgb(30 43 63 / 0.35);
-}
-.ink-card:hover::before {
-  opacity: 1;
+.slip:hover,
+.slip:focus-within {
+  translate: 0 -3px;
+  border-color: color-mix(in srgb, var(--gold) 65%, var(--border));
+  box-shadow: 0 18px 32px -24px rgb(30 43 63 / 0.45);
 }
 
-/* Page + list entrance. */
+/* Odds line motion: stroke draws, wash bleeds, seals stamp. */
+@keyframes draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes redraw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes bleed {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+@keyframes stamp {
+  0% {
+    scale: 1.8;
+    rotate: -10deg;
+    opacity: 0;
+  }
+  60% {
+    scale: 0.92;
+    rotate: 2deg;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    rotate: 0deg;
+  }
+}
+.ink-stroke {
+  animation: draw 0.9s var(--ease-ink) both;
+}
+.slip:hover .ink-stroke {
+  animation: redraw 0.7s var(--ease-ink) both;
+}
+.spread-wash {
+  animation: bleed 0.8s 0.5s ease-out both;
+}
+.seal {
+  animation: stamp 0.5s var(--ease-ink) both;
+  transition: scale 0.2s var(--ease-ink);
+}
+.seal:hover,
+.seal:focus {
+  scale: 1.18;
+}
+
+/* Page entrance + staggered lists. */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    translate: 0 12px;
   }
 }
 .rise {
-  animation: rise 0.6s var(--ease-ink) both;
+  animation: rise 0.7s var(--ease-ink) both;
 }
 .stagger > * {
-  animation: rise 0.6s var(--ease-ink) both;
+  animation: rise 0.7s var(--ease-ink) both;
 }
 .stagger > :nth-child(2) {
-  animation-delay: 60ms;
+  animation-delay: 50ms;
 }
 .stagger > :nth-child(3) {
-  animation-delay: 120ms;
+  animation-delay: 100ms;
 }
 .stagger > :nth-child(4) {
-  animation-delay: 180ms;
+  animation-delay: 150ms;
 }
 .stagger > :nth-child(5) {
-  animation-delay: 240ms;
+  animation-delay: 200ms;
 }
 .stagger > :nth-child(6) {
-  animation-delay: 300ms;
+  animation-delay: 250ms;
 }
 .stagger > :nth-child(n + 7) {
-  animation-delay: 360ms;
+  animation-delay: 300ms;
 }
 
-/* Brush underline drawn under the active nav link. */
+/* Handscroll: the banner unrolls from its centre. */
+@keyframes unroll {
+  from {
+    clip-path: inset(0 50% 0 50%);
+  }
+}
+.unroll {
+  animation: unroll 1.4s var(--ease-ink) both;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+.fade-up {
+  animation: fade-up 0.8s var(--ease-ink) both;
+}
+
 @keyframes brush {
   from {
     clip-path: inset(0 100% 0 0);
@@ -213,7 +258,6 @@ h3 {
   animation: brush 0.5s var(--ease-ink) both;
 }
 
-/* Skeleton: a slow gold wash across paper. */
 @keyframes wash {
   to {
     background-position: -200% 0;
@@ -224,7 +268,7 @@ h3 {
     linear-gradient(
         90deg,
         transparent 30%,
-        color-mix(in srgb, var(--gold) 22%, transparent) 50%,
+        color-mix(in srgb, var(--gold) 20%, transparent) 50%,
         transparent 70%
       )
       0 0 / 200% 100%,
@@ -232,54 +276,13 @@ h3 {
   animation: wash 1.8s linear infinite;
 }
 
-/* Hanko stamp for the header seal and confirmations. */
-@keyframes stamp {
-  0% {
-    transform: scale(1.6) rotate(-8deg);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(0.94) rotate(1deg);
-    opacity: 1;
-  }
-}
-.stamp {
-  animation: stamp 0.55s var(--ease-ink) both;
-}
-
-@keyframes drift {
-  50% {
-    transform: translate3d(14px, -6px, 0);
-  }
-}
-.drift {
-  animation: drift 9s ease-in-out infinite;
-}
-
-/* Ink-drop ripple on click, spawned by <PointerFx>. */
-@keyframes ripple {
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-  }
-}
-.ink-ripple {
-  position: fixed;
-  z-index: 70;
-  width: 56px;
-  height: 56px;
-  border-radius: 9999px;
-  pointer-events: none;
-  border: 1.5px solid var(--seal);
-  transform: translate(-50%, -50%) scale(0.1);
-  opacity: 0.7;
-  animation: ripple 0.6s var(--ease-ink) forwards;
-}
-
 /* Wordmark is ink navy on transparent; dark mode inverts lightness only (seal stays red). */
+:root[data-theme='dark'] .wordmark {
+  filter: invert(1) hue-rotate(180deg) brightness(1.05);
+}
 @media (prefers-color-scheme: dark) {
-  .wordmark {
-    filter: invert(1) hue-rotate(180deg) brightness(1.1);
+  :root:not([data-theme='light']) .wordmark {
+    filter: invert(1) hue-rotate(180deg) brightness(1.05);
   }
 }
 
@@ -288,16 +291,11 @@ h3 {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .ink-card:hover {
-    transform: none;
+  .slip:hover {
+    translate: none;
   }
-}
-
-/* Primary actions: jade ink with a soft lift. */
-button.bg-accent:not(:disabled):hover,
-a.bg-accent:hover {
-  box-shadow: 0 8px 20px -10px var(--accent);
 }

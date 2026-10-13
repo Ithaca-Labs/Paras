@@ -66,7 +66,7 @@ export default async function MagicPage({ params }: { params: Promise<{ token: s
         </dl>
         <Link
           href={`/events/${ml.event.id}${qs ? `?${qs}` : ''}`}
-          className="self-start rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg"
+          className="self-start rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110"
         >
           Review on Event page
         </Link>

@@ -16,8 +16,9 @@ import { ErrorState } from './states';
 import { VaultGate } from './vault-gate';
 
 const card = 'rounded-card border border-border bg-surface p-5';
-const btn = 'rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50';
-const input = 'w-full rounded-lg border border-border bg-bg px-2 py-1.5 text-sm';
+const btn =
+  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
+const input = 'w-full rounded-sm border border-border bg-bg px-2 py-1.5 text-sm';
 
 export interface BetContext {
   eventId: string;
@@ -257,7 +258,7 @@ function Form({
 
       {preview && (
         <div
-          className="space-y-2 rounded-lg border border-border p-3 text-sm"
+          className="space-y-2 rounded-sm border border-border p-3 text-sm"
           aria-label="Intent preview"
         >
           {preview.blockers.length > 0 && (

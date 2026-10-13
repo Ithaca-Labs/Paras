@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/app-shell';
 import { BetPanel } from '@/components/bet-panel';
 import { EventLive } from '@/components/event-live';
+import { OddsLine } from '@/components/odds-line';
 import { PriceChart } from '@/components/price-chart';
 import { RulesCompare } from '@/components/rules-compare';
 import { SmartMoneyPanel } from '@/components/smart-money-panel';
@@ -43,13 +44,18 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
             <Link
               key={t.id}
               href={`/explore?${t.kind}=${encodeURIComponent(t.id)}`}
-              className="hover:underline"
+              className="hover:text-fg hover:underline"
             >
               #{t.label}
             </Link>
           ))}
         </div>
-        {event.description && <p className="max-w-3xl text-sm">{event.description}</p>}
+        <div className="max-w-3xl">
+          <OddsLine event={event} size="lg" />
+        </div>
+        {event.description && (
+          <p className="max-w-3xl text-sm leading-relaxed text-muted">{event.description}</p>
+        )}
         <EventLive event={event} initial={comparison} />
         <BetPanel eventId={event.id} />
         <PriceChart eventId={event.id} initial={history} />

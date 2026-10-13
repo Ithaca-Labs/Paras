@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useSession } from './providers';
 
-const btn = 'rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50';
+const btn =
+  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
 
 export function AccountButton() {
   const { configured, loading, user, signIn, signOut } = useSession();

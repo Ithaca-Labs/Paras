@@ -34,8 +34,9 @@ describe('EventCard', () => {
       `/events/${event.id}`,
     );
     expect(screen.getByText('Polymarket')).toBeTruthy();
-    expect(screen.getByText('Yes 42¢')).toBeTruthy();
-    expect(screen.getByText('Vol $1.5M')).toBeTruthy();
+    expect(screen.getAllByText('42¢').length).toBeGreaterThan(0);
+    expect(screen.getByText('Yes, best price')).toBeTruthy();
+    expect(screen.getByText('$1.5M traded')).toBeTruthy();
     expect(screen.getByText('Because you follow the Fed')).toBeTruthy();
   });
 });

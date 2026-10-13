@@ -17,7 +17,7 @@ export function SignInGate({ message }: { message: string }) {
       <button
         onClick={signIn}
         disabled={!configured || loading}
-        className="rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50"
+        className="rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50"
       >
         Sign in
       </button>

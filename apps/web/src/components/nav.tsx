@@ -15,7 +15,7 @@ export const NAV = [
 export function Nav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Primary" className="flex gap-1">
+    <nav aria-label="Primary" className="-mx-2 flex gap-0.5 overflow-x-auto">
       {NAV.map(({ href, label }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
@@ -23,19 +23,12 @@ export function Nav() {
             key={href}
             href={href}
             aria-current={active ? 'page' : undefined}
-            className={`group relative rounded-lg px-3 py-1.5 text-sm ${
+            className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-sm whitespace-nowrap ${
               active ? 'font-medium text-fg' : 'text-muted hover:bg-surface-2 hover:text-fg'
             }`}
           >
+            {active && <span aria-hidden className="seal size-2 rounded-[2px] bg-seal" />}
             {label}
-            <span
-              aria-hidden
-              className={`absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-gold to-seal ${
-                active
-                  ? 'brush'
-                  : 'scale-x-0 opacity-0 transition duration-300 group-hover:scale-x-100 group-hover:opacity-60'
-              }`}
-            />
           </Link>
         );
       })}

@@ -72,14 +72,14 @@ export function ConsentForm({
           <button
             disabled={busy}
             onClick={() => decide(true)}
-            className="rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50"
+            className="rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50"
           >
             Allow
           </button>
           <button
             disabled={busy}
             onClick={() => decide(false)}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-sm border border-border px-3 py-1.5 text-sm disabled:opacity-50"
           >
             Deny
           </button>
@@ -88,7 +88,7 @@ export function ConsentForm({
         <button
           onClick={signIn}
           disabled={!configured || loading}
-          className="self-start rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50"
+          className="self-start rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50"
         >
           Sign in to continue
         </button>

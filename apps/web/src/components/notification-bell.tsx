@@ -25,7 +25,7 @@ export function NotificationBell() {
     <Link
       href="/notifications"
       aria-label={unread ? `Notifications, ${unread} unread` : 'Notifications'}
-      className="relative rounded-lg px-2 py-1.5 text-sm text-muted hover:text-fg"
+      className="relative rounded-sm px-2 py-1.5 text-sm text-muted hover:text-fg"
     >
       Alerts
       {unread > 0 && (

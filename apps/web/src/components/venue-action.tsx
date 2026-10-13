@@ -22,7 +22,7 @@ export function VenueAction({
       href={redirectUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-surface-2"
+      className="rounded-sm border border-border px-3 py-1.5 text-xs hover:bg-surface-2"
     >
       Bet on {venueName} ↗
     </a>
@@ -30,7 +30,7 @@ export function VenueAction({
   if (availability === 'routable') {
     return (
       <span className="flex flex-wrap gap-2">
-        <a href="#bet" className="rounded-lg bg-accent px-3 py-1.5 text-xs text-accent-fg">
+        <a href="#bet" className="rounded-sm bg-accent px-3 py-1.5 text-xs text-accent-fg">
           Bet with Vault
         </a>
         {link}

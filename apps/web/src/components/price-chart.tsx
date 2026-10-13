@@ -60,7 +60,7 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
               aria-label="Outcome"
               value={h.outcome}
               onChange={(e) => load(h.interval, e.target.value)}
-              className="rounded-lg border border-border bg-surface px-2 py-1"
+              className="rounded-sm border border-border bg-surface px-2 py-1"
             >
               {h.outcomes.map((o) => (
                 <option key={o}>{o}</option>
@@ -72,7 +72,7 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
               key={i}
               onClick={() => load(i, h.outcome)}
               aria-pressed={i === h.interval}
-              className={`rounded-lg px-2 py-1 ${
+              className={`rounded-sm px-2 py-1 ${
                 i === h.interval ? 'bg-accent text-accent-fg' : 'border border-border'
               }`}
             >

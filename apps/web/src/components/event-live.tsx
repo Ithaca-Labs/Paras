@@ -94,7 +94,7 @@ export function EventLive({ event, initial }: { event: EventView; initial: Event
               value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="e.g. 100"
-              className="w-40 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-fg"
+              className="w-40 rounded-sm border border-border bg-surface px-3 py-1.5 text-sm text-fg"
             />
           </label>
         </div>

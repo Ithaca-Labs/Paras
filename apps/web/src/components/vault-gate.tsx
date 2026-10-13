@@ -16,7 +16,8 @@ const REASON: Record<string, string> = {
 };
 
 const card = 'rounded-card border border-border bg-surface p-5';
-const btn = 'rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50';
+const btn =
+  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
 
 /** Renders `children` only for a signed-in, Vault-eligible User; else the step to fix it (or a redirect to discovery). */
 export function VaultGate({ children }: { children: React.ReactNode }) {
@@ -91,7 +92,7 @@ function Eligibility({ children }: { children: React.ReactNode }) {
               value={country}
               onChange={(ev) => setCountry(ev.target.value.slice(0, 2))}
               maxLength={2}
-              className="mt-1 block w-24 rounded-lg border border-border bg-bg px-2 py-1.5 uppercase"
+              className="mt-1 block w-24 rounded-sm border border-border bg-bg px-2 py-1.5 uppercase"
             />
           </label>
           <button className={btn} disabled={busy || country.length !== 2}>

@@ -49,7 +49,7 @@ export function NotificationPrefsForm({ initial }: { initial: NotificationPrefs 
           onChange={(e) =>
             setPrefs({ ...prefs, frequency: e.target.value as NotificationPrefs['frequency'] })
           }
-          className="rounded-lg border border-border bg-surface p-2"
+          className="rounded-sm border border-border bg-surface p-2"
         >
           {FREQ.map((f) => (
             <option key={f} value={f}>
@@ -64,7 +64,7 @@ export function NotificationPrefsForm({ initial }: { initial: NotificationPrefs 
       <div className="flex items-center gap-3">
         <button
           disabled={status === 'saving'}
-          className="rounded-lg bg-accent px-4 py-2 text-sm text-accent-fg disabled:opacity-50"
+          className="rounded-sm bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50"
         >
           Save
         </button>

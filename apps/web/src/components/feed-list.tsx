@@ -5,9 +5,9 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { EventCard } from './event-card';
 
-const chip = 'rounded-full border px-2.5 py-0.5 text-xs';
+const chip = 'inline-flex items-center gap-1.5 text-xs';
 const act =
-  'rounded-lg border border-border px-2.5 py-1 text-xs text-muted hover:text-fg disabled:opacity-50';
+  'rounded-sm px-2 py-1 text-xs text-muted hover:bg-surface-2 hover:text-fg disabled:opacity-50';
 
 /** Feed card with reason chip + dismiss / fewer-like-this / follow. Ranking is the API's; we only send signals. */
 function FeedCard({
@@ -48,7 +48,11 @@ function FeedCard({
   return (
     <div className="flex flex-col gap-2">
       <div>
-        <span className={`${chip} ${smart ? 'border-accent text-fg' : 'border-border text-muted'}`}>
+        <span className={`${chip} ${smart ? 'font-medium text-accent' : 'text-muted'}`}>
+          <span
+            aria-hidden
+            className={`size-1.5 rounded-[1px] ${smart ? 'bg-accent' : 'bg-gold'}`}
+          />
           {item.reason}
         </span>
       </div>
