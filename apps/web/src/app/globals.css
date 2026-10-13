@@ -20,6 +20,7 @@
   --gold: #d4b878;
   --seal: #c3563d;
   --celadon: #c9dcc0;
+  --indigo: #536b8f;
   --banner: url('/brand/banner.jpg');
   --radius: 1rem;
 }
@@ -80,7 +81,19 @@
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(
+      60rem 30rem at 0% -10%,
+      color-mix(in srgb, var(--celadon) 35%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50rem 28rem at 100% 0%,
+      color-mix(in srgb, var(--gold) 22%, transparent),
+      transparent 70%
+    ),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -355,4 +368,48 @@ h2 {
   :root:not([data-theme='light']) .ornament {
     filter: brightness(1.45) saturate(1.15);
   }
+}
+
+/* Seigaiha (brand pattern 03) as a faint wash behind the page. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.07;
+  --w: color-mix(in srgb, var(--indigo, #536b8f) 100%, transparent);
+  background:
+    radial-gradient(
+        circle at 50% 100%,
+        transparent 26%,
+        var(--w) 27% 29%,
+        transparent 30% 36%,
+        var(--w) 37% 39%,
+        transparent 40% 46%,
+        var(--w) 47% 49%,
+        transparent 50%
+      )
+      0 0 / 48px 24px,
+    radial-gradient(
+        circle at 50% 100%,
+        transparent 26%,
+        var(--w) 27% 29%,
+        transparent 30% 36%,
+        var(--w) 37% 39%,
+        transparent 40% 46%,
+        var(--w) 47% 49%,
+        transparent 50%
+      )
+      24px 12px / 48px 24px;
+  mask-image: linear-gradient(to bottom, #000, transparent 45%, transparent 75%, #000);
+}
+
+/* Pill selects keep a chevron after appearance-none. */
+select.pill-field {
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%237b8290' stroke-width='1.6'%3E%3Cpath d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1rem;
 }

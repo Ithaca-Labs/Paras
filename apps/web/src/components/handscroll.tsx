@@ -71,8 +71,8 @@ export function Handscroll({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <section className="mb-12 overflow-hidden border-y border-border bg-surface sm:rounded-card sm:border">
-      <div ref={box} className="unroll relative aspect-[3/1] max-h-80 w-full overflow-hidden">
+    <section className="relative mb-8 overflow-hidden border-y border-gold/50 bg-surface shadow-[0_24px_60px_-40px_rgb(30_43_63/0.55)] sm:rounded-[1.5rem] sm:border">
+      <div ref={box} className="unroll relative aspect-[3/1] max-h-72 w-full overflow-hidden">
         <div
           aria-hidden
           className="absolute -inset-6 bg-cover bg-center transition-transform duration-1000 ease-[var(--ease-ink)]"
@@ -81,9 +81,12 @@ export function Handscroll({ children }: { children: React.ReactNode }) {
             transform: 'translate3d(calc(var(--px, 0) * -12px), calc(var(--py, 0) * -6px), 0)',
           }}
         />
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-surface"
+        />
         <canvas ref={ink} aria-hidden className="pointer-events-none absolute inset-0 size-full" />
       </div>
-      <div className="h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
       {children}
     </section>
   );
