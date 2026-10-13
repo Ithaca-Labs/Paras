@@ -5,7 +5,11 @@ import { Providers } from '@/components/providers';
 import './globals.css';
 
 const body = Inter({ subsets: ['latin'], variable: '--font-body' });
-const serif = Cormorant_Garamond({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-serif' });
+const serif = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-serif',
+});
 
 export const metadata: Metadata = {
   title: { default: 'Paras', template: '%s · Paras' },
