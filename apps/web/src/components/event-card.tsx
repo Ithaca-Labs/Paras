@@ -16,7 +16,7 @@ const ORNAMENT: [RegExp, string][] = [
 /** "YES" -> "Yes". */
 const outcome = (l: string) => l.charAt(0).toUpperCase() + l.slice(1).toLowerCase();
 
-const ornament = (category: string | null) =>
+export const ornament = (category: string | null) =>
   ORNAMENT.find(([re]) => re.test(category?.toLowerCase() ?? ''))?.[1] ?? 'cloud';
 
 /**

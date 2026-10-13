@@ -14,14 +14,16 @@ export function SmartMoneyPanel({
   return (
     <section
       aria-labelledby="sm-h"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
+      className="relative flex flex-col gap-4 overflow-hidden rounded-card border border-border bg-surface p-6"
     >
-      <h2 id="sm-h" className="text-lg font-medium">
+      <h2 id="sm-h" className="text-2xl">
         Why is this moving?
       </h2>
-      <p className="text-sm">{explain?.summary ?? 'No explanation available yet.'}</p>
+      <p className="max-w-prose border-l-2 border-gold pl-4 font-display text-[1.05rem] leading-relaxed">
+        {explain?.summary ?? 'No explanation available yet.'}
+      </p>
       {smartMoney ? (
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-xl bg-surface-2/50 p-4 text-sm sm:grid-cols-[auto_1fr]">
           <dt className="text-muted">Smart money leans</dt>
           <dd className={`font-medium ${tone[smartMoney.leaning]}`}>
             {smartMoney.leaning} ({Math.round(smartMoney.strength * 100)}%)

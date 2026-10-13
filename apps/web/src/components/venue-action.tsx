@@ -22,15 +22,18 @@ export function VenueAction({
       href={redirectUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="rounded-sm border border-border px-3 py-1.5 text-xs hover:bg-surface-2"
+      className="inline-flex items-center gap-1 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium whitespace-nowrap hover:border-fg/40 hover:bg-surface-2"
     >
       Bet on {venueName} ↗
     </a>
   );
   if (availability === 'routable') {
     return (
-      <span className="flex flex-wrap gap-2">
-        <a href="#bet" className="rounded-sm bg-accent px-3 py-1.5 text-xs text-accent-fg">
+      <span className="flex flex-wrap justify-end gap-2">
+        <a
+          href="#bet"
+          className="rounded-full bg-accent px-3.5 py-1.5 text-xs font-medium whitespace-nowrap text-accent-fg hover:brightness-110"
+        >
           Bet with Vault
         </a>
         {link}

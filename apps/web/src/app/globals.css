@@ -72,6 +72,7 @@
   --color-gold: var(--gold);
   --color-seal: var(--seal);
   --color-celadon: var(--celadon);
+  --color-indigo: var(--indigo);
   --color-parchment: #f6f1e6;
   --radius-card: var(--radius);
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
@@ -412,4 +413,10 @@ select.pill-field {
   background-repeat: no-repeat;
   background-position: right 0.8rem center;
   background-size: 1rem;
+}
+.ornament-soft {
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 70%);
+}
+:root[data-theme='dark'] .ornament-soft {
+  filter: brightness(1.45) saturate(1.15);
 }

@@ -15,7 +15,7 @@ const REASON: Record<string, string> = {
   disclosures_not_acknowledged: 'Read and accept the risk disclosures.',
 };
 
-const card = 'rounded-card border border-border bg-surface p-5';
+const card = 'rounded-xl bg-surface-2/60 p-4';
 const btn =
   'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
 

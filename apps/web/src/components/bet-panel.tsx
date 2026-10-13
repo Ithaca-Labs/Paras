@@ -15,10 +15,10 @@ import { useSession } from './providers';
 import { ErrorState } from './states';
 import { VaultGate } from './vault-gate';
 
-const card = 'rounded-card border border-border bg-surface p-5';
 const btn =
-  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
-const input = 'w-full rounded-sm border border-border bg-bg px-2 py-1.5 text-sm';
+  'w-full rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
+const input =
+  'mt-1 w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm focus:border-accent focus:outline-none';
 
 export interface BetContext {
   eventId: string;
@@ -50,8 +50,15 @@ function Panel({
   const q = useSearchParams();
   const cfg = useLoad(() => api.getConfig());
   return (
-    <section id="bet" className={card} aria-label="Bet with the Vault">
-      <h2 className="mb-3 font-medium">Bet with the Vault</h2>
+    <section
+      id="bet"
+      className="scroll-frame relative overflow-hidden rounded-card border border-gold/60 bg-surface p-6 shadow-[0_18px_40px_-30px_rgb(30_43_63/0.5)]"
+      aria-label="Bet with the Vault"
+    >
+      <h2 className="text-xl">Bet with the Vault</h2>
+      <p className="mt-1 mb-4 text-xs text-muted">
+        You pick the Outcome and amount. The Vault routes to the best Venue.
+      </p>
       {cfg.data?.demoMode && <DemoBanner />}
       <VaultGate>
         <Form
@@ -219,7 +226,7 @@ function Form({
   const e = preview?.route?.expected;
   return (
     <div className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3">
         <label className="text-sm">
           Outcome
           <select
@@ -323,7 +330,7 @@ function Form({
         </p>
       )}
       {selected && (
-        <div className="grid gap-4 border-t border-border pt-3 md:grid-cols-2">
+        <div className="grid gap-4 border-t border-border pt-3">
           <OneClickBet eventId={eventId} outcome={selected} />
           <LimitOrderForm eventId={eventId} outcome={selected} />
         </div>

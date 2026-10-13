@@ -23,3 +23,22 @@ export const centsPrecise = (v: string | null | undefined) =>
 
 export const when = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+
+const ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  '#39': "'",
+  nbsp: ' ',
+};
+
+/** Venue copy sometimes arrives as HTML: paragraphs/breaks -> newlines, tags dropped, entities decoded. */
+export const plainText = (s: string) =>
+  s
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, e: string) => ENTITIES[e]!)
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();

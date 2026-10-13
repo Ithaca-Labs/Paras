@@ -75,27 +75,39 @@ export function EventLive({ event, initial }: { event: EventView; initial: Event
   const market = (id: string) => event.markets.find((m) => m.id === id);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-10">
       <section aria-labelledby="cmp-h" className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 id="cmp-h" className="text-lg font-medium">
-            Compare Venues
+          <div className="flex items-center gap-3">
+            <h2 id="cmp-h" className="text-2xl">
+              Compare Venues
+            </h2>
             <span
-              className={`ml-3 text-xs font-normal ${live ? 'text-positive' : 'text-muted'}`}
               aria-live="polite"
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs ${
+                live ? 'border-positive/40 text-positive' : 'border-border text-muted'
+              }`}
             >
-              {live ? '● live' : '○ connecting'}
+              <span
+                aria-hidden
+                className={`size-1.5 rounded-full ${live ? 'animate-pulse bg-positive' : 'bg-muted'}`}
+              />
+              {live ? 'Live' : 'Connecting'}
             </span>
-          </h2>
-          <label className="flex flex-col gap-1 text-xs text-muted">
-            Stake (USD) for estimated fill
-            <input
-              inputMode="decimal"
-              value={stake}
-              onChange={(e) => setStake(e.target.value)}
-              placeholder="e.g. 100"
-              className="w-40 rounded-sm border border-border bg-surface px-3 py-1.5 text-sm text-fg"
-            />
+          </div>
+          <label className="flex items-center gap-2 rounded-full border border-border bg-surface py-1 pr-1 pl-4 text-xs text-muted focus-within:border-accent">
+            Estimate fill for
+            <span className="flex items-center rounded-full bg-surface-2 px-3 py-1 text-sm text-fg">
+              $
+              <input
+                inputMode="decimal"
+                value={stake}
+                onChange={(e) => setStake(e.target.value)}
+                placeholder="100"
+                aria-label="Stake (USD) for estimated fill"
+                className="w-16 bg-transparent pl-0.5 focus:outline-none"
+              />
+            </span>
           </label>
         </div>
         {error && (
@@ -106,96 +118,119 @@ export function EventLive({ event, initial }: { event: EventView; initial: Event
         {cmp.outcomes.map((o) => (
           <div
             key={o.label}
-            className="overflow-x-auto rounded-card border border-border bg-surface"
+            className="overflow-hidden rounded-card border border-border bg-surface shadow-[0_10px_30px_-26px_rgb(30_43_63/0.5)]"
           >
-            <div className="flex items-center justify-between border-b border-border px-4 py-2">
-              <h3 className="font-medium">{o.label}</h3>
+            <div className="flex items-center justify-between gap-3 border-b border-border bg-surface-2/40 px-5 py-3">
+              <h3 className="flex items-center gap-2 font-display text-lg font-bold">
+                <span
+                  aria-hidden
+                  className={`size-2 rounded-full ${/^no$/i.test(o.label) ? 'bg-seal' : 'bg-accent'}`}
+                />
+                {o.label.charAt(0).toUpperCase() + o.label.slice(1).toLowerCase()}
+              </h3>
               {o.divergent && (
-                <span className="text-xs text-warning">
+                <span className="rounded-full border border-seal/40 px-2.5 py-0.5 text-xs text-negative">
                   Venues diverge by {centsPrecise(o.spread)}
                 </span>
               )}
             </div>
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs text-muted">
-                <tr>
-                  <th className="px-4 py-2 font-normal">Venue</th>
-                  <th className="px-2 font-normal">Bid / Ask</th>
-                  <th className="px-2 font-normal">Fee / share</th>
-                  <th className="px-2 font-normal">Effective ask</th>
-                  {cmp.stake && <th className="px-2 font-normal">Est. fill for ${cmp.stake}</th>}
-                  <th className="px-4 font-normal" />
-                </tr>
-              </thead>
-              <tbody>
-                {o.venues.map((v) => {
-                  const best = o.best?.marketId === v.marketId;
-                  const m = market(v.marketId);
-                  return (
-                    <tr
-                      key={v.marketId}
-                      aria-label={best ? `${v.venue.name} (best)` : v.venue.name}
-                      className={`border-t border-border align-top ${best ? 'bg-surface-2' : ''}`}
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-medium">{v.venue.name}</span>
-                          {best && <span className="text-xs text-positive">Best</span>}
-                          {v.stale && <span className="text-xs text-warning">stale</span>}
-                        </div>
-                        {m && (
-                          <div className="mt-1">
-                            <VenueLabel label={m.venue.label} />
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="text-left text-[0.7rem] tracking-wide text-muted uppercase">
+                  <tr>
+                    <th className="px-5 py-2.5 font-medium">Venue</th>
+                    <th className="px-3 font-medium">Bid / Ask</th>
+                    <th className="px-3 font-medium">Fee</th>
+                    <th className="px-3 font-medium">Effective ask</th>
+                    {cmp.stake && <th className="px-3 font-medium">Fill for ${cmp.stake}</th>}
+                    <th className="px-5" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {o.venues.map((v) => {
+                    const best = o.best?.marketId === v.marketId;
+                    const m = market(v.marketId);
+                    return (
+                      <tr
+                        key={v.marketId}
+                        aria-label={best ? `${v.venue.name} (best)` : v.venue.name}
+                        className={`border-t border-border/70 align-middle transition-colors hover:bg-surface-2/50 ${
+                          best ? 'bg-accent/[0.06] shadow-[inset_3px_0_0_var(--accent)]' : ''
+                        }`}
+                      >
+                        <td className="px-5 py-3.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-medium">{v.venue.name}</span>
+                            {best && (
+                              <span className="rounded-full bg-accent px-2 py-0.5 text-[0.65rem] font-medium text-accent-fg">
+                                Best
+                              </span>
+                            )}
+                            {v.stale && (
+                              <span className="flex items-center gap-1 text-xs text-warning">
+                                <span aria-hidden className="size-1.5 rounded-full bg-gold" />
+                                stale
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </td>
-                      <td className="px-2 py-3 font-mono tabular-nums">
-                        {cents(v.bid)} / {cents(v.ask)}
-                      </td>
-                      <td className="px-2 py-3 font-mono tabular-nums">
-                        {centsPrecise(v.feePerShare)}
-                      </td>
-                      <td className="px-2 py-3 font-mono tabular-nums">
-                        {perShare(v.effectiveAsk)}
-                      </td>
-                      {cmp.stake && (
-                        <td className="px-2 py-3 font-mono text-xs tabular-nums">
-                          {v.fill ? (
-                            <>
-                              {Number(v.fill.shares).toFixed(2)} shares @{' '}
-                              {perShare(v.fill.effectivePrice)}
-                              <br />
-                              fees ${Number(v.fill.fees).toFixed(2)}
-                              {Number(v.fill.unspent) > 0 && (
-                                <span className="text-warning">
-                                  {' '}
-                                  partial, ${Number(v.fill.unspent).toFixed(2)} unfilled
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            '—'
+                          {m && (
+                            <div className="mt-1.5">
+                              <VenueLabel label={m.venue.label} />
+                            </div>
                           )}
                         </td>
-                      )}
-                      <td className="px-4 py-3 text-right">
-                        {m && (
-                          <VenueAction
-                            venueName={v.venue.name}
-                            availability={m.availability}
-                            redirectUrl={v.redirectUrl}
-                          />
+                        <td className="px-3 py-3.5 font-mono whitespace-nowrap tabular-nums">
+                          {cents(v.bid)} <span className="text-muted">/</span> {cents(v.ask)}
+                        </td>
+                        <td className="px-3 py-3.5 font-mono text-muted tabular-nums">
+                          {centsPrecise(v.feePerShare)}
+                        </td>
+                        <td
+                          className={`px-3 py-3.5 font-mono tabular-nums ${best ? 'font-semibold text-accent' : ''}`}
+                        >
+                          {perShare(v.effectiveAsk)}
+                        </td>
+                        {cmp.stake && (
+                          <td className="px-3 py-3.5 font-mono text-xs tabular-nums">
+                            {v.fill ? (
+                              <>
+                                {Number(v.fill.shares).toFixed(2)} shares @{' '}
+                                {perShare(v.fill.effectivePrice)}
+                                <br />
+                                <span className="text-muted">
+                                  fees ${Number(v.fill.fees).toFixed(2)}
+                                </span>
+                                {Number(v.fill.unspent) > 0 && (
+                                  <span className="text-warning">
+                                    {' '}
+                                    partial, ${Number(v.fill.unspent).toFixed(2)} unfilled
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              '—'
+                            )}
+                          </td>
                         )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        <td className="px-5 py-3.5 text-right">
+                          {m && (
+                            <VenueAction
+                              venueName={v.venue.name}
+                              availability={m.availability}
+                              redirectUrl={v.redirectUrl}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         ))}
         <p className="text-xs text-muted">
-          As of {when(cmp.asOf)}. Fees included in effective ask.
+          As of {when(cmp.asOf)}. Effective ask includes Venue fees.
         </p>
       </section>
 
@@ -212,35 +247,53 @@ function Depth({ event, quotes }: { event: EventView; quotes: Record<string, Quo
     return q ? [{ id: m.id, name: m.venue.name, label: o.label, q }] : [];
   });
   const max = Math.max(1, ...rows.flatMap((r) => [Number(r.q.bidDepth), Number(r.q.askDepth)]));
-  const bar = (v: string, cls: string) => (
-    <div className="h-2 rounded-full bg-surface-2">
-      <div
-        className={`h-2 rounded-full ${cls}`}
-        style={{ width: `${Math.min(100, (Number(v) / max) * 100)}%` }}
-      />
-    </div>
-  );
+  const w = (v: string) => `${Math.min(100, (Number(v) / max) * 100)}%`;
   return (
-    <section aria-labelledby="depth-h" className="flex flex-col gap-3">
-      <h2 id="depth-h" className="text-lg font-medium">
-        Depth
-      </h2>
+    <section aria-labelledby="depth-h" className="flex flex-col gap-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id="depth-h" className="text-2xl">
+          Depth
+        </h2>
+        <p className="text-xs text-muted">Resting orders on each side of the book</p>
+      </div>
       {rows.length === 0 ? (
-        <p className="text-sm text-muted">No order book data yet.</p>
+        <p className="rounded-card border border-dashed border-border p-6 text-sm text-muted">
+          No order book data yet.
+        </p>
       ) : (
-        <ul className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
+        <ul className="flex flex-col divide-y divide-border/70 rounded-card border border-border bg-surface">
           {rows.map((r) => (
-            <li key={r.id} className="grid grid-cols-[8rem_1fr_1fr] items-center gap-3 text-xs">
-              <span className="text-sm">
-                {r.name} <span className="text-muted">{r.label}</span>
+            <li
+              key={r.id}
+              className="grid items-center gap-3 px-5 py-4 text-xs sm:grid-cols-[9rem_1fr]"
+            >
+              <span className="text-sm font-medium">
+                {r.name} <span className="font-normal text-muted">{r.label}</span>
               </span>
               <div>
-                <div className="mb-1 text-muted">Bids {usd(r.q.bidDepth)}</div>
-                {bar(r.q.bidDepth, 'bg-positive')}
-              </div>
-              <div>
-                <div className="mb-1 text-muted">Asks {usd(r.q.askDepth)}</div>
-                {bar(r.q.askDepth, 'bg-negative')}
+                <div className="mb-1.5 flex justify-between text-muted">
+                  <span>
+                    Bids <span className="font-mono text-fg">{usd(r.q.bidDepth)}</span>
+                  </span>
+                  <span>
+                    Asks <span className="font-mono text-fg">{usd(r.q.askDepth)}</span>
+                  </span>
+                </div>
+                {/* Bids grow left from the centre, asks grow right. */}
+                <div className="grid grid-cols-2 gap-1">
+                  <div className="flex h-2.5 justify-end rounded-l-full bg-surface-2">
+                    <div
+                      className="ink-stroke h-full rounded-l-full bg-positive"
+                      style={{ width: w(r.q.bidDepth) }}
+                    />
+                  </div>
+                  <div className="h-2.5 rounded-r-full bg-surface-2">
+                    <div
+                      className="ink-stroke h-full rounded-r-full bg-seal"
+                      style={{ width: w(r.q.askDepth) }}
+                    />
+                  </div>
+                </div>
               </div>
             </li>
           ))}
