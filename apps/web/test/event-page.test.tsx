@@ -1,6 +1,7 @@
 import type { MarketView } from '@paras/shared';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
+import { venuePrices } from '@/components/odds-line';
 import { RulesCompare } from '@/components/rules-compare';
 import { SmartMoneyPanel } from '@/components/smart-money-panel';
 import { VenueAction } from '@/components/venue-action';
@@ -75,5 +76,30 @@ describe('SmartMoneyPanel', () => {
     );
     expect(screen.getByText('Whales bought YES')).toBeTruthy();
     expect(screen.getByText('YES (70%)')).toBeTruthy();
+  });
+});
+
+describe('venuePrices (#130)', () => {
+  const m = (id: string, quote: { ask?: string | null; last?: string | null }) => ({
+    id,
+    venue: { name: id },
+    stale: false,
+    outcomes: [{ label: 'Yes', quote }],
+  });
+  it('ranks Venues by ask; a misattributed last trade does not move them', () => {
+    const event = {
+      markets: [
+        m('Polymarket', { ask: '0.041', last: '0.959' }),
+        m('Limitless', { ask: '0.045', last: '0.05' }),
+        m('Opinion', { ask: '0.092', last: null }),
+        m('NoAsk', { ask: null, last: '0.07' }),
+      ],
+    } as unknown as Parameters<typeof venuePrices>[0];
+    expect(venuePrices(event).map((p) => [p.venue, p.price])).toEqual([
+      ['Polymarket', 0.041],
+      ['Limitless', 0.045],
+      ['NoAsk', 0.07],
+      ['Opinion', 0.092],
+    ]);
   });
 });
