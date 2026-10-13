@@ -621,7 +621,12 @@ _Contract addresses, by network. Filled by #18 and later._
 
 | Network | Contract | Address |
 |---|---|---|
-| Monad testnet (10143) | Vault proxy / Timelock / impl / DemoCctp | pending: HITL #56 (deployer password is interactive). Dry-run green 2026-10-11. Command in #56. Record the four addresses here after broadcast. |
+| Monad testnet (10143) | Vault proxy | `0x64BccF97c7e4EF197182E4665f3F99E6D72Bcba5` |
+| Monad testnet (10143) | Vault impl | `0x34AA9a04112e7F89FCd6C86175Fe2daD395fA878` |
+| Monad testnet (10143) | Timelock | `0xDFEECF23eD1012FcD2FA1965F6e1a86F42abc292` |
+| Monad testnet (10143) | DemoCctp (TokenMessenger + MessageTransmitter) | `0xA2258396A0a4F4f624f69f908919736245090CA0` |
+
+Deployed 2026-10-14, start block `70795955`, deployer `0xAc99290B7Cd053276839Fb4bfB33dA9cdABF727D` (Timelock proposer/executor + pauser, demo only). `EXECUTOR_ROLE` + DemoCctp attester: `0x7B093Dd62A916a3B425817A12466468d04312a74`.
 
 **Testnet demo deploy (#98, #56).** `DEMO_CCTP=true EXECUTOR=<Vault executor addr> ATTESTER=<EXECUTOR_PRIVATE_KEY addr> forge script script/DeployVault.s.sol --rpc-url https://testnet-rpc.monad.xyz --account chainlink --sender 0xAc99290B7Cd053276839Fb4bfB33dA9cdABF727D --broadcast` from `contracts/`. On chain 10143 `MULTISIG` defaults to the sender (demo only: Timelock proposer/executor and pauser are the deployer EOA; **mainnet must pass a Safe**, the script requires the env there). `DEMO_CCTP=true` deploys `DemoCctp` (see Module: Executor, "Testnet demo mode") as TokenMessenger and MessageTransmitter, with `ATTESTER` (default `EXECUTOR`) as its attester: it must be the address of the Executor env key `EXECUTOR_PRIVATE_KEY`, which signs the simulated attestations (when `EXECUTOR_MONAD_SIGNER=privy`, `EXECUTOR` is the Privy wallet and `ATTESTER` the env key). Then set on the Executor: `EXECUTOR_DEMO_MODE=simulate EXECUTOR_PRIVATE_KEY=<executor key> VAULT_ADDRESS=<proxy> VAULT_CHAIN_ID=10143 MONAD_MESSAGE_TRANSMITTER=<DemoCctp> VAULT_START_BLOCK=<deploy block> MONAD_RPC_URL=...`; on the API `VAULT_ADDRESS`, `VAULT_CHAIN_ID`, `MONAD_RPC_URL`. Fund the Executor key with MON (gas) and keep the DemoCctp escrow topped up with testnet USDC if demo sells book a profit.
 
