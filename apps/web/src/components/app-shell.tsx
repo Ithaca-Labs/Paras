@@ -9,9 +9,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b border-border bg-bg/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
-          <Link href="/feed" className="text-lg font-semibold tracking-tight">
-            Paras
-          </Link>
+          <Link href="/feed" aria-label="Paras" className="wordmark h-9 w-24 shrink-0" />
           <Nav />
           <div className="ml-auto flex items-center gap-2">
             <NotificationBell />
@@ -27,7 +25,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 export function PageHeader({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <div className="mb-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+      <h1 className="font-display text-4xl font-semibold tracking-tight">{title}</h1>
       {children && <p className="mt-1 text-sm text-muted">{children}</p>}
     </div>
   );

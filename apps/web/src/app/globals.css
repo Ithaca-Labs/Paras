@@ -1,55 +1,63 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens: the ONLY place colors/fonts/radius live. Neutral placeholder theme;
- * brand assets (#25) later replace these values and nothing else.
+ * Design tokens: the ONLY place colors/fonts/radius live. Paras brand (#25, brand-assets/colour-sheer.png):
+ * Parchment #F6F1E6, Celadon #C9DCC0, Moss #5B7F46, Jade #2F685B, Ink Navy #1E2B3F, Dusty Indigo #536B8F,
+ * Terracotta #C3563D, Muted Gold #D4B878, Mist Grey #B8B9B0, Soft Charcoal #3B3B3A.
  * Components use the Tailwind utilities below (bg-surface, text-muted, ...), never raw colors.
  */
 :root {
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --surface-2: #f1f1ef;
-  --border: #e4e4e0;
-  --fg: #171717;
-  --muted: #6b6b66;
-  --accent: #171717;
-  --accent-fg: #fafaf9;
-  --positive: #15803d;
-  --negative: #b91c1c;
-  --warning: #a16207;
+  --bg: #f6f1e6;
+  --surface: #fbf8f1;
+  --surface-2: #efe8d8;
+  --border: #ddd3bf;
+  --fg: #1e2b3f;
+  --muted: #5d6676;
+  --accent: #2f685b;
+  --accent-fg: #f6f1e6;
+  --positive: #5b7f46;
+  --negative: #c3563d;
+  --warning: #9a7a35;
   --radius: 0.75rem;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-serif), Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --wordmark: url('/brand/wordmark-light.png');
+  --banner: url('/brand/banner-light.jpg');
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0e0e0d;
-    --surface: #171716;
-    --surface-2: #222220;
-    --border: #2e2e2b;
-    --fg: #f2f2ef;
-    --muted: #9a9a93;
-    --accent: #f2f2ef;
-    --accent-fg: #0e0e0d;
-    --positive: #4ade80;
-    --negative: #f87171;
-    --warning: #facc15;
+    --bg: #15171b;
+    --surface: #1d2025;
+    --surface-2: #262a31;
+    --border: #353a43;
+    --fg: #f6f1e6;
+    --muted: #b8b9b0;
+    --accent: #c9dcc0;
+    --accent-fg: #1e2b3f;
+    --positive: #9dbf84;
+    --negative: #e07a60;
+    --warning: #d4b878;
+    --wordmark: url('/brand/wordmark-dark.png');
+    --banner: url('/brand/banner-dark.jpg');
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #0e0e0d;
-  --surface: #171716;
-  --surface-2: #222220;
-  --border: #2e2e2b;
-  --fg: #f2f2ef;
-  --muted: #9a9a93;
-  --accent: #f2f2ef;
-  --accent-fg: #0e0e0d;
-  --positive: #4ade80;
-  --negative: #f87171;
-  --warning: #facc15;
+  --bg: #15171b;
+  --surface: #1d2025;
+  --surface-2: #262a31;
+  --border: #353a43;
+  --fg: #f6f1e6;
+  --muted: #b8b9b0;
+  --accent: #c9dcc0;
+  --accent-fg: #1e2b3f;
+  --positive: #9dbf84;
+  --negative: #e07a60;
+  --warning: #d4b878;
+  --wordmark: url('/brand/wordmark-dark.png');
+  --banner: url('/brand/banner-dark.jpg');
 }
 
 @theme inline {
@@ -66,6 +74,7 @@
   --color-warning: var(--warning);
   --radius-card: var(--radius);
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --font-mono: var(--font-mono);
 }
 
@@ -73,4 +82,19 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* The wordmark swaps with the theme; size it with width/height utilities. */
+.wordmark {
+  display: block;
+  background: var(--wordmark) left center / contain no-repeat;
+}
+
+.banner {
+  background: var(--banner) center / cover no-repeat;
 }
