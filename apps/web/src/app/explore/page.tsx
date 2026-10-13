@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PageHeader } from '@/components/app-shell';
+import { BrandHero } from '@/components/brand-hero';
 import { EventCard } from '@/components/event-card';
 import { EmptyState } from '@/components/states';
 import { VenueLabel } from '@/components/venue-label';
@@ -69,6 +70,11 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
   return (
     <>
+      <BrandHero>
+        <span className="text-[0.6875rem] tracking-[0.28em] text-fg uppercase">
+          02 &nbsp; Every Venue, one view
+        </span>
+      </BrandHero>
       <PageHeader title="Explore">Search and compare prices across Venues.</PageHeader>
 
       <form method="get" role="search" className="mb-4 flex flex-wrap items-end gap-3">
@@ -137,7 +143,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
             entity: undefined,
             cursor: undefined,
           })}
-          className={`rounded-full border border-border px-3 py-1 ${f.category ? '' : 'bg-accent text-accent-fg'}`}
+          className={`rounded-full border border-border px-3 py-1 hover:border-gold ${f.category ? '' : 'bg-accent text-accent-fg'}`}
         >
           All
         </Link>
@@ -145,7 +151,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           <Link
             key={c.id}
             href={href({ category: c.id, topic: undefined, entity: undefined })}
-            className={`rounded-full border border-border px-3 py-1 ${f.category === c.id ? 'bg-accent text-accent-fg' : ''}`}
+            className={`rounded-full border border-border px-3 py-1 hover:border-gold ${f.category === c.id ? 'bg-accent text-accent-fg' : ''}`}
           >
             {c.label} <span className="text-muted">{c.eventCount}</span>
           </Link>
@@ -169,7 +175,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         {list.items.length === 0 ? (
           <EmptyState>No Events match.</EmptyState>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {list.items.map((e) => (
               <EventCard key={e.id} event={e} />
             ))}

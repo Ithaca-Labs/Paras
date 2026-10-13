@@ -23,11 +23,19 @@ export function Nav() {
             key={href}
             href={href}
             aria-current={active ? 'page' : undefined}
-            className={`rounded-lg px-3 py-1.5 text-sm ${
-              active ? 'bg-accent text-accent-fg' : 'text-muted hover:text-fg'
+            className={`group relative rounded-lg px-3 py-1.5 text-sm ${
+              active ? 'font-medium text-fg' : 'text-muted hover:bg-surface-2 hover:text-fg'
             }`}
           >
             {label}
+            <span
+              aria-hidden
+              className={`absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-gold to-seal ${
+                active
+                  ? 'brush'
+                  : 'scale-x-0 opacity-0 transition duration-300 group-hover:scale-x-100 group-hover:opacity-60'
+              }`}
+            />
           </Link>
         );
       })}

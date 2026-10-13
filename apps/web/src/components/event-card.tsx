@@ -8,13 +8,16 @@ import { cents, usd } from '@/lib/format';
  */
 export function EventCard({ event, reason }: { event: EventView; reason?: string }) {
   return (
-    <article className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
+    <article className="ink-card flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
       <header className="flex flex-col gap-1">
         {event.category && (
           <span className="text-xs uppercase tracking-wide text-muted">{event.category}</span>
         )}
-        <h3 className="text-base font-medium leading-snug">
-          <Link href={`/events/${event.id}`} className="hover:underline">
+        <h3 className="text-lg leading-snug font-semibold">
+          <Link
+            href={`/events/${event.id}`}
+            className="decoration-gold underline-offset-4 hover:underline"
+          >
             {event.title}
           </Link>
         </h3>

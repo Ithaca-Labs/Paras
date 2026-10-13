@@ -19,7 +19,7 @@ export function RulesCompare({ markets }: { markets: MarketView[] }) {
         {markets.map((m) => (
           <article
             key={m.id}
-            className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
+            className="ink-card flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
           >
             <header className="flex flex-wrap items-center gap-2">
               <h3 className="font-medium">{m.venue.name}</h3>
