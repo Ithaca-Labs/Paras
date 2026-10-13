@@ -39,7 +39,9 @@ export function ThemeToggle() {
             r="7"
             fill="black"
             className={`transition-transform duration-500 ease-[var(--ease-ink)] ${
-              dark ? 'translate-x-[4px] -translate-y-[3px]' : 'translate-x-[14px] -translate-y-[10px]'
+              dark
+                ? 'translate-x-[4px] -translate-y-[3px]'
+                : 'translate-x-[14px] -translate-y-[10px]'
             }`}
           />
         </mask>

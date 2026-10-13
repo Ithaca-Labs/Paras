@@ -24,9 +24,7 @@ export function Nav() {
             href={href}
             aria-current={active ? 'page' : undefined}
             className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-display text-[0.95rem] tracking-wide whitespace-nowrap transition-colors ${
-              active
-                ? 'bg-surface-2 font-medium text-fg'
-                : 'text-muted hover:text-fg'
+              active ? 'bg-surface-2 font-medium text-fg' : 'text-muted hover:text-fg'
             }`}
           >
             {active && <span aria-hidden className="seal size-2 rounded-[2px] bg-seal" />}

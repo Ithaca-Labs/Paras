@@ -22,7 +22,10 @@ export function AccountButton() {
   if (user)
     return (
       <div className="flex items-center gap-3">
-        <Link href="/settings/connected-apps" className="rounded-full px-3 py-1.5 text-sm text-muted hover:bg-surface hover:text-fg">
+        <Link
+          href="/settings/connected-apps"
+          className="rounded-full px-3 py-1.5 text-sm text-muted hover:bg-surface hover:text-fg"
+        >
           Connected apps
         </Link>
         <button
