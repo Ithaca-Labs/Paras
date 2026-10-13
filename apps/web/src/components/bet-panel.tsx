@@ -88,7 +88,7 @@ function Form({
   extension?: (c: BetContext) => ReactNode;
 }) {
   const { user } = useSession();
-  const { address, client } = useVaultWallet();
+  const { address, client, signTypedData } = useVaultWallet();
   const event = useLoad(() => api.getEvent({ params: { id: eventId } }), [eventId]);
   const [outcome, setOutcome] = useState(initial.outcome);
   const [amount, setAmount] = useState(initial.amount);
@@ -139,8 +139,7 @@ function Form({
       const wallet = await client();
       const { domain, types, primaryType, message } = intent.typedData;
       setStep('Sign the Intent in your wallet…');
-      const signature = await wallet.signTypedData({
-        account: address,
+      const signature = await signTypedData({
         domain: { ...domain, verifyingContract: domain.verifyingContract as `0x${string}` },
         types,
         primaryType,
