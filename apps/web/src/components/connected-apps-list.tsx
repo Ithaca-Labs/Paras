@@ -34,7 +34,7 @@ export function ConnectedAppsList({ initial }: { initial: ConnectedApp[] }) {
             </div>
             <button
               onClick={() => revoke(a.id)}
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-negative"
+              className="rounded-sm border border-border px-3 py-1.5 text-sm text-negative"
             >
               Revoke
             </button>

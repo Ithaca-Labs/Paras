@@ -36,7 +36,7 @@ export function OrdersList() {
       {items.map((o) => (
         <div
           key={o.id}
-          className="flex flex-wrap items-center gap-4 rounded-card border border-border bg-surface p-4 text-sm"
+          className="ink-card flex flex-wrap items-center gap-4 rounded-card border border-border bg-surface p-4 text-sm"
         >
           <strong>{LABEL[o.kind]}</strong>
           <span>{o.outcome ?? 'position'}</span>

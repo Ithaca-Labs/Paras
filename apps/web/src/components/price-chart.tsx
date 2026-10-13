@@ -6,11 +6,11 @@ import { api } from '@/lib/api';
 
 // One stroke token + dash per Venue so series differ without raw colors.
 const STROKES = [
+  'stroke-accent',
+  'stroke-seal',
+  'stroke-indigo',
+  'stroke-gold',
   'stroke-fg',
-  'stroke-positive',
-  'stroke-warning',
-  'stroke-negative',
-  'stroke-muted',
 ] as const;
 const DASH = [undefined, '6 3', '2 3', '8 3 2 3', '1 4'] as const;
 const W = 640;
@@ -49,18 +49,18 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
   const hasData = paths.some(Boolean);
 
   return (
-    <section aria-labelledby="hist-h" className="flex flex-col gap-3">
+    <section aria-labelledby="hist-h" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="hist-h" className="text-lg font-medium">
+        <h2 id="hist-h" className="text-2xl">
           Price history
         </h2>
-        <div className="flex flex-wrap gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-surface p-1 text-xs">
           {h.outcomes.length > 1 && (
             <select
               aria-label="Outcome"
               value={h.outcome}
               onChange={(e) => load(h.interval, e.target.value)}
-              className="rounded-lg border border-border bg-surface px-2 py-1"
+              className="rounded-full border border-border bg-surface px-3 py-1"
             >
               {h.outcomes.map((o) => (
                 <option key={o}>{o}</option>
@@ -72,8 +72,8 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
               key={i}
               onClick={() => load(i, h.outcome)}
               aria-pressed={i === h.interval}
-              className={`rounded-lg px-2 py-1 ${
-                i === h.interval ? 'bg-accent text-accent-fg' : 'border border-border'
+              className={`rounded-full px-3 py-1 ${
+                i === h.interval ? 'bg-fg text-bg' : 'text-muted hover:bg-surface-2 hover:text-fg'
               }`}
             >
               {i}
@@ -82,7 +82,7 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
         </div>
       </div>
       <div
-        className={`rounded-card border border-border bg-surface p-3 ${busy ? 'opacity-60' : ''}`}
+        className={`rounded-card border border-border bg-surface p-5 transition-opacity ${busy ? 'opacity-60' : ''}`}
       >
         {error && (
           <p role="alert" className="text-sm text-negative">
@@ -98,7 +98,14 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
           >
             {[0, 0.25, 0.5, 0.75, 1].map((p) => (
               <g key={p}>
-                <line x1={PAD.l} x2={W - PAD.r} y1={y(p)} y2={y(p)} className="stroke-border" />
+                <line
+                  x1={PAD.l}
+                  x2={W - PAD.r}
+                  y1={y(p)}
+                  y2={y(p)}
+                  className="stroke-border"
+                  strokeDasharray="2 4"
+                />
                 <text
                   x={PAD.l - 4}
                   y={y(p) + 3}
@@ -130,7 +137,9 @@ export function PriceChart({ eventId, initial }: { eventId: string; initial: Eve
                 key={h.series[i]!.marketId}
                 d={d}
                 fill="none"
-                strokeWidth={1.5}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 strokeDasharray={DASH[i % DASH.length]}
                 className={STROKES[i % STROKES.length]}
               />

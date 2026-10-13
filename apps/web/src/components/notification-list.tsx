@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { EmptyState } from './states';
 
-const btn = 'rounded-lg border border-border px-3 py-1.5 text-sm text-muted hover:text-fg';
+const btn = 'rounded-sm border border-border px-3 py-1.5 text-sm text-muted hover:text-fg';
 
 export function NotificationList({
   initial,

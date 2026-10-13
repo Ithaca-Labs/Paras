@@ -13,7 +13,8 @@ import { EmptyState, ErrorState } from './states';
 import { VaultGate } from './vault-gate';
 
 const card = 'rounded-card border border-border bg-surface p-5';
-const btn = 'rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50';
+const btn =
+  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
 const pnlClass = (v: string) =>
   Number(v) < 0 ? 'text-negative' : Number(v) > 0 ? 'text-positive' : '';
 
@@ -192,7 +193,7 @@ function Position({
         <label className="text-sm">
           Return proceeds to
           <select
-            className="ml-2 rounded-lg border border-border bg-bg px-2 py-1"
+            className="ml-2 rounded-sm border border-border bg-bg px-2 py-1"
             value={p.returnTo}
             onChange={(e) => void setReturn(e.target.value as 'vault' | 'polygon')}
           >
@@ -206,7 +207,7 @@ function Position({
               Min price
               <input
                 aria-label="Minimum exit price"
-                className="ml-2 w-20 rounded-lg border border-border bg-bg px-2 py-1"
+                className="ml-2 w-20 rounded-sm border border-border bg-bg px-2 py-1"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
               />

@@ -1,55 +1,60 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens: the ONLY place colors/fonts/radius live. Neutral placeholder theme;
- * brand assets (#25) later replace these values and nothing else.
- * Components use the Tailwind utilities below (bg-surface, text-muted, ...), never raw colors.
+ * Design tokens: the ONLY place colors/fonts/radius live. Brand palette (#25,
+ * brand-assets/colour-sheer.png). Components use the Tailwind utilities below, never raw colors.
+ * Terracotta (seal) is reserved for Venue seals and price disagreement; gold for hairlines.
  */
 :root {
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --surface-2: #f1f1ef;
-  --border: #e4e4e0;
-  --fg: #171717;
-  --muted: #6b6b66;
-  --accent: #171717;
-  --accent-fg: #fafaf9;
-  --positive: #15803d;
-  --negative: #b91c1c;
-  --warning: #a16207;
-  --radius: 0.75rem;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --bg: #f6f1e6; /* parchment */
+  --surface: #fbf8f0;
+  --surface-2: #efe8d8;
+  --border: #ddd3bf;
+  --fg: #1e2b3f; /* ink navy */
+  --muted: #5b6474;
+  --accent: #2f685b; /* jade */
+  --accent-fg: #f6f1e6;
+  --positive: #4a6b38; /* moss, deepened for text */
+  --negative: #a8442d; /* terracotta, deepened for text */
+  --warning: #82652a; /* muted gold, deepened for text */
+  --gold: #d4b878;
+  --seal: #c3563d;
+  --celadon: #c9dcc0;
+  --indigo: #536b8f;
+  --banner: url('/brand/banner.jpg');
+  --radius: 1rem;
+}
+
+:root[data-theme='dark'] {
+  --bg: #141619;
+  --surface: #1b1e22;
+  --surface-2: #24282e;
+  --border: #33373e;
+  --fg: #efe9dc;
+  --muted: #a9aba3;
+  --accent: #c9dcc0; /* celadon */
+  --accent-fg: #1e2b3f;
+  --positive: #9dbf84;
+  --negative: #e58b72;
+  --warning: #d4b878;
+  --banner: url('/brand/banner-dark.jpg');
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0e0e0d;
-    --surface: #171716;
-    --surface-2: #222220;
-    --border: #2e2e2b;
-    --fg: #f2f2ef;
-    --muted: #9a9a93;
-    --accent: #f2f2ef;
-    --accent-fg: #0e0e0d;
-    --positive: #4ade80;
-    --negative: #f87171;
-    --warning: #facc15;
+    --bg: #141619;
+    --surface: #1b1e22;
+    --surface-2: #24282e;
+    --border: #33373e;
+    --fg: #efe9dc;
+    --muted: #a9aba3;
+    --accent: #c9dcc0; /* celadon */
+    --accent-fg: #1e2b3f;
+    --positive: #9dbf84;
+    --negative: #e58b72;
+    --warning: #d4b878;
+    --banner: url('/brand/banner-dark.jpg');
   }
-}
-
-:root[data-theme='dark'] {
-  --bg: #0e0e0d;
-  --surface: #171716;
-  --surface-2: #222220;
-  --border: #2e2e2b;
-  --fg: #f2f2ef;
-  --muted: #9a9a93;
-  --accent: #f2f2ef;
-  --accent-fg: #0e0e0d;
-  --positive: #4ade80;
-  --negative: #f87171;
-  --warning: #facc15;
 }
 
 @theme inline {
@@ -64,13 +69,354 @@
   --color-positive: var(--positive);
   --color-negative: var(--negative);
   --color-warning: var(--warning);
+  --color-gold: var(--gold);
+  --color-seal: var(--seal);
+  --color-celadon: var(--celadon);
+  --color-indigo: var(--indigo);
+  --color-parchment: #f6f1e6;
   --radius-card: var(--radius);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-mincho), 'Hiragino Mincho ProN', Georgia, serif;
+  --font-mono: var(--font-code), ui-monospace, Menlo, monospace;
+  --ease-ink: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(
+      60rem 30rem at 0% -10%,
+      color-mix(in srgb, var(--celadon) 35%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50rem 28rem at 100% 0%,
+      color-mix(in srgb, var(--gold) 22%, transparent),
+      transparent 70%
+    ),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--fg);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Washi grain. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--gold);
+  color: #1e2b3f;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@layer base {
+  a,
+  button {
+    transition:
+      color 0.2s,
+      background-color 0.2s,
+      border-color 0.2s,
+      box-shadow 0.25s,
+      scale 0.15s var(--ease-ink);
+  }
+  button:not(:disabled):active {
+    scale: 0.97;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Event slip: hover lifts the card and re-inks its odds line. */
+.slip {
+  position: relative;
+  transition:
+    translate 0.4s var(--ease-ink),
+    box-shadow 0.4s var(--ease-ink),
+    border-color 0.3s;
+}
+.slip:hover,
+.slip:focus-within {
+  translate: 0 -3px;
+  border-color: color-mix(in srgb, var(--gold) 65%, var(--border));
+  box-shadow: 0 18px 32px -24px rgb(30 43 63 / 0.45);
+}
+
+/* Odds line motion: stroke draws, wash bleeds, seals stamp. */
+@keyframes draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes redraw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes bleed {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+@keyframes stamp {
+  0% {
+    scale: 1.8;
+    rotate: -10deg;
+    opacity: 0;
+  }
+  60% {
+    scale: 0.92;
+    rotate: 2deg;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    rotate: 0deg;
+  }
+}
+.ink-stroke {
+  animation: draw 0.9s var(--ease-ink) both;
+}
+.slip:hover .ink-stroke {
+  animation: redraw 0.7s var(--ease-ink) both;
+}
+.spread-wash {
+  animation: bleed 0.8s 0.5s ease-out both;
+}
+.seal {
+  animation: stamp 0.5s var(--ease-ink) both;
+  transition: scale 0.2s var(--ease-ink);
+}
+.seal:hover,
+.seal:focus {
+  scale: 1.18;
+}
+
+/* Page entrance + staggered lists. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+.rise {
+  animation: rise 0.7s var(--ease-ink) both;
+}
+.stagger > * {
+  animation: rise 0.7s var(--ease-ink) both;
+}
+.stagger > :nth-child(2) {
+  animation-delay: 50ms;
+}
+.stagger > :nth-child(3) {
+  animation-delay: 100ms;
+}
+.stagger > :nth-child(4) {
+  animation-delay: 150ms;
+}
+.stagger > :nth-child(5) {
+  animation-delay: 200ms;
+}
+.stagger > :nth-child(6) {
+  animation-delay: 250ms;
+}
+.stagger > :nth-child(n + 7) {
+  animation-delay: 300ms;
+}
+
+/* Handscroll: the banner unrolls from its centre. */
+@keyframes unroll {
+  from {
+    clip-path: inset(0 50% 0 50%);
+  }
+}
+.unroll {
+  animation: unroll 1.4s var(--ease-ink) both;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+.fade-up {
+  animation: fade-up 0.8s var(--ease-ink) both;
+}
+
+@keyframes brush {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+.brush {
+  animation: brush 0.5s var(--ease-ink) both;
+}
+
+@keyframes wash {
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton {
+  background:
+    linear-gradient(
+        90deg,
+        transparent 30%,
+        color-mix(in srgb, var(--gold) 20%, transparent) 50%,
+        transparent 70%
+      )
+      0 0 / 200% 100%,
+    var(--surface-2);
+  animation: wash 1.8s linear infinite;
+}
+
+/* Wordmark is ink navy on transparent; dark mode inverts lightness only (seal stays red). */
+:root[data-theme='dark'] .wordmark {
+  filter: invert(1) hue-rotate(180deg) brightness(1.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .wordmark {
+    filter: invert(1) hue-rotate(180deg) brightness(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .slip:hover {
+    translate: none;
+  }
+}
+
+/* Card frame, after the brand "frame tile": a soft inset gold hairline. */
+.scroll-frame::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  border-radius: calc(var(--radius) - 5px);
+  transition:
+    inset 0.4s var(--ease-ink),
+    border-color 0.4s;
+}
+.scroll-frame:hover::before {
+  inset: 4px;
+  border-color: color-mix(in srgb, var(--gold) 75%, transparent);
+}
+/* Ornament fades into the paper on its left/bottom edge and stirs on hover. */
+.ornament {
+  mask-image: radial-gradient(ellipse at top right, #000 35%, transparent 75%);
+  transition:
+    scale 0.6s var(--ease-ink),
+    rotate 0.6s var(--ease-ink),
+    opacity 0.4s;
+}
+.scroll-frame:hover .ornament {
+  scale: 1.08;
+  rotate: -2deg;
+  opacity: 1;
+}
+@keyframes stamp-tilt {
+  0% {
+    scale: 1.8;
+    rotate: -12deg;
+    opacity: 0;
+  }
+  60% {
+    scale: 0.94;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    rotate: 0deg;
+  }
+}
+.stamp-badge {
+  animation: stamp-tilt 0.5s 0.6s var(--ease-ink) both;
+  background: color-mix(in srgb, var(--seal) 8%, transparent);
+}
+:root[data-theme='dark'] .ornament {
+  filter: brightness(1.45) saturate(1.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .ornament {
+    filter: brightness(1.45) saturate(1.15);
+  }
+}
+
+/* Seigaiha (brand pattern 03) as a faint wash behind the page. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.07;
+  --w: color-mix(in srgb, var(--indigo, #536b8f) 100%, transparent);
+  background:
+    radial-gradient(
+        circle at 50% 100%,
+        transparent 26%,
+        var(--w) 27% 29%,
+        transparent 30% 36%,
+        var(--w) 37% 39%,
+        transparent 40% 46%,
+        var(--w) 47% 49%,
+        transparent 50%
+      )
+      0 0 / 48px 24px,
+    radial-gradient(
+        circle at 50% 100%,
+        transparent 26%,
+        var(--w) 27% 29%,
+        transparent 30% 36%,
+        var(--w) 37% 39%,
+        transparent 40% 46%,
+        var(--w) 47% 49%,
+        transparent 50%
+      )
+      24px 12px / 48px 24px;
+  mask-image: linear-gradient(to bottom, #000, transparent 45%, transparent 75%, #000);
+}
+
+/* Pill selects keep a chevron after appearance-none. */
+select.pill-field {
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%237b8290' stroke-width='1.6'%3E%3Cpath d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1rem;
+}
+.ornament-soft {
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 70%);
+}
+:root[data-theme='dark'] .ornament-soft {
+  filter: brightness(1.45) saturate(1.15);
 }

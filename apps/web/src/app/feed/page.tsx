@@ -19,9 +19,11 @@ export default async function FeedPage() {
   const followed = follows.items.filter((f) => f.kind === 'event').map((f) => f.targetId);
   return (
     <>
-      <PageHeader title="Feed">
-        {feed.personalized ? 'Picked for you.' : 'Popular right now.'}{' '}
-        <Link href="/onboarding" className="underline">
+      <PageHeader title={feed.personalized ? 'Picked for you' : 'Popular right now'}>
+        {feed.personalized
+          ? 'Ranked from your interests.'
+          : 'Pick a few interests and this list becomes yours.'}{' '}
+        <Link href="/onboarding" className="text-fg underline decoration-gold underline-offset-4">
           Edit interests
         </Link>
       </PageHeader>

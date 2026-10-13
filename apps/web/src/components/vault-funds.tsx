@@ -8,8 +8,9 @@ import { erc20Abi, publicClient, toUsdc, txUrl, validAmount, vaultAbi } from '@/
 import { ErrorState } from './states';
 
 const card = 'rounded-card border border-border bg-surface p-5';
-const btn = 'rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg disabled:opacity-50';
-const input = 'w-40 rounded-lg border border-border bg-bg px-2 py-1.5 text-sm';
+const btn =
+  'rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
+const input = 'w-40 rounded-sm border border-border bg-bg px-2 py-1.5 text-sm';
 
 type Vault = { address: string; usdc: string };
 

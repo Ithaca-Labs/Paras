@@ -2,14 +2,14 @@ import { ApiError } from '@paras/shared';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PageHeader } from '@/components/app-shell';
 import { BetPanel } from '@/components/bet-panel';
+import { EventHero } from '@/components/event-hero';
 import { EventLive } from '@/components/event-live';
 import { PriceChart } from '@/components/price-chart';
 import { RulesCompare } from '@/components/rules-compare';
 import { SmartMoneyPanel } from '@/components/smart-money-panel';
 import { serverApi } from '@/lib/api';
-import { usd, when } from '@/lib/format';
+import { plainText } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,35 +26,73 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
     if (e instanceof ApiError && (e.status === 404 || e.status === 400)) notFound();
     throw e;
   });
+  const about = plainText(event.description);
 
   return (
     <>
-      <PageHeader title={event.title}>
-        {[event.category, event.endDate && `Closes ${when(event.endDate)}`]
-          .filter(Boolean)
-          .join(' · ')}
-      </PageHeader>
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-          <span>Vol {usd(event.volume)}</span>
-          <span>Liq {usd(event.liquidity)}</span>
-          <span>{event.markets.length} Venues</span>
-          {event.tags.map((t) => (
+      <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-2 text-xs text-muted">
+        <Link href="/explore" className="hover:text-fg">
+          Explore
+        </Link>
+        {event.category && (
+          <>
+            <span aria-hidden>/</span>
             <Link
-              key={t.id}
-              href={`/explore?${t.kind}=${encodeURIComponent(t.id)}`}
-              className="hover:underline"
+              href={`/explore?category=${encodeURIComponent(event.category)}`}
+              className="capitalize hover:text-fg"
             >
-              #{t.label}
+              {event.category}
             </Link>
-          ))}
+          </>
+        )}
+      </nav>
+      <EventHero event={event} />
+
+      <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="flex min-w-0 flex-col gap-10">
+          <EventLive event={event} initial={comparison} />
+          <PriceChart eventId={event.id} initial={history} />
+          <SmartMoneyPanel smartMoney={event.smartMoney} explain={explain} />
+          <RulesCompare markets={event.markets} />
         </div>
-        {event.description && <p className="max-w-3xl text-sm">{event.description}</p>}
-        <EventLive event={event} initial={comparison} />
-        <BetPanel eventId={event.id} />
-        <PriceChart eventId={event.id} initial={history} />
-        <SmartMoneyPanel smartMoney={event.smartMoney} explain={explain} />
-        <RulesCompare markets={event.markets} />
+        <aside className="flex flex-col gap-6 lg:sticky lg:top-20">
+          <BetPanel eventId={event.id} />
+          {(about || event.tags.length > 0) && (
+            <section
+              aria-labelledby="about-h"
+              className="rounded-card border border-border bg-surface p-5"
+            >
+              <h2 id="about-h" className="mb-2 text-base">
+                About this Event
+              </h2>
+              {about && (
+                <details className="group text-sm leading-relaxed text-muted">
+                  <summary className="cursor-pointer list-none">
+                    <span className="line-clamp-4 whitespace-pre-line group-open:line-clamp-none">
+                      {about}
+                    </span>
+                    <span className="mt-2 inline-block text-xs font-medium text-accent group-open:hidden">
+                      Read more
+                    </span>
+                  </summary>
+                </details>
+              )}
+              {event.tags.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {event.tags.map((t) => (
+                    <Link
+                      key={t.id}
+                      href={`/explore?${t.kind}=${encodeURIComponent(t.id)}`}
+                      className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted hover:border-accent hover:text-fg"
+                    >
+                      {t.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+        </aside>
       </div>
     </>
   );

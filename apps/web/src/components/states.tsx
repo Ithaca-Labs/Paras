@@ -4,10 +4,7 @@ export function CardSkeletons({ count = 6 }: { count?: number }) {
   return (
     <div role="status" aria-label="Loading" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: count }, (_, i) => (
-        <div
-          key={i}
-          className="h-44 animate-pulse rounded-card border border-border bg-surface-2"
-        />
+        <div key={i} className="skeleton h-44 rounded-card border border-border" />
       ))}
     </div>
   );
@@ -29,7 +26,7 @@ export function ErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="rounded-lg bg-accent px-3 py-1.5 text-sm text-accent-fg"
+          className="rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:brightness-110"
         >
           Try again
         </button>

@@ -15,7 +15,7 @@ export const NAV = [
 export function Nav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Primary" className="flex gap-1">
+    <nav aria-label="Primary" className="-mx-2 flex gap-0.5 overflow-x-auto">
       {NAV.map(({ href, label }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
@@ -23,10 +23,11 @@ export function Nav() {
             key={href}
             href={href}
             aria-current={active ? 'page' : undefined}
-            className={`rounded-lg px-3 py-1.5 text-sm ${
-              active ? 'bg-accent text-accent-fg' : 'text-muted hover:text-fg'
+            className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-sm whitespace-nowrap ${
+              active ? 'font-medium text-fg' : 'text-muted hover:bg-surface-2 hover:text-fg'
             }`}
           >
+            {active && <span aria-hidden className="seal size-2 rounded-[2px] bg-seal" />}
             {label}
           </Link>
         );

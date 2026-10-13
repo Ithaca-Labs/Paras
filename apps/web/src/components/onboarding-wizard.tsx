@@ -11,11 +11,14 @@ type Suggestion = Awaited<ReturnType<typeof api.interpretInterest>>['matches'][n
 type Explainer = Awaited<ReturnType<typeof api.getExplainer>>;
 
 const STEPS = ['Categories', 'Topics', 'Your interests', 'About you', 'How it works'] as const;
-const btn = 'rounded-lg bg-accent px-4 py-2 text-sm text-accent-fg disabled:opacity-50';
-const ghost = 'rounded-lg border border-border px-4 py-2 text-sm text-muted hover:text-fg';
+const btn =
+  'rounded-sm bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:brightness-110 disabled:opacity-50';
+const ghost = 'rounded-sm border border-border px-4 py-2 text-sm text-muted hover:text-fg';
 const pill = (on: boolean) =>
-  `rounded-full border px-3 py-1 text-sm ${
-    on ? 'border-accent bg-accent text-accent-fg' : 'border-border text-muted hover:text-fg'
+  `flex items-center gap-1.5 rounded-sm border px-3 py-1.5 text-sm ${
+    on
+      ? 'border-fg bg-fg text-bg before:size-2 before:rounded-[2px] before:bg-seal'
+      : 'border-border text-muted hover:border-fg/50 hover:text-fg'
   }`;
 
 const toggle = (xs: string[], x: string) =>
@@ -220,7 +223,7 @@ export function OnboardingWizard({
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
             placeholder="F1 and AI startups"
-            className="rounded-lg border border-border bg-surface p-3 text-sm"
+            className="rounded-sm border border-border bg-surface p-3 text-sm"
           />
           <button
             className={`${ghost} self-start`}
