@@ -1,12 +1,12 @@
 import type { EventView } from '@paras/shared';
 import { cents } from '@/lib/format';
 
-/** First-Outcome price per Venue, cheapest first. Display only. */
+/** First-Outcome ask per Venue (last trade only without an ask), cheapest first. Display only. */
 export function venuePrices(event: EventView) {
   return event.markets
     .flatMap((m) => {
       const o = m.outcomes[0];
-      const p = o?.quote?.last ?? o?.quote?.ask;
+      const p = o?.quote?.ask ?? o?.quote?.last; // ask = what Compare ranks by; last can be stale or misattributed
       return p == null
         ? []
         : [{ id: m.id, venue: m.venue.name, label: o!.label, price: Number(p), stale: m.stale }];
