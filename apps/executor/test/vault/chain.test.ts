@@ -87,6 +87,53 @@ describe('Monad Vault client (#57: viem VaultRegistry)', () => {
   });
 });
 
+describe('Monad log scans (#122: public RPC caps eth_getLogs at 100 blocks)', () => {
+  const rangeNode = (head: bigint) => {
+    const ranges: [bigint, bigint][] = [];
+    const transport = custom({
+      async request({ method, params }: { method: string; params?: unknown[] }) {
+        if (method === 'eth_blockNumber') return `0x${head.toString(16)}`;
+        if (method !== 'eth_getLogs') throw new Error(`unexpected rpc ${method}`);
+        const { fromBlock, toBlock } = params![0] as { fromBlock: Hex; toBlock: Hex };
+        const r: [bigint, bigint] = [BigInt(fromBlock), BigInt(toBlock)];
+        if (r[1] - r[0] + 1n > 100n) throw new Error('eth_getLogs is limited to a 100 range');
+        ranges.push(r);
+        return [];
+      },
+    } as never);
+    return { transport, ranges };
+  };
+  const monad = (transport: ReturnType<typeof custom>) =>
+    createMonad({
+      transport,
+      chainId: 10143,
+      account: privateKeyToAccount(generatePrivateKey()),
+      vault: VAULT,
+      messageTransmitter: '0x4444444444444444444444444444444444444444',
+      fromBlock: 1000n,
+      confirmations: 0n,
+    }).chain;
+
+  it('events() covers a 2000-block window in contiguous chunks of at most 100', async () => {
+    const node = rangeNode(10_000n);
+    const { toBlock } = await monad(node.transport).events(1000n);
+    expect(toBlock).toBe(2999n);
+    expect(node.ranges).toHaveLength(20);
+    expect(node.ranges[0]).toEqual([1000n, 1099n]);
+    expect(node.ranges.at(-1)).toEqual([2900n, 2999n]);
+  });
+
+  it('dispatchTx() scans back to the deploy block in chunks of at most 100', async () => {
+    const node = rangeNode(1250n);
+    expect(await monad(node.transport).dispatchTx(user, `0x${'00'.repeat(32)}`)).toBeNull();
+    expect(node.ranges).toEqual([
+      [1151n, 1250n],
+      [1051n, 1150n],
+      [1000n, 1050n],
+    ]);
+  });
+});
+
 describe('Iris client', () => {
   it('returns the attestation once complete, null while pending or unindexed', async () => {
     const mk = (status: number, body: unknown) =>

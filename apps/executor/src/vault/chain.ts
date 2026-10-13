@@ -29,6 +29,8 @@ export interface MonadOptions {
   confirmations?: bigint;
 }
 
+/** Monad's public RPC caps eth_getLogs at 100 blocks; one events() call scans up to MAX_RANGE in LOG_RANGE chunks. */
+const LOG_RANGE = 100n;
 const MAX_RANGE = 2000n;
 
 /** Executor-side Monad access: the Vault port the engine uses and the `VaultRegistry` the wallet service uses. */
@@ -59,12 +61,18 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
       const head = (await pub.getBlockNumber()) - (o.confirmations ?? 2n);
       if (head < from) return { events: [], toBlock: from - 1n };
       const toBlock = head < from + MAX_RANGE ? head : from + MAX_RANGE - 1n;
-      const logs = await pub.getLogs({
-        address: vault,
-        fromBlock: from,
-        toBlock,
-        events: vaultIntentEvents,
-      });
+      const logs = [];
+      for (let a = from; a <= toBlock; a += LOG_RANGE) {
+        const b = a + LOG_RANGE - 1n < toBlock ? a + LOG_RANGE - 1n : toBlock;
+        logs.push(
+          ...(await pub.getLogs({
+            address: vault,
+            fromBlock: a,
+            toBlock: b,
+            events: vaultIntentEvents,
+          })),
+        );
+      }
       const times = new Map<bigint, Date>();
       const events: VaultEvent[] = [];
       for (const l of logs) {
@@ -130,13 +138,20 @@ export function createMonad(o: MonadOptions): { chain: VaultChain; registry: Vau
       );
     },
     async dispatchTx(user, id) {
-      const logs = await pub.getLogs({
-        address: vault,
-        event: vaultDispatchedEvent[0],
-        args: { user, id },
-        fromBlock: o.fromBlock ?? 0n,
-      });
-      return logs.at(-1)?.transactionHash ?? null;
+      // Newest first: a dispatch being looked up is recent.
+      const start = o.fromBlock ?? 0n;
+      for (let b = await pub.getBlockNumber(); b >= start; b -= LOG_RANGE) {
+        const a = b - LOG_RANGE + 1n > start ? b - LOG_RANGE + 1n : start;
+        const logs = await pub.getLogs({
+          address: vault,
+          event: vaultDispatchedEvent[0],
+          args: { user, id },
+          fromBlock: a,
+          toBlock: b,
+        });
+        if (logs.length) return logs.at(-1)!.transactionHash;
+      }
+      return null;
     },
     async expireIntent(user, id) {
       await mined(
