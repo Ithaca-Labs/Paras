@@ -38,6 +38,7 @@ export interface TestAppOptions {
   oauth?: Partial<OAuthDeps>;
   /** Fake Privy (`createFakePrivy().port`) + signer id; omit for the 503 path. */
   privy?: AppDeps['privy'];
+  geo?: AppDeps['geo'];
 }
 
 export const TEST_AUTH_DOMAIN = 'paras.test';
@@ -80,6 +81,7 @@ export async function createTestApp(options: TestAppOptions = {}) {
     ...(options.chain && { chain: options.chain }),
     ...(options.nearIntents && { nearIntents: options.nearIntents }),
     ...(options.privy && { privy: options.privy }),
+    ...(options.geo && { geo: options.geo }),
     ...(options.activity && { activity: options.activity }),
     ...(options.feedWeights && { feedWeights: options.feedWeights }),
     ssePollMs: options.ssePollMs ?? 50,
