@@ -40,7 +40,8 @@ export function createApiClient(options: ClientOptions): ApiClient {
       );
       const qs = new URLSearchParams();
       for (const [k, v] of Object.entries(input.query ?? {})) {
-        if (v !== undefined) qs.set(k, String(v));
+        if (Array.isArray(v)) for (const x of v) qs.append(k, String(x));
+        else if (v !== undefined) qs.set(k, String(v));
       }
       const url = options.baseUrl.replace(/\/$/, '') + path + (qs.size ? `?${qs}` : '');
       const res = await doFetch(url, {
