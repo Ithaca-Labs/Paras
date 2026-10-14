@@ -25,7 +25,7 @@ export type EventSort =
 
 export interface ListFilter {
   status: MarketStatus | 'all';
-  venue?: string | undefined;
+  venue?: readonly string[] | undefined;
   /** Keep play-money Venues' Markets (and Events made only of them). Default false. */
   includePlayMoney?: boolean | undefined;
   category?: string | undefined;
@@ -59,10 +59,13 @@ const price = sql`coalesce(lq.last, (lq.bid + lq.ask) / 2)`;
 function conditions(f: ListFilter) {
   return and(
     f.status === 'all' ? undefined : eq(events.status, f.status),
-    f.venue
+    f.venue?.length
       ? sql`exists (
           select 1 from ${eventMarkets} em join ${markets} m on m.id = em.market_id
-          where em.event_id = ${events.id} and m.venue_id = ${f.venue}
+          where em.event_id = ${events.id} and m.venue_id in (${sql.join(
+            f.venue.map((v) => sql`${v}`),
+            sql`, `,
+          )})
         )`
       : undefined,
     f.includePlayMoney

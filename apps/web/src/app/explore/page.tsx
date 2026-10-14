@@ -5,6 +5,7 @@ import { EventCard } from '@/components/event-card';
 import { Handscroll } from '@/components/handscroll';
 import { OddsLine, venuePrices } from '@/components/odds-line';
 import { EmptyState } from '@/components/states';
+import { VenueChips } from '@/components/venue-chips';
 import { VenueLabel } from '@/components/venue-label';
 import { serverApi } from '@/lib/api';
 
@@ -23,7 +24,6 @@ const SORTS = [
 const FILTER_KEYS = [
   'q',
   'status',
-  'venue',
   'category',
   'topic',
   'entity',
@@ -32,6 +32,7 @@ const FILTER_KEYS = [
   'includePlayMoney',
 ] as const;
 type Params = Record<string, string | string[] | undefined>;
+const many = (v: string | string[] | undefined) => (Array.isArray(v) ? v : v ? [v] : []);
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
 
 export default async function ExplorePage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -40,6 +41,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     (typeof FILTER_KEYS)[number],
     string | undefined
   >;
+  const venueIds = many(sp.venue);
   const cursor = one(sp.cursor);
   const api = serverApi();
   const [list, venues, cats] = await Promise.all([
@@ -49,7 +51,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         cursor,
         q: f.q,
         status: (f.status as 'open' | 'closed' | 'resolved' | 'all') ?? 'open',
-        venue: f.venue,
+        venue: venueIds.length ? venueIds : undefined,
         category: f.category,
         topic: f.topic,
         entity: f.entity,
@@ -62,9 +64,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     api.listCategories(),
   ]);
 
-  const href = (over: Record<string, string | undefined>) => {
+  const href = (over: Record<string, string | undefined>, venueSel = venueIds) => {
     const qs = new URLSearchParams();
     for (const [k, v] of Object.entries({ ...f, ...over })) if (v) qs.set(k, v);
+    for (const v of venueSel) qs.append('venue', v);
     return `/explore${qs.size ? `?${qs}` : ''}`;
   };
   const field =
@@ -181,14 +184,6 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
               </option>
             ))}
           </select>
-          <select name="venue" defaultValue={f.venue ?? ''} aria-label="Venue" className={field}>
-            <option value="">All Venues</option>
-            {venues.items.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name}
-              </option>
-            ))}
-          </select>
           <select
             name="status"
             defaultValue={f.status ?? 'open'}
@@ -223,7 +218,15 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           {(['category', 'topic', 'entity'] as const).map(
             (k) => f[k] && <input key={k} type="hidden" name={k} value={f[k]} />,
           )}
+          {venueIds.map((v) => (
+            <input key={v} type="hidden" name="venue" value={v} />
+          ))}
         </div>
+        <VenueChips
+          venues={venues.items}
+          selected={venueIds}
+          hrefFor={(next) => href({ cursor: undefined }, next)}
+        />
       </form>
 
       <nav

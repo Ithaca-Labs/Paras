@@ -146,7 +146,8 @@ export const listEvents = defineRoute({
       /** Free text, e.g. "will the Fed cut in December". Matches by words and by meaning. */
       q: z.string().trim().min(1).max(300).optional(),
       status: z.enum(['open', 'closed', 'resolved', 'all']).default('open'),
-      venue: VenueId.optional(),
+      /** Venue id; repeat (`venue=a&venue=b`) to keep Events with a Market on any of them. */
+      venue: z.union([VenueId, z.array(VenueId).min(1)]).optional(),
       /** Include play-money Venues (e.g. Manifold). Hidden by default so they never read as real prices. */
       includePlayMoney: z.enum(['true', 'false']).default('false'),
       /** Taxonomy ids from `GET /v1/categories`. */

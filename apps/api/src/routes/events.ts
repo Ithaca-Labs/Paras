@@ -42,6 +42,7 @@ export const eventRoutes: RoutePlugin = (
       const includePlayMoney = query.includePlayMoney === 'true';
       const ids = await searchEventIds(db, {
         ...query,
+        venue: query.venue === undefined ? undefined : [query.venue].flat(),
         includePlayMoney,
         closesAfter: query.closesAfter ? new Date(query.closesAfter) : undefined,
         closesBefore: query.closesBefore ? new Date(query.closesBefore) : undefined,

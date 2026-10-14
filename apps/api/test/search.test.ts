@@ -179,6 +179,17 @@ describe('browse: defaults, filters, sorts', () => {
     expect(titles(await ask({ venue: 'other-venue' }))).toEqual(['Will Ethereum flip Bitcoin?']);
   });
 
+  it('repeated venue keeps Events with a Market on any listed Venue', async () => {
+    const both = await t.client.listEvents({
+      query: { venue: ['other-venue', 'fake-venue'], status: 'all' },
+    });
+    const fake = await ask({ venue: 'fake-venue', status: 'all' });
+    expect(titles(both)).toHaveLength(titles(fake).length + 1);
+    expect(titles(both)).toContain('Will Ethereum flip Bitcoin?');
+    const none = await t.client.listEvents({ query: { venue: ['nope', 'nada'] } });
+    expect(none.items).toEqual([]);
+  });
+
   it('filters by category, topic and entity', async () => {
     expect(titles(await ask({ category: 'sports' }))).toEqual([
       'Will the Lakers win the NBA Finals?',

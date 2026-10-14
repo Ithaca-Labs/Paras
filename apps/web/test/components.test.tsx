@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { EventCard } from '@/components/event-card';
 import { Nav } from '@/components/nav';
 import { ErrorState } from '@/components/states';
+import { VenueChips } from '@/components/venue-chips';
 import { cents, usd } from '@/lib/format';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/explore' }));
@@ -53,6 +54,24 @@ describe('Nav', () => {
       'Settings',
     ]);
     expect(screen.getByRole('link', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
+  });
+});
+
+describe('VenueChips', () => {
+  const venues = [
+    { id: 'polymarket', name: 'Polymarket' },
+    { id: 'kalshi', name: 'Kalshi' },
+  ];
+  const hrefFor = (next: string[]) => `/explore?${next.map((v) => `venue=${v}`).join('&')}`;
+
+  it('links each chip to the URL with that Venue toggled', () => {
+    render(<VenueChips venues={venues} selected={['kalshi']} hrefFor={hrefFor} />);
+    expect(screen.getByRole('link', { name: 'Polymarket' }).getAttribute('href')).toBe(
+      '/explore?venue=kalshi&venue=polymarket',
+    );
+    const on = screen.getByRole('link', { name: 'Kalshi' });
+    expect(on.getAttribute('aria-current')).toBe('true');
+    expect(on.getAttribute('href')).toBe('/explore?');
   });
 });
 
