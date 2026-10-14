@@ -111,9 +111,18 @@ export function normalizeClobBook(raw: ClobBook, now: Date): OrderBook {
 }
 
 export function orderBookToQuote(book: OrderBook): Quote {
+  const q = bookToQuote(book);
+  // The CLOB reports one market-level last_trade_price on both token books, so the
+  // complementary token carries the other side's price (#131). Attribution is unknowable;
+  // keep `last` only when it sits within this Outcome's own spread.
+  const out =
+    q.last !== null &&
+    ((q.bid !== null && Number(q.last) < Number(q.bid)) ||
+      (q.ask !== null && Number(q.last) > Number(q.ask)));
   return {
     outcomeExternalId: book.outcomeExternalId,
-    ...bookToQuote(book),
+    ...q,
+    last: out ? null : q.last,
     observedAt: book.observedAt,
   };
 }
