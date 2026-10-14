@@ -10,7 +10,7 @@
     "typecheck": "tsc",
     "test": "vitest run --passWithNoTests",
     "generate": "drizzle-kit generate",
-    "migrate": "tsx src/migrate-cli.ts"
+    "migrate": "tsx --env-file-if-exists=../../.env src/migrate-cli.ts"
   },
   "dependencies": {
     "@paras/domain": "workspace:*",
