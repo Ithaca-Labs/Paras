@@ -1,4 +1,5 @@
 import { ApiError } from '@paras/shared';
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -12,6 +13,27 @@ import { serverApi } from '@/lib/api';
 import { plainText } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const event = await serverApi()
+    .getEvent({ params: { id } })
+    .catch(() => null);
+  if (!event) return {};
+  const about = plainText(event.description);
+  const description = about.length > 200 ? `${about.slice(0, 197)}…` : about;
+  const title = event.title;
+  return {
+    title,
+    description,
+    openGraph: { type: 'website', siteName: 'Paras', url: `/events/${id}`, title, description },
+    twitter: { card: 'summary_large_image', title, description },
+  };
+}
 
 export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -17,9 +17,16 @@ const body = Zen_Kaku_Gothic_New({
 });
 const code = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-code' });
 
+const description =
+  'Compare prediction market odds across Venues, follow a personal Feed, and bet from one USDC Vault on Monad.';
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://paraspredic.fun'),
   title: { default: 'Paras', template: '%s · Paras' },
-  description: 'Prediction market aggregator and discovery layer on Monad.',
+  description,
+  applicationName: 'Paras',
+  openGraph: { type: 'website', siteName: 'Paras', url: '/', title: 'Paras', description },
+  twitter: { card: 'summary_large_image', title: 'Paras', description },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
