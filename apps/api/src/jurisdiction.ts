@@ -23,8 +23,8 @@ function country(raw: string | string[] | undefined) {
 
 /**
  * Web (Vercel) -> API crosses Cloudflare, which stamps Vercel's datacenter country (#136). The web
- * proves itself with GEO_SECRET (`x-paras-geo-secret`); then only the visitor's
- * `x-vercel-ip-country` counts (absent = unknown, fail closed). Other callers: `headerGeo`.
+ * proves itself with GEO_SECRET (`x-paras-geo-secret`); then only the visitor country it forwards
+ * as `x-paras-country` counts (absent = unknown, fail closed; #146). Other callers: `headerGeo`.
  */
 export function trustedGeo(secret: string): GeoResolver {
   const want = Buffer.from(secret);
@@ -32,7 +32,7 @@ export function trustedGeo(secret: string): GeoResolver {
     const raw = req.headers['x-paras-geo-secret'];
     const given = Buffer.from(typeof raw === 'string' ? raw : '');
     const fromWeb = given.length === want.length && timingSafeEqual(given, want);
-    return fromWeb ? country(req.headers['x-vercel-ip-country']) : headerGeo(req);
+    return fromWeb ? country(req.headers['x-paras-country']) : headerGeo(req);
   };
 }
 

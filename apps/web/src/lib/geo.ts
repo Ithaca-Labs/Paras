@@ -11,13 +11,12 @@ export function geoOverride(
 ): Record<string, string> {
   const dev = env.NODE_ENV !== 'production' ? env.DEV_COUNTRY?.trim().toUpperCase() : undefined;
   if (dev) return { 'cf-ipcountry': dev };
-  // Lets the API trust our x-vercel-ip-country over the country Cloudflare stamps on us (#136).
-  const proof: Record<string, string> = env.GEO_SECRET
-    ? { 'x-paras-geo-secret': env.GEO_SECRET }
-    : {};
+  // With GEO_SECRET the API trusts our country over the one Cloudflare stamps on us (#136). Own
+  // header name: Vercel drops x-vercel-* on the /v1 rewrite to the API (#146).
+  const secret = env.GEO_SECRET;
   for (const h of GEO_HEADERS) {
     const v = incoming.get(h);
-    if (v) return { [h]: v, ...proof };
+    if (v) return secret ? { 'x-paras-country': v, 'x-paras-geo-secret': secret } : { [h]: v };
   }
-  return proof;
+  return secret ? { 'x-paras-geo-secret': secret } : {};
 }

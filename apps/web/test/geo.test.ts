@@ -18,7 +18,7 @@ describe('geoOverride', () => {
   it('GEO_SECRET rides along; Vercel country preferred over a client-sent cf-ipcountry', () => {
     const incoming = h({ 'cf-ipcountry': 'US', 'x-vercel-ip-country': 'IN' });
     expect(geoOverride(incoming, { NODE_ENV: 'production', GEO_SECRET: 's' })).toEqual({
-      'x-vercel-ip-country': 'IN',
+      'x-paras-country': 'IN',
       'x-paras-geo-secret': 's',
     });
   });
@@ -42,5 +42,18 @@ describe('serverApi', () => {
       .catch(() => {});
     const init = (fetchMock.mock.calls[0] as unknown as [unknown, RequestInit])[1];
     expect(new Headers(init.headers).get('x-vercel-ip-country')).toBe('IN');
+  });
+});
+
+describe('proxy', () => {
+  it('drops a client-sent x-paras-country (the API trusts it alongside the secret)', async () => {
+    const { NextRequest } = await import('next/server');
+    const { proxy } = await import('@/proxy');
+    const res = proxy(
+      new NextRequest('https://paraspredic.fun/v1/events', {
+        headers: { 'x-paras-country': 'IN' },
+      }),
+    );
+    expect(res.headers.get('x-middleware-request-x-paras-country')).toBeNull();
   });
 });

@@ -181,15 +181,15 @@ describe('web geo secret (#136)', () => {
   };
 
   it('valid secret: visitor country wins over Cloudflare', async () => {
-    expect(await polymarket({ 'x-paras-geo-secret': secret, 'x-vercel-ip-country': 'IN' })).toBe(
+    expect(await polymarket({ 'x-paras-geo-secret': secret, 'x-paras-country': 'IN' })).toBe(
       'routable',
     );
   });
   it('wrong or missing secret: spoofed visitor country ignored', async () => {
     expect(
-      await polymarket({ 'x-paras-geo-secret': 'x'.repeat(32), 'x-vercel-ip-country': 'IN' }),
+      await polymarket({ 'x-paras-geo-secret': 'x'.repeat(32), 'x-paras-country': 'IN' }),
     ).toBe('blocked');
-    expect(await polymarket({ 'x-vercel-ip-country': 'IN' })).toBe('blocked');
+    expect(await polymarket({ 'x-paras-country': 'IN' })).toBe('blocked');
   });
   it('valid secret without visitor country fails closed', async () => {
     expect(await polymarket({ 'x-paras-geo-secret': secret })).toBe('redirect');

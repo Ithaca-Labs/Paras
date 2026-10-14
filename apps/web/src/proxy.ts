@@ -4,6 +4,7 @@ import { geoOverride } from '@/lib/geo';
 /** Stamps DEV_COUNTRY onto requests (pages + the /v1 rewrite to the API). No-op in production. */
 export function proxy(req: NextRequest) {
   const headers = new Headers(req.headers);
+  headers.delete('x-paras-country'); // only geoOverride may set it (the API trusts it with the secret)
   for (const [k, v] of Object.entries(geoOverride(req.headers))) headers.set(k, v);
   return NextResponse.next({ request: { headers } });
 }
