@@ -101,6 +101,11 @@ export const NormalizedMarket = z.object({
   url: z.string().url(),
   fee: FeeSchedule,
   outcomes: z.array(NormalizedOutcome).min(1),
+  /**
+   * Set when the Venue groups sibling binary Markets under one parent (Kalshi event): they share one
+   * Paras Event titled `title`, each standing for `candidate` (its YES).
+   */
+  group: z.object({ key: z.string(), title: z.string(), candidate: z.string() }).optional(),
   /** Venue-specific extras the Executor may need later (tick size, neg-risk flag, ...). */
   meta: z.record(z.string(), z.unknown()),
 });
