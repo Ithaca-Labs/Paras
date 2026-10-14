@@ -4,7 +4,16 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { errMsg, useLoad } from '@/lib/use-api';
 import { useVaultWallet } from '@/lib/use-vault-wallet';
-import { erc20Abi, publicClient, toUsdc, txUrl, validAmount, vaultAbi } from '@/lib/vault-chain';
+import {
+  chain,
+  erc20Abi,
+  publicClient,
+  toUsdc,
+  txUrl,
+  validAmount,
+  vaultAbi,
+} from '@/lib/vault-chain';
+import { CopyAddress } from './copy-address';
 import { ErrorState } from './states';
 
 const card = 'rounded-card border border-border bg-surface p-5';
@@ -106,9 +115,28 @@ function MoveFunds({ vault, onDone }: { vault: Vault; onDone: () => void }) {
   return (
     <section className={card} aria-label="Deposit or withdraw">
       <h2 className="font-medium">Deposit / withdraw</h2>
-      <p className="mt-1 text-xs text-muted">
-        Wallet {address ?? 'not connected'}. Needs testnet USDC and MON for gas.
+      <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
+        Wallet {address ? <CopyAddress address={address} /> : 'not connected'}. Needs USDC and MON
+        for gas.
       </p>
+      {chain.id === 10143 && (
+        <p className="mt-1 text-xs text-muted">
+          Testnet faucets:{' '}
+          <a
+            className="underline"
+            href="https://faucet.circle.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            USDC (Circle)
+          </a>
+          ,{' '}
+          <a className="underline" href="https://faucet.monad.xyz" target="_blank" rel="noreferrer">
+            MON (Monad)
+          </a>
+          .
+        </p>
+      )}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <input
           aria-label="Amount in USDC"

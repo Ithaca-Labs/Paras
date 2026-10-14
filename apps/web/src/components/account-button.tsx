@@ -1,10 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import { useVaultWallet } from '@/lib/use-vault-wallet';
+import { CopyAddress } from './copy-address';
 import { useSession } from './providers';
 
 const btn =
   'rounded-full bg-accent px-4 py-1.5 shadow-sm ring-1 ring-gold/40 transition font-display text-[0.95rem] font-semibold tracking-wide text-accent-fg hover:brightness-110 disabled:opacity-50';
+
+function WalletAddress() {
+  const { address } = useVaultWallet();
+  return address ? <CopyAddress address={address} short /> : null;
+}
 
 export function AccountButton() {
   const { configured, loading, user, signIn, signOut } = useSession();
@@ -28,6 +35,7 @@ export function AccountButton() {
         >
           Connected apps
         </Link>
+        <WalletAddress />
         <button
           onClick={signOut}
           className={btn}
