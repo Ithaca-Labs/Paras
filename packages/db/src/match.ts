@@ -99,11 +99,20 @@ const asMatch = (m: Member): MatchMarket => ({
 const refOf = (members: Member[]) => members.find((m) => !m.candidate) ?? members[0]!;
 
 /** Recompute an Event's display fields and totals from its linked Markets. */
-async function refreshAggregate(tx: Tx | Database, eventId: string) {
+export async function refreshAggregate(tx: Tx | Database, eventId: string) {
   const members = (await loadMembers(tx, [eventId])).get(eventId);
   if (!members?.length) return;
   const ref = refOf(members);
   const [m] = await tx.select().from(markets).where(eq(markets.id, ref.id));
+  // A Venue group (Kalshi event) names its Event; otherwise the representative Market does.
+  const [grouped] = await tx
+    .select({ title: sql<string>`${markets.meta}->'group'->>'title'` })
+    .from(eventMarkets)
+    .innerJoin(markets, eq(markets.id, eventMarkets.marketId))
+    .where(
+      and(eq(eventMarkets.eventId, eventId), sql`${markets.meta}->'group'->>'title' is not null`),
+    )
+    .limit(1);
   const [lock] = await tx
     .select({ labelLocked: events.labelLocked })
     .from(events)
@@ -118,7 +127,7 @@ async function refreshAggregate(tx: Tx | Database, eventId: string) {
   await tx
     .update(events)
     .set({
-      ...(!lock?.labelLocked && { title: m!.question }),
+      ...(!lock?.labelLocked && { title: grouped?.title ?? m!.question }),
       description: m!.description,
       endDate: m!.endDate,
       imageUrl: m!.imageUrl,
@@ -276,14 +285,26 @@ export async function runMatching(
         const seedIsHost = sm.outcomes.length >= 3 && tRef.outcomes.length < 3;
         let hostId = targetId;
         let hostMembers = tm;
+        let hostRef = tRef;
         let guest = sm;
         let guestEventId = seedId;
+        let groupCandidate: string | null = null;
         if (seedIsHost) {
           if (tm.length !== 1 || tRef.source !== 'auto') continue;
           hostId = seedId;
           hostMembers = seedMembers;
+          hostRef = sm;
           guest = tRef;
           guestEventId = targetId;
+        } else if (tm.every((h) => h.outcomes.length < 3) && tm.some((h) => h.candidate)) {
+          // Venue group (Kalshi event): compare with the member named in the seed's question.
+          groupCandidate = findCandidate(
+            tm.flatMap((h) => h.candidate ?? []),
+            guest.question,
+          );
+          const member = tm.find((h) => h.candidate === groupCandidate);
+          if (!member) continue;
+          hostRef = member;
         }
         // A rejection holds in both directions of the pair.
         if (
@@ -292,8 +313,9 @@ export async function runMatching(
         ) {
           continue;
         }
-        let verdict = evaluatePair(asMatch(refOf(hostMembers)), asMatch(guest), sim);
+        let verdict = evaluatePair(asMatch(hostRef), asMatch(guest), sim);
         if (verdict.tier === 'separate') continue;
+        if (groupCandidate) verdict = { ...verdict, candidate: groupCandidate };
         const sameVenue = hostMembers.some(
           (h) =>
             h.venueId === guest.venueId &&
@@ -302,7 +324,7 @@ export async function runMatching(
         if (sameVenue) continue;
         if (verdict.tier === 'review' && verifier && budget > 0) {
           budget--;
-          const answer = await verifier.verify(asMatch(refOf(hostMembers)), asMatch(guest));
+          const answer = await verifier.verify(asMatch(hostRef), asMatch(guest));
           verdict = applyVerification(verdict, answer);
           if (verdict.tier === 'separate') continue;
         }

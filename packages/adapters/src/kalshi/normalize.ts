@@ -103,6 +103,10 @@ export function normalizeKalshiMarket(
       { externalId: outcomeId(raw.ticker, 'yes'), label: 'Yes', index: 0 },
       { externalId: outcomeId(raw.ticker, 'no'), label: 'No', index: 1 },
     ],
+    // Siblings of a multi-market Kalshi event share one Paras Event.
+    ...(multi && eventTitle && raw.yes_sub_title
+      ? { group: { key: raw.event_ticker, title: eventTitle, candidate: raw.yes_sub_title } }
+      : {}),
     meta,
   };
 }

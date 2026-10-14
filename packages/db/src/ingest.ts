@@ -1,12 +1,15 @@
 import type { NormalizedMarket, Quote, VenueCapabilities } from '@paras/shared';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import type { Database } from './client.js';
+import { refreshAggregate } from './match.js';
 import {
   eventMarkets,
   events,
   follows,
   latestQuotes,
+  magicLinks,
   markets,
+  matchReviews,
   outcomes,
   positions,
   quoteSnapshots,
@@ -63,7 +66,7 @@ export async function upsertMarkets(
             imageUrl: m.imageUrl,
             url: m.url,
             fee: m.fee,
-            meta: m.meta,
+            meta: m.group ? { ...m.meta, group: m.group } : m.meta,
           })),
         )
         .onConflictDoUpdate({
@@ -126,10 +129,15 @@ export async function upsertMarkets(
           .insert(eventMarkets)
           .values([...eventIdOf].map(([marketId, eventId]) => ({ eventId, marketId })));
       }
+      const grouped = part.flatMap((m) => {
+        const id = idOf.get(`${m.venueId}\u0000${m.externalId}`)!;
+        return m.group ? [{ id, venueId: m.venueId, group: m.group }] : [];
+      });
+      const groupEvents = grouped.length ? await groupMarkets(tx, grouped) : [];
       // Single-Market Events mirror their Market (matching merges later; merged Events are left alone).
       await tx.execute(sql`
         update ${events} e set
-          title = case when e.label_locked then e.title else m.question end,
+          title = case when e.label_locked then e.title else coalesce(m.meta->'group'->>'title', m.question) end,
           description = m.description,
           liquidity = m.liquidity,
           status = m.status,
@@ -145,9 +153,97 @@ export async function upsertMarkets(
           )})
           and (select count(*) from ${eventMarkets} x where x.event_id = e.id) = 1
       `);
+      for (const id of groupEvents) await refreshAggregate(tx, id);
     });
   }
   return batch.length;
+}
+
+type Tx = Parameters<Parameters<Database['transaction']>[0]>[0];
+
+/**
+ * Put Markets that share a Venue group (Kalshi event) into one Event, returning the multi-Market
+ * group Events touched. Only lone, auto-seeded Events move: a Market already matched across Venues
+ * keeps its Event. The first member's Event becomes the group Event (its id, Magic Links and
+ * follows survive); later members' lone Events are folded in and their references repointed.
+ */
+async function groupMarkets(
+  tx: Tx,
+  items: { id: string; venueId: string; group: { key: string; candidate: string } }[],
+): Promise<string[]> {
+  const cur = new Map(
+    (
+      await tx
+        .select({
+          marketId: eventMarkets.marketId,
+          eventId: eventMarkets.eventId,
+          candidate: eventMarkets.candidate,
+          source: eventMarkets.source,
+          n: sql<number>`(select count(*) from ${eventMarkets} x where x.event_id = event_markets.event_id)`.mapWith(
+            Number,
+          ),
+        })
+        .from(eventMarkets)
+        .where(
+          inArray(
+            eventMarkets.marketId,
+            items.map((i) => i.id),
+          ),
+        )
+    ).map((r) => [r.marketId, r]),
+  );
+  const keyOf = (venueId: string, key: string) => `${venueId}\u0000${key}`;
+  // A group Event is one holding a Market with a candidate label (legacy matched pairs have none).
+  const host = new Map(
+    (
+      await tx
+        .select({
+          venueId: markets.venueId,
+          key: sql<string>`${markets.meta}->'group'->>'key'`,
+          eventId: eventMarkets.eventId,
+        })
+        .from(eventMarkets)
+        .innerJoin(markets, eq(markets.id, eventMarkets.marketId))
+        .where(
+          and(
+            sql`${eventMarkets.candidate} is not null`,
+            inArray(sql`${markets.meta}->'group'->>'key'`, [
+              ...new Set(items.map((i) => i.group.key)),
+            ]),
+          ),
+        )
+    ).map((r) => [keyOf(r.venueId, r.key), r.eventId]),
+  );
+  const touched = new Set<string>();
+  for (const m of items) {
+    const c = cur.get(m.id);
+    if (!c || c.candidate !== null || c.n > 1 || c.source !== 'auto') continue;
+    const target = host.get(keyOf(m.venueId, m.group.key));
+    if (!target) {
+      await tx
+        .update(eventMarkets)
+        .set({ candidate: m.group.candidate })
+        .where(eq(eventMarkets.marketId, m.id));
+      host.set(keyOf(m.venueId, m.group.key), c.eventId);
+      continue;
+    }
+    await tx.delete(eventMarkets).where(eq(eventMarkets.marketId, m.id));
+    await tx
+      .insert(eventMarkets)
+      .values({ eventId: target, marketId: m.id, candidate: m.group.candidate });
+    await tx.delete(matchReviews).where(eq(matchReviews.marketId, m.id));
+    // Magic Links have no cascade; follows are text ids. Keep both pointing at the surviving Event.
+    await tx.update(magicLinks).set({ eventId: target }).where(eq(magicLinks.eventId, c.eventId));
+    await tx.execute(sql`
+      update ${follows} f set target_id = ${target}
+      where f.kind = 'event' and f.target_id = ${c.eventId}
+        and not exists (select 1 from ${follows} g
+          where g.owner_key = f.owner_key and g.kind = 'event' and g.target_id = ${target})`);
+    await tx.delete(follows).where(and(eq(follows.kind, 'event'), eq(follows.targetId, c.eventId)));
+    await tx.delete(events).where(eq(events.id, c.eventId));
+    touched.add(target);
+  }
+  return [...touched];
 }
 
 export interface RecordQuotesOptions {

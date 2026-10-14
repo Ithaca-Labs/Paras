@@ -30,6 +30,22 @@ describe('kalshi adapter (fixture replay)', () => {
     expect(vols).toEqual([...vols].sort((a, b) => b - a));
   });
 
+  it('groups sibling Markets of a Kalshi event under one titled group', async () => {
+    const { items } = await adapter.listMarkets({ limit: 5 });
+    const nato = items.filter((m) => m.meta.eventTicker === 'KXNEXTNATOSECGEN-99');
+    expect(nato.length).toBeGreaterThan(1);
+    for (const m of nato) {
+      expect(m.group).toEqual({
+        key: 'KXNEXTNATOSECGEN-99',
+        title: 'Who will be the next Secretary General of NATO?',
+        candidate: expect.any(String),
+      });
+    }
+    expect(nato.find((m) => m.externalId.endsWith('-KKAL'))!.group!.candidate).toBe('Kaja Kallas');
+    // A single-Market event has no group.
+    expect(items.find((m) => m.externalId === 'KXELONMARS-99')!.group).toBeUndefined();
+  });
+
   it('derives YES and NO Quotes from the order book', async () => {
     const { items } = await adapter.listMarkets({ limit: 5 });
     const ids = items[0]!.outcomes.map((o) => o.externalId);

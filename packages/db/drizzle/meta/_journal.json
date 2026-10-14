@@ -162,6 +162,13 @@
       "when": 1791935256741,
       "tag": "0022_remove_probable",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791940000000,
+      "tag": "0023_kalshi_event_groups",
+      "breakpoints": true
     }
   ]
 }
