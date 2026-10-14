@@ -10,7 +10,10 @@
     "TESTCONTAINERS_HOST_OVERRIDE"
   ],
   "tasks": {
-    "build": { "outputs": ["dist/**", ".next/**", "!.next/cache/**"] },
+    "build": {
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["API_URL", "NEXT_PUBLIC_PRIVY_APP_ID", "PRIVY_APP_ID"]
+    },
     "typecheck": {},
     "test": { "cache": false }
   }
