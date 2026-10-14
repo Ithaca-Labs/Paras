@@ -44,7 +44,12 @@ describe('polymarket adapter (fixture replay)', () => {
     for (const q of quotes) {
       Quote.parse(q);
       const book = books.find((b) => b.outcomeExternalId === q.outcomeExternalId)!;
-      expect(q).toMatchObject(bookToQuote(book));
+      // Recorded last is 0.84 on both books: dropped where outside the 0.15/0.16 spread (#131).
+      const { last, ...rest } = bookToQuote(book);
+      expect(q).toMatchObject(rest);
+      expect(q.last).toBe(
+        Number(last) >= Number(q.bid) && Number(last) <= Number(q.ask) ? last : null,
+      );
       expect(q.bid).not.toBeNull();
       expect(q.ask).not.toBeNull();
       expect(Number(q.bid)).toBeLessThanOrEqual(Number(q.ask));
