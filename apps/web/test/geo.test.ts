@@ -15,6 +15,13 @@ describe('geoOverride', () => {
       'cf-ipcountry': 'US',
     });
   });
+  it('GEO_SECRET rides along; Vercel country preferred over a client-sent cf-ipcountry', () => {
+    const incoming = h({ 'cf-ipcountry': 'US', 'x-vercel-ip-country': 'IN' });
+    expect(geoOverride(incoming, { NODE_ENV: 'production', GEO_SECRET: 's' })).toEqual({
+      'x-vercel-ip-country': 'IN',
+      'x-paras-geo-secret': 's',
+    });
+  });
 });
 
 describe('serverApi', () => {

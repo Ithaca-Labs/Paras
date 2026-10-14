@@ -1,6 +1,7 @@
 import { createFakeAdapter, fakeMarket } from '@paras/adapters';
 import { upsertMarkets, upsertVenue } from '@paras/db';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { trustedGeo } from '../src/jurisdiction.js';
 import { createTestApp, type TestApp } from './harness.js';
 
 let t: TestApp;
@@ -150,5 +151,47 @@ describe('Vault eligibility', () => {
       (await call('POST', '/v1/me/jurisdiction', { bearer: token, body: { country: 'USA' } }))
         .status,
     ).toBe(400);
+  });
+});
+
+describe('web geo secret (#136)', () => {
+  const secret = 'g'.repeat(32);
+  let w: TestApp;
+  beforeAll(async () => {
+    const poly = createFakeAdapter({
+      id: 'polymarket',
+      name: 'Polymarket',
+      capabilities: { routable: true, regulation: 'offshore', restrictedJurisdictions: ['US'] },
+      markets: [fakeMarket('p1', { venueId: 'polymarket' })],
+    });
+    w = await createTestApp({ adapters: [poly], geo: trustedGeo(secret) });
+    await upsertVenue(w.db, poly);
+    await upsertMarkets(w.db, (await poly.listMarkets({ status: 'all' })).items);
+  });
+  afterAll(() => w.close());
+
+  // Cloudflare stamps Vercel's datacenter (US); the visitor is in IN.
+  const polymarket = async (headers: Record<string, string>) => {
+    const r = await w.app.inject({
+      method: 'GET',
+      url: '/v1/events',
+      headers: { 'cf-ipcountry': 'US', ...headers },
+    });
+    return (r.json() as Json).items[0].markets[0].availability;
+  };
+
+  it('valid secret: visitor country wins over Cloudflare', async () => {
+    expect(await polymarket({ 'x-paras-geo-secret': secret, 'x-vercel-ip-country': 'IN' })).toBe(
+      'routable',
+    );
+  });
+  it('wrong or missing secret: spoofed visitor country ignored', async () => {
+    expect(
+      await polymarket({ 'x-paras-geo-secret': 'x'.repeat(32), 'x-vercel-ip-country': 'IN' }),
+    ).toBe('blocked');
+    expect(await polymarket({ 'x-vercel-ip-country': 'IN' })).toBe('blocked');
+  });
+  it('valid secret without visitor country fails closed', async () => {
+    expect(await polymarket({ 'x-paras-geo-secret': secret })).toBe('redirect');
   });
 });

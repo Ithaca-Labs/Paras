@@ -15,6 +15,7 @@ import { defaultAuthConfig } from './auth/types.js';
 import { loadConfig, loadMagicLinkKeys } from './config.js';
 import { createNearIntents } from './near-intents.js';
 import { createEnvioActivity } from './envio.js';
+import { trustedGeo } from './jurisdiction.js';
 import { createVaultReader } from './vault.js';
 
 const config = loadConfig();
@@ -44,6 +45,7 @@ const app = buildApp(
           chainId: config.VAULT_CHAIN_ID,
         }),
       }),
+    ...(config.GEO_SECRET && { geo: trustedGeo(config.GEO_SECRET) }),
     chain: {
       usdc: config.USDC_ADDRESS as `0x${string}`,
       demo: config.EXECUTOR_DEMO_MODE === 'simulate',

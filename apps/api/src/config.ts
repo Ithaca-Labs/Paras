@@ -45,6 +45,8 @@ const Env = z.object({
   EXECUTOR_DEMO_MODE: z.enum(['off', 'simulate']).default('off'),
   /** 1Click API key (X-API-Key). Feature is on only when VAULT_CHAIN_ID is 143 (mainnet). */
   NEAR_INTENTS_API_KEY: z.string().optional(),
+  /** Shared with apps/web: its requests carry the visitor's Vercel country (#136). */
+  GEO_SECRET: z.string().min(32).optional(),
   /** Privy (#92). All four set = Privy endpoints on; PRIVY_SIGNER_ID is the key-quorum id of the authorization key. */
   PRIVY_APP_ID: z.string().optional(),
   PRIVY_APP_SECRET: z.string().optional(),
