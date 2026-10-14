@@ -38,7 +38,9 @@ Deployer needs MON from the Monad faucet (https://faucet.monad.xyz).
   ```
 - [ ] Record the four addresses in `PRD.md` > Deployments.
 
-## 3. `.env` (repo root, read by every app and by `apps/web`)
+## 3. `.env` (repo root)
+
+Loaded by `pnpm db:migrate` and the api/worker/executor/mcp `dev` scripts (`tsx watch --env-file-if-exists=../../.env`, Node >=22.9) and by `apps/web` (next.config). A var already exported in your shell wins over the file. Production/Docker `start` (`node dist/index.js`) does not read it; inject env there.
 
 ```sh
 # core
