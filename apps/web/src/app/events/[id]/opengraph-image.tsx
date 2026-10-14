@@ -61,10 +61,10 @@ export default async function Image({ params }: { params: Promise<{ id: string }
       <div
         style={{
           position: 'absolute',
-          top: -150,
-          right: -110,
-          width: 440,
-          height: 440,
+          top: -170,
+          right: -130,
+          width: 400,
+          height: 400,
           borderRadius: 9999,
           background: '#c3563d',
           opacity: 0.9,
@@ -76,7 +76,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
       <div
         style={{
           display: 'flex',
-          maxWidth: 960,
+          maxWidth: 860,
           fontFamily: 'Mincho',
           fontSize: titleSize,
           fontWeight: 800,
