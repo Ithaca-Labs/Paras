@@ -1,7 +1,7 @@
-# #83 Deploy: Vercel + Render + Cloudflare
+# #83 Deploy: Vercel + VPS + Cloudflare Tunnel
 
 - [x] api `trustProxy`
-- [x] `render.yaml` Blueprint (Railway dropped)
+- [x] `docker-compose.prod.yml` + tunnel (Railway, Render dropped)
 - [x] `docs/DEPLOY.md` runbook
 - [x] PRD decision log, BLOCKERS D2
 - [x] Follow-up #136 (geo header spoofing)

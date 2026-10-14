@@ -1,0 +1,36 @@
+# VPS overlay (#83): docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# No published ports: only the Cloudflare Tunnel reaches api/mcp. Secrets come from .env. Runbook: docs/DEPLOY.md
+services:
+  postgres:
+    restart: unless-stopped
+    ports: !reset []
+  migrate:
+    env_file: .env
+  api:
+    restart: unless-stopped
+    env_file: .env
+    ports: !reset []
+  worker:
+    restart: unless-stopped
+    env_file: .env
+    ports: !reset []
+  mcp:
+    restart: unless-stopped
+    env_file: .env
+    ports: !reset []
+  executor:
+    restart: unless-stopped
+    env_file: .env
+    ports: !reset []
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.0
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?set in .env}
+    volumes: ['./deploy/cloudflared.yml:/etc/cloudflared/config.yml:ro']
+    depends_on: [api, mcp]

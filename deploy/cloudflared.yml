@@ -1,0 +1,7 @@
+# Cloudflare Tunnel ingress (#83). Token: CLOUDFLARE_TUNNEL_TOKEN in the server .env.
+ingress:
+  - hostname: api.paraspredic.fun
+    service: http://api:3000
+  - hostname: mcp.paraspredic.fun
+    service: http://mcp:3002
+  - service: http_status:404

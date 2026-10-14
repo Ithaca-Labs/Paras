@@ -1,31 +1,34 @@
 # Deploy (testnet demo)
 
-Web on Vercel, backend on Render (`render.yaml` Blueprint), DNS and edge on Cloudflare (#83). Domain: `paraspredic.fun`.
+Web on Vercel. Backend on one VPS (Oracle Cloud A1, Ubuntu 24.04 arm64) with Docker Compose. DNS and ingress on Cloudflare: a Cloudflare Tunnel (`paras`) is the only way in, so no ports are open and `CF-IPCountry` can't be spoofed (#83). Domain: `paraspredic.fun`.
 
-## 1. Cloudflare
+## Server
 
-Site added, nameservers moved from Hostinger. SSL/TLS mode: **Full**.
+`~/paras` on the VPS holds the source (no git; synced with rsync) and `.env` (mode 600, never committed). Keys: `.env.example`, plus `CLOUDFLARE_TUNNEL_TOKEN` (`cloudflared tunnel token paras`) and `DATABASE_URL=postgres://paras:paras@postgres:5432/paras`.
 
-## 2. Render
+Deploy or update from the repo root on your machine:
 
-1. New → **Blueprint** → this repo. Creates `paras-db` (Postgres 16), `paras-api`, `paras-mcp` (web), `paras-worker` (worker), `paras-executor` (private). Fill the `sync: false` prompts from your local `.env`; `MAGIC_LINK_KEYS` = `k1:<openssl rand -hex 32>`.
-2. Migrate from your laptop (prod images have no migrations): `DATABASE_URL=<paras-db External URL> pnpm db:migrate`. Re-run after every schema change. `0000_enable_pgvector.sql` enables pgvector.
-3. If `paras-api`'s internal hostname (Connect → Internal) is not `paras-api`, fix `API_URL` on `paras-mcp`.
+```sh
+rsync -az --delete --exclude node_modules --exclude .next --exclude .turbo --exclude dist \
+  --exclude .git --exclude .env --exclude contracts --exclude spikes --exclude brand-assets --exclude .claude \
+  ./ ubuntu@<vps>:~/paras/
+ssh ubuntu@<vps> 'cd ~/paras && docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build'
+```
 
-`EMAIL_PROVIDER=console`: email sign-in codes only go to the api log. For real email set `resend`, `RESEND_API_KEY`, `EMAIL_FROM` and add Resend's DNS records.
+The `migrate` service runs migrations before the apps start. Postgres data lives in the `pgdata` volume.
 
-## 3. Cloudflare DNS
+## Cloudflare
 
-- `api`, `mcp`: CNAME → `paras-api.onrender.com` / `paras-mcp.onrender.com`, **proxied**. Verify each domain in Render.
+- Tunnel `paras`; ingress in `deploy/cloudflared.yml`: `api.` → `api:3000`, `mcp.` → `mcp:3002`. DNS: `cloudflared tunnel route dns paras <host>`.
 - `@`, `www`: Vercel records, **DNS only** (Vercel advice).
 
-## 4. Vercel
+## Vercel
 
-Import the repo, root directory `apps/web`. Env: `API_URL=https://paras-api.onrender.com`, `NEXT_PUBLIC_PRIVY_APP_ID`. `API_URL` is baked in at build: redeploy after changing it. Add `paraspredic.fun` and `www`.
+Import the repo, root directory `apps/web`. Env: `API_URL=https://api.paraspredic.fun`, `NEXT_PUBLIC_PRIVY_APP_ID`. `API_URL` is baked in at build: redeploy after changing it. Add `paraspredic.fun` and `www`.
 
-`API_URL` must be the Render origin, not `api.paraspredic.fun`: through Cloudflare the API would read Vercel's datacenter country, not the visitor's. Hardening: #136.
+Web → API passes through Cloudflare, which stamps Vercel's datacenter country; #136 makes the API trust the visitor country the web forwards.
 
-## 5. Privy
+## Privy
 
 Add `https://paraspredic.fun` to allowed origins.
 
@@ -35,3 +38,4 @@ Add `https://paraspredic.fun` to allowed origins.
 - `curl https://api.paraspredic.fun/.well-known/oauth-authorization-server` → issuer `https://api.paraspredic.fun`.
 - `https://paraspredic.fun`: Feed loads, sign in, Vault eligibility shows your country, demo deposit + bet completes.
 - Claude → add connector `https://mcp.paraspredic.fun/mcp` → sign in → a tool call returns Markets.
+- Logs: `docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f api`.
