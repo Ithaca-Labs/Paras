@@ -17,3 +17,4 @@ indexer/.envio
 indexer/envio-env.d.ts
 indexer/abis
 next-env.d.ts
+.vercel
