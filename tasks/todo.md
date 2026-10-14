@@ -1,11 +1,11 @@
-# #83 Deploy: Vercel + Railway + Cloudflare
+# #83 Deploy: Vercel + Render + Cloudflare
 
 - [x] api `trustProxy`
-- [x] `apps/*/railway.json`
+- [x] `render.yaml` Blueprint (Railway dropped)
 - [x] `docs/DEPLOY.md` runbook
 - [x] PRD decision log, BLOCKERS D2
 - [x] Follow-up #136 (geo header spoofing)
-- [ ] Infra: Cloudflare, Railway, Vercel, Privy (user accounts)
+- [ ] Infra: Cloudflare, Render, Vercel, Privy (user accounts)
 - [ ] Live checks (health, OAuth metadata, web flow, Claude connector)
 
 ## Review

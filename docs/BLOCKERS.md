@@ -4,10 +4,10 @@ Status 2026-10-09: all backend issues an agent can finish alone are merged (`mai
 
 ## 1. Decisions (answer in chat or on the issue)
 
-| #   | Decision                                                                                              | Recommendation       | Unblocks                                                |
-| --- | ----------------------------------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------- |
-| D1  | ~~Exit signature~~ **Decided (#82):** EIP-712 `Exit` required                                         | Done                 | —                                                       |
-| D2  | ~~Hosting~~ **Decided (#83):** Vercel (web), Railway (backend), Cloudflare (DNS). Geo hardening: #136 | See `docs/DEPLOY.md` | Public MCP URL, real geo gating, OAuth issuer URL (#83) |
+| #   | Decision                                                                                             | Recommendation       | Unblocks                                                |
+| --- | ---------------------------------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------- |
+| D1  | ~~Exit signature~~ **Decided (#82):** EIP-712 `Exit` required                                        | Done                 | —                                                       |
+| D2  | ~~Hosting~~ **Decided (#83):** Vercel (web), Render (backend), Cloudflare (DNS). Geo hardening: #136 | See `docs/DEPLOY.md` | Public MCP URL, real geo gating, OAuth issuer URL (#83) |
 
 ## 2. Accounts, keys and funds
 

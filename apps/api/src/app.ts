@@ -7,7 +7,7 @@ import { routePlugins } from './routes/index.js';
 
 export function buildApp(deps: AppDeps, opts: FastifyServerOptions = {}) {
   // Magic Link tokens ride in the path and exceed Fastify's 100-char default param limit.
-  // trustProxy: req.ip is the client, not Cloudflare/Railway (per-IP rate limits, email code IPs).
+  // trustProxy: req.ip is the client, not Cloudflare/Render (per-IP rate limits, email code IPs).
   const app = Fastify({ maxParamLength: 2048, trustProxy: true, ...opts });
 
   app.setErrorHandler((err: Error & { statusCode?: number }, req, reply) => {
